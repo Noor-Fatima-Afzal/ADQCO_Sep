@@ -1,3 +1,9 @@
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
 # Experiment result files
 nagp_v1_run_raw.pkl
 nagp_v1_run_results.csv
