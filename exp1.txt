@@ -1,0 +1,53 @@
+Generated: 2026-09-01T13:01:27
+Dataset: mnist
+Torch device: cuda
+
+training without pruning:
+step 1: accuracy=0.6480, loss=0.787126, time=328.6069s
+step 2: accuracy=0.8260, loss=0.592689, time=19.1367s
+step 3: accuracy=0.9320, loss=0.455058, time=19.0640s
+step 4: accuracy=0.9520, loss=0.382325, time=19.2460s
+step 5: accuracy=0.9340, loss=0.363631, time=19.2298s
+step 6: accuracy=0.9500, loss=0.357458, time=19.2912s
+step 7: accuracy=0.9280, loss=0.354963, time=19.4714s
+step 8: accuracy=0.9520, loss=0.355274, time=19.0476s
+step 9: accuracy=0.9180, loss=0.355546, time=19.2242s
+step 10: accuracy=0.9500, loss=0.356336, time=19.4604s
+step 11: accuracy=0.9240, loss=0.355165, time=19.0707s
+step 12: accuracy=0.9520, loss=0.353838, time=19.1517s
+step 13: accuracy=0.9220, loss=0.351690, time=19.4618s
+step 14: accuracy=0.9540, loss=0.350163, time=18.9347s
+step 15: accuracy=0.9220, loss=0.348882, time=19.1492s
+step 16: accuracy=0.9540, loss=0.348250, time=19.3226s
+step 17: accuracy=0.9220, loss=0.347970, time=18.9758s
+step 18: accuracy=0.9540, loss=0.348131, time=19.1164s
+step 19: accuracy=0.9180, loss=0.348505, time=19.3748s
+step 20: accuracy=0.9540, loss=0.348951, time=19.0053s
+cumulative result: accuracy=0.9540, loss=0.348951, time=697.0385s
+
+training with pruning:
+step 1: accuracy=0.6480, sparsity=0.0000, loss=0.787126, time=19.2088s
+step 2: accuracy=0.8260, sparsity=0.0000, loss=0.592689, time=19.1106s
+step 3: accuracy=0.9320, sparsity=0.0000, loss=0.455058, time=19.1241s
+step 4: accuracy=0.9520, sparsity=0.0000, loss=0.382325, time=19.1759s
+step 5: accuracy=0.9340, sparsity=0.0000, loss=0.363631, time=19.0255s
+step 6: accuracy=0.9500, sparsity=0.2083, loss=0.357458, time=19.3799s
+step 7: accuracy=0.9580, sparsity=0.2083, loss=0.405484, time=18.9871s
+step 8: accuracy=0.9620, sparsity=0.2083, loss=0.385861, time=19.1828s
+step 9: accuracy=0.9580, sparsity=0.2083, loss=0.373202, time=19.4938s
+step 10: accuracy=0.9620, sparsity=0.2083, loss=0.366498, time=19.1176s
+step 11: accuracy=0.9600, sparsity=0.3333, loss=0.361707, time=19.2229s
+step 12: accuracy=0.7160, sparsity=0.3333, loss=0.659749, time=19.3972s
+step 13: accuracy=0.7980, sparsity=0.3333, loss=0.604642, time=19.0113s
+step 14: accuracy=0.8700, sparsity=0.3333, loss=0.532285, time=19.2822s
+step 15: accuracy=0.8680, sparsity=0.3333, loss=0.493186, time=19.4206s
+step 16: accuracy=0.8980, sparsity=0.3333, loss=0.468780, time=19.0845s
+step 17: accuracy=0.8820, sparsity=0.3333, loss=0.450443, time=19.2214s
+step 18: accuracy=0.8960, sparsity=0.3333, loss=0.437301, time=19.4243s
+step 19: accuracy=0.8840, sparsity=0.3333, loss=0.428905, time=19.0848s
+step 20: accuracy=0.8900, sparsity=0.3333, loss=0.424723, time=19.2287s
+cumulative result: accuracy=0.8900, sparsity=0.3333, loss=0.424723, time=388.0993s
+
+Total run time: 0:18:06.970000 (1086.97s)
+No-pruning validation accuracy: 0.9233
+QAdaPrune validation accuracy: 0.8700

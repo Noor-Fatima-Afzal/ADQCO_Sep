@@ -1,0 +1,1963 @@
+Torch device: cuda
+GPU: NVIDIA A40
+Run config:
+  datasets: ['mnist', 'fashionmnist']
+  qubits: [4]
+  sparsities: [0.1, 0.25, 0.4]
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7]
+  encoding: pca
+  noise_levels: [0.03, 0.05, 0.1]
+  layers: 3
+  steps: 40
+  win_sz: 4
+  shots: None
+  prune_start_frac: 0.15
+  prune_end_frac: 0.65
+  max_round_freeze_frac: 0.08
+  noise_eval_samples: 100
+  v5_grad_pts: 16
+  v5_imp_ema_beta: 0.6
+  v5_hysteresis_rounds: 2
+  v5_regrow_frac_init: 0.3
+  v5_protect_entangling_frac: 0.34
+  v5_distill_hardness_max: 0.7
+  v5_distill_hardness_min: 0.2
+  v5_lr_warm_mult: 2.0
+
+This sweep will train 64 models (16 combos x (1 no-pruning + 3 sparsities)).
+
+##############################################################################
+[1/16] dataset=mnist qubits=4 seed=0
+##############################################################################
+using lightning.gpu (cuQuantum), wires=4, shots=None
+[mnist/q4/seed0] circuit device: cuda (lightning.gpu)
+
+training without pruning (dense teacher):
+step 1: accuracy=0.7060, loss=0.704677, time=19.3789s
+step 2: accuracy=0.7240, loss=0.584760, time=19.2416s
+step 3: accuracy=0.7400, loss=0.557392, time=19.2443s
+step 4: accuracy=0.7460, loss=0.541821, time=19.5197s
+step 5: accuracy=0.7480, loss=0.532583, time=19.0847s
+step 6: accuracy=0.7440, loss=0.527062, time=19.2832s
+step 7: accuracy=0.7480, loss=0.523397, time=19.2432s
+step 8: accuracy=0.7380, loss=0.521194, time=19.2999s
+step 9: accuracy=0.7460, loss=0.520282, time=19.2660s
+step 10: accuracy=0.7340, loss=0.520725, time=19.2901s
+step 11: accuracy=0.7480, loss=0.523138, time=19.3177s
+step 12: accuracy=0.7400, loss=0.524769, time=19.2582s
+step 13: accuracy=0.7500, loss=0.525126, time=19.3181s
+step 14: accuracy=0.7440, loss=0.522364, time=19.4176s
+step 15: accuracy=0.7400, loss=0.521245, time=19.3337s
+step 16: accuracy=0.7460, loss=0.520099, time=19.0926s
+step 17: accuracy=0.7420, loss=0.519805, time=19.2883s
+step 18: accuracy=0.7440, loss=0.519465, time=19.2917s
+step 19: accuracy=0.7420, loss=0.519663, time=19.3412s
+step 20: accuracy=0.7440, loss=0.519726, time=19.4780s
+step 21: accuracy=0.7460, loss=0.520429, time=19.2883s
+step 22: accuracy=0.7400, loss=0.520670, time=19.0776s
+step 23: accuracy=0.7480, loss=0.521779, time=19.2947s
+step 24: accuracy=0.7440, loss=0.521511, time=19.2820s
+step 25: accuracy=0.7480, loss=0.522363, time=19.2625s
+step 26: accuracy=0.7380, loss=0.521441, time=19.4485s
+step 27: accuracy=0.7460, loss=0.522000, time=19.2727s
+step 28: accuracy=0.7480, loss=0.521492, time=19.0652s
+step 29: accuracy=0.7460, loss=0.522606, time=19.3137s
+step 30: accuracy=0.7320, loss=0.522388, time=19.2566s
+step 31: accuracy=0.7440, loss=0.522524, time=19.2535s
+step 32: accuracy=0.7400, loss=0.521057, time=19.4667s
+step 33: accuracy=0.7500, loss=0.520185, time=19.3411s
+step 34: accuracy=0.7520, loss=0.519337, time=19.0910s
+step 35: accuracy=0.7520, loss=0.518578, time=19.3225s
+step 36: accuracy=0.7520, loss=0.518171, time=19.2482s
+step 37: accuracy=0.7520, loss=0.517798, time=19.2468s
+step 38: accuracy=0.7500, loss=0.517741, time=19.4577s
+step 39: accuracy=0.7520, loss=0.517706, time=19.3543s
+step 40: accuracy=0.7420, loss=0.517929, time=19.0735s
+cumulative result: accuracy=0.7420, loss=0.517929, time=0:12:55.140000 (775.1404s)
+(validation accuracy on held-out set: 0.7633)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.7060, sparsity=0.0000, loss=0.308231, regrown=0, time=22.6737s
+step 2: accuracy=0.7320, sparsity=0.0000, loss=0.223474, regrown=0, time=22.6493s
+step 3: accuracy=0.7220, sparsity=0.0000, loss=0.211270, regrown=0, time=22.6061s
+step 4: accuracy=0.7320, sparsity=0.0000, loss=0.207776, regrown=0, time=22.6664s
+step 5: accuracy=0.7440, sparsity=0.0000, loss=0.209066, regrown=0, time=22.6689s
+step 6: accuracy=0.7500, sparsity=0.0000, loss=0.213590, regrown=0, time=22.6918s
+step 7: accuracy=0.7420, sparsity=0.0000, loss=0.221552, regrown=0, time=22.4299s
+step 8: accuracy=0.7480, sparsity=0.0000, loss=0.234978, regrown=0, time=22.8640s
+step 9: accuracy=0.7400, sparsity=0.0000, loss=0.244953, regrown=0, time=22.7237s
+step 10: accuracy=0.7160, sparsity=0.0000, loss=0.248897, regrown=0, time=22.4789s
+step 11: accuracy=0.7000, sparsity=0.0000, loss=0.282892, regrown=0, time=22.9731s
+step 12: accuracy=0.7280, sparsity=0.0000, loss=0.311309, regrown=0, time=22.4001s
+step 13: accuracy=0.7460, sparsity=0.0833, loss=0.294784, regrown=0, time=22.7466s
+step 14: accuracy=0.7400, sparsity=0.0833, loss=0.289168, regrown=0, time=22.8798s
+step 15: accuracy=0.7340, sparsity=0.0833, loss=0.303270, regrown=0, time=22.7457s
+step 16: accuracy=0.7340, sparsity=0.0833, loss=0.322485, regrown=0, time=22.5359s
+step 17: accuracy=0.7480, sparsity=0.1250, loss=0.333027, regrown=0, time=23.0063s
+step 18: accuracy=0.7360, sparsity=0.1250, loss=0.328298, regrown=0, time=22.7290s
+step 19: accuracy=0.7460, sparsity=0.1250, loss=0.339769, regrown=0, time=22.4529s
+step 20: accuracy=0.7340, sparsity=0.1250, loss=0.353552, regrown=0, time=22.9812s
+step 21: accuracy=0.7520, sparsity=0.1250, loss=0.363899, regrown=0, time=22.4805s
+step 22: accuracy=0.7400, sparsity=0.1250, loss=0.369184, regrown=0, time=22.6436s
+step 23: accuracy=0.7240, sparsity=0.1250, loss=0.390368, regrown=0, time=22.8591s
+step 24: accuracy=0.7440, sparsity=0.1250, loss=0.410763, regrown=0, time=22.8001s
+step 25: accuracy=0.7460, sparsity=0.1250, loss=0.413383, regrown=0, time=22.5724s
+step 26: accuracy=0.7440, sparsity=0.1250, loss=0.406720, regrown=0, time=23.0354s
+step 27: accuracy=0.7460, sparsity=0.1250, loss=0.419101, regrown=0, time=22.6351s
+step 28: accuracy=0.7260, sparsity=0.1250, loss=0.426011, regrown=0, time=22.6803s
+step 29: accuracy=0.7480, sparsity=0.1250, loss=0.427823, regrown=0, time=22.8798s
+step 30: accuracy=0.7440, sparsity=0.1250, loss=0.416714, regrown=0, time=22.7639s
+step 31: accuracy=0.7420, sparsity=0.1250, loss=0.417920, regrown=0, time=22.6827s
+step 32: accuracy=0.7400, sparsity=0.1250, loss=0.422207, regrown=0, time=23.1457s
+step 33: accuracy=0.7420, sparsity=0.1250, loss=0.422046, regrown=0, time=22.6953s
+step 34: accuracy=0.7320, sparsity=0.1250, loss=0.417101, regrown=0, time=22.8160s
+step 35: accuracy=0.7180, sparsity=0.1250, loss=0.427804, regrown=0, time=23.0191s
+step 36: accuracy=0.7400, sparsity=0.1250, loss=0.447257, regrown=0, time=22.8597s
+step 37: accuracy=0.7540, sparsity=0.1250, loss=0.437218, regrown=0, time=22.5816s
+step 38: accuracy=0.7400, sparsity=0.1250, loss=0.416410, regrown=0, time=22.9740s
+step 39: accuracy=0.7440, sparsity=0.1250, loss=0.416691, regrown=0, time=22.5922s
+step 40: accuracy=0.7360, sparsity=0.1250, loss=0.418174, regrown=0, time=29.4983s
+cumulative result: accuracy=0.7360, sparsity=0.1250, loss=0.418174, time=0:15:24.060000 (924.0628s)
+(validation accuracy on held-out set: 0.7533)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.7060, sparsity=0.0000, loss=0.308231, regrown=0, time=38.2261s
+step 2: accuracy=0.7320, sparsity=0.0000, loss=0.223474, regrown=0, time=33.4084s
+step 3: accuracy=0.7220, sparsity=0.0000, loss=0.211270, regrown=0, time=24.9867s
+step 4: accuracy=0.7320, sparsity=0.0000, loss=0.207776, regrown=0, time=24.8111s
+step 5: accuracy=0.7440, sparsity=0.0000, loss=0.209066, regrown=0, time=22.7562s
+step 6: accuracy=0.7500, sparsity=0.0000, loss=0.213590, regrown=0, time=22.7807s
+step 7: accuracy=0.7420, sparsity=0.0000, loss=0.221552, regrown=0, time=22.8034s
+step 8: accuracy=0.7480, sparsity=0.0000, loss=0.234978, regrown=0, time=22.5968s
+step 9: accuracy=0.7400, sparsity=0.0000, loss=0.244953, regrown=0, time=31.7922s
+step 10: accuracy=0.7160, sparsity=0.0000, loss=0.248897, regrown=0, time=25.1118s
+step 11: accuracy=0.7000, sparsity=0.0000, loss=0.282892, regrown=0, time=26.2367s
+step 12: accuracy=0.7280, sparsity=0.0000, loss=0.311309, regrown=0, time=24.7189s
+step 13: accuracy=0.7460, sparsity=0.0833, loss=0.294784, regrown=0, time=32.4247s
+step 14: accuracy=0.7400, sparsity=0.0833, loss=0.289168, regrown=0, time=23.3412s
+step 15: accuracy=0.7340, sparsity=0.0833, loss=0.303270, regrown=0, time=31.1667s
+step 16: accuracy=0.7340, sparsity=0.0833, loss=0.322485, regrown=0, time=31.8069s
+step 17: accuracy=0.7480, sparsity=0.1667, loss=0.333027, regrown=0, time=35.2965s
+step 18: accuracy=0.7380, sparsity=0.1667, loss=0.328106, regrown=0, time=37.4561s
+step 19: accuracy=0.7440, sparsity=0.1667, loss=0.340800, regrown=0, time=36.1847s
+step 20: accuracy=0.7400, sparsity=0.1667, loss=0.355705, regrown=0, time=38.4200s
+step 21: accuracy=0.7500, sparsity=0.2500, loss=0.366074, regrown=0, time=36.8156s
+step 22: accuracy=0.7140, sparsity=0.2500, loss=0.407718, regrown=0, time=37.6405s
+step 23: accuracy=0.7120, sparsity=0.2500, loss=0.420290, regrown=0, time=30.8344s
+step 24: accuracy=0.7360, sparsity=0.2500, loss=0.413360, regrown=0, time=22.8560s
+step 25: accuracy=0.7460, sparsity=0.2500, loss=0.409308, regrown=0, time=22.9824s
+step 26: accuracy=0.7400, sparsity=0.2500, loss=0.413112, regrown=0, time=22.8175s
+step 27: accuracy=0.7500, sparsity=0.2500, loss=0.422639, regrown=0, time=22.6443s
+step 28: accuracy=0.7380, sparsity=0.2500, loss=0.422520, regrown=0, time=22.9551s
+step 29: accuracy=0.7540, sparsity=0.2500, loss=0.422025, regrown=0, time=22.6817s
+step 30: accuracy=0.7340, sparsity=0.2500, loss=0.421221, regrown=0, time=22.8466s
+step 31: accuracy=0.7400, sparsity=0.2500, loss=0.421737, regrown=0, time=23.0140s
+step 32: accuracy=0.7340, sparsity=0.2500, loss=0.423328, regrown=0, time=22.8393s
+step 33: accuracy=0.7400, sparsity=0.2500, loss=0.424070, regrown=0, time=22.6085s
+step 34: accuracy=0.7320, sparsity=0.2500, loss=0.421794, regrown=0, time=23.0108s
+step 35: accuracy=0.7380, sparsity=0.2500, loss=0.427458, regrown=0, time=22.6478s
+step 36: accuracy=0.7360, sparsity=0.2500, loss=0.433281, regrown=0, time=23.4926s
+step 37: accuracy=0.7360, sparsity=0.2500, loss=0.424913, regrown=0, time=22.9694s
+step 38: accuracy=0.7340, sparsity=0.2500, loss=0.418917, regrown=0, time=22.9045s
+step 39: accuracy=0.7240, sparsity=0.2500, loss=0.419562, regrown=0, time=22.6073s
+step 40: accuracy=0.7380, sparsity=0.2500, loss=0.421186, regrown=0, time=23.0852s
+cumulative result: accuracy=0.7380, sparsity=0.2500, loss=0.421186, time=0:18:04.360000 (1084.3590s)
+(validation accuracy on held-out set: 0.7767)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.7060, sparsity=0.0000, loss=0.308231, regrown=0, time=22.5417s
+step 2: accuracy=0.7320, sparsity=0.0000, loss=0.223474, regrown=0, time=22.8696s
+step 3: accuracy=0.7220, sparsity=0.0000, loss=0.211270, regrown=0, time=22.7174s
+step 4: accuracy=0.7320, sparsity=0.0000, loss=0.207776, regrown=0, time=22.4795s
+step 5: accuracy=0.7440, sparsity=0.0000, loss=0.209066, regrown=0, time=23.0840s
+step 6: accuracy=0.7500, sparsity=0.0000, loss=0.213590, regrown=0, time=23.0156s
+step 7: accuracy=0.7420, sparsity=0.0000, loss=0.221552, regrown=0, time=22.6785s
+step 8: accuracy=0.7480, sparsity=0.0000, loss=0.234978, regrown=0, time=23.0190s
+step 9: accuracy=0.7400, sparsity=0.0000, loss=0.244953, regrown=0, time=22.5430s
+step 10: accuracy=0.7160, sparsity=0.0000, loss=0.248897, regrown=0, time=22.7198s
+step 11: accuracy=0.7000, sparsity=0.0000, loss=0.282892, regrown=0, time=22.8889s
+step 12: accuracy=0.7280, sparsity=0.0000, loss=0.311309, regrown=0, time=22.7319s
+step 13: accuracy=0.7460, sparsity=0.0833, loss=0.294784, regrown=0, time=22.4865s
+step 14: accuracy=0.7400, sparsity=0.0833, loss=0.289168, regrown=0, time=22.9056s
+step 15: accuracy=0.7340, sparsity=0.0833, loss=0.303270, regrown=0, time=22.7224s
+step 16: accuracy=0.7340, sparsity=0.0833, loss=0.322485, regrown=0, time=22.5379s
+step 17: accuracy=0.7480, sparsity=0.1667, loss=0.333027, regrown=0, time=22.8757s
+step 18: accuracy=0.7380, sparsity=0.1667, loss=0.328106, regrown=0, time=22.5255s
+step 19: accuracy=0.7440, sparsity=0.1667, loss=0.340800, regrown=0, time=22.7833s
+step 20: accuracy=0.7400, sparsity=0.1667, loss=0.355705, regrown=0, time=22.8043s
+step 21: accuracy=0.7500, sparsity=0.2500, loss=0.366074, regrown=0, time=22.7303s
+step 22: accuracy=0.7140, sparsity=0.2500, loss=0.407718, regrown=0, time=22.5671s
+step 23: accuracy=0.7120, sparsity=0.2500, loss=0.420290, regrown=0, time=22.9819s
+step 24: accuracy=0.7360, sparsity=0.2500, loss=0.413360, regrown=0, time=22.5788s
+step 25: accuracy=0.7460, sparsity=0.3333, loss=0.409308, regrown=0, time=22.7012s
+step 26: accuracy=0.7200, sparsity=0.3333, loss=0.452892, regrown=0, time=22.9602s
+step 27: accuracy=0.7320, sparsity=0.3333, loss=0.457210, regrown=0, time=22.7868s
+step 28: accuracy=0.7340, sparsity=0.3333, loss=0.449094, regrown=0, time=22.5943s
+step 29: accuracy=0.7340, sparsity=0.4167, loss=0.447845, regrown=0, time=22.8673s
+step 30: accuracy=0.7000, sparsity=0.4167, loss=0.489685, regrown=0, time=22.6053s
+step 31: accuracy=0.6960, sparsity=0.4167, loss=0.478885, regrown=0, time=22.7378s
+step 32: accuracy=0.7160, sparsity=0.4167, loss=0.469227, regrown=0, time=22.8735s
+step 33: accuracy=0.7220, sparsity=0.4167, loss=0.460061, regrown=0, time=22.7271s
+step 34: accuracy=0.7140, sparsity=0.4167, loss=0.454179, regrown=0, time=22.5219s
+step 35: accuracy=0.6800, sparsity=0.4167, loss=0.464950, regrown=0, time=22.9798s
+step 36: accuracy=0.7180, sparsity=0.4167, loss=0.473882, regrown=0, time=22.5116s
+step 37: accuracy=0.7240, sparsity=0.4167, loss=0.459372, regrown=0, time=22.6679s
+step 38: accuracy=0.7360, sparsity=0.4167, loss=0.445359, regrown=0, time=22.8079s
+step 39: accuracy=0.7280, sparsity=0.4167, loss=0.442478, regrown=0, time=22.7993s
+step 40: accuracy=0.7460, sparsity=0.4167, loss=0.442415, regrown=0, time=22.5998s
+cumulative result: accuracy=0.7460, sparsity=0.4167, loss=0.442415, time=0:15:13.470000 (913.4722s)
+(validation accuracy on held-out set: 0.7467)
+
+##############################################################################
+[2/16] dataset=mnist qubits=4 seed=1
+##############################################################################
+using lightning.gpu (cuQuantum), wires=4, shots=None
+[mnist/q4/seed1] circuit device: cuda (lightning.gpu)
+
+training without pruning (dense teacher):
+step 1: accuracy=0.6720, loss=0.735612, time=19.2459s
+step 2: accuracy=0.7140, loss=0.595246, time=19.3336s
+step 3: accuracy=0.7360, loss=0.568971, time=19.1367s
+step 4: accuracy=0.7640, loss=0.551332, time=19.3722s
+step 5: accuracy=0.7560, loss=0.540255, time=19.4976s
+step 6: accuracy=0.7720, loss=0.533145, time=19.1230s
+step 7: accuracy=0.7500, loss=0.529644, time=19.3301s
+step 8: accuracy=0.7900, loss=0.527496, time=19.4071s
+step 9: accuracy=0.7520, loss=0.522365, time=19.3052s
+step 10: accuracy=0.7840, loss=0.516308, time=19.4068s
+step 11: accuracy=0.7660, loss=0.511517, time=19.3440s
+step 12: accuracy=0.7880, loss=0.508370, time=19.3514s
+step 13: accuracy=0.7640, loss=0.505879, time=19.3661s
+step 14: accuracy=0.7820, loss=0.504409, time=19.3773s
+step 15: accuracy=0.7620, loss=0.503013, time=19.5575s
+step 16: accuracy=0.7820, loss=0.502333, time=19.3865s
+step 17: accuracy=0.7680, loss=0.501676, time=19.1171s
+step 18: accuracy=0.7780, loss=0.501749, time=19.3702s
+step 19: accuracy=0.7720, loss=0.501991, time=19.3318s
+step 20: accuracy=0.7820, loss=0.502726, time=19.3481s
+step 21: accuracy=0.7720, loss=0.502846, time=19.3171s
+step 22: accuracy=0.7860, loss=0.502388, time=19.4787s
+step 23: accuracy=0.7700, loss=0.501423, time=19.3369s
+step 24: accuracy=0.7860, loss=0.500598, time=19.1266s
+step 25: accuracy=0.7700, loss=0.500297, time=19.3178s
+step 26: accuracy=0.7840, loss=0.499892, time=19.3129s
+step 27: accuracy=0.7700, loss=0.499990, time=19.3836s
+step 28: accuracy=0.7880, loss=0.499139, time=19.3659s
+step 29: accuracy=0.7700, loss=0.498742, time=19.5983s
+step 30: accuracy=0.7880, loss=0.498004, time=19.1387s
+step 31: accuracy=0.7700, loss=0.497378, time=19.3003s
+step 32: accuracy=0.7840, loss=0.496756, time=19.3673s
+step 33: accuracy=0.7700, loss=0.496259, time=19.3864s
+step 34: accuracy=0.7860, loss=0.495830, time=19.3405s
+step 35: accuracy=0.7660, loss=0.495554, time=19.3165s
+step 36: accuracy=0.7800, loss=0.495250, time=19.2922s
+step 37: accuracy=0.7640, loss=0.495062, time=19.3798s
+step 38: accuracy=0.7800, loss=0.494782, time=19.3091s
+step 39: accuracy=0.7640, loss=0.494573, time=19.5797s
+step 40: accuracy=0.7820, loss=0.494337, time=19.4100s
+cumulative result: accuracy=0.7820, loss=0.494337, time=0:12:57.520000 (777.5197s)
+(validation accuracy on held-out set: 0.7533)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.6720, sparsity=0.0000, loss=0.331001, regrown=0, time=22.5978s
+step 2: accuracy=0.7160, sparsity=0.0000, loss=0.235867, regrown=0, time=22.8829s
+step 3: accuracy=0.7340, sparsity=0.0000, loss=0.225919, regrown=0, time=22.8665s
+step 4: accuracy=0.7520, sparsity=0.0000, loss=0.223939, regrown=0, time=22.6114s
+step 5: accuracy=0.7680, sparsity=0.0000, loss=0.226039, regrown=0, time=23.0227s
+step 6: accuracy=0.7600, sparsity=0.0000, loss=0.228586, regrown=0, time=22.6341s
+step 7: accuracy=0.7040, sparsity=0.0000, loss=0.231532, regrown=0, time=22.7687s
+step 8: accuracy=0.7200, sparsity=0.0000, loss=0.294506, regrown=0, time=22.9835s
+step 9: accuracy=0.7620, sparsity=0.0000, loss=0.276371, regrown=0, time=22.8410s
+step 10: accuracy=0.7520, sparsity=0.0000, loss=0.252003, regrown=0, time=22.5641s
+step 11: accuracy=0.7520, sparsity=0.0000, loss=0.268813, regrown=0, time=22.9878s
+step 12: accuracy=0.7740, sparsity=0.0000, loss=0.280952, regrown=0, time=22.8644s
+step 13: accuracy=0.7800, sparsity=0.0833, loss=0.276562, regrown=0, time=22.7116s
+step 14: accuracy=0.7740, sparsity=0.0833, loss=0.279161, regrown=0, time=23.0935s
+step 15: accuracy=0.7720, sparsity=0.0833, loss=0.290246, regrown=0, time=22.9127s
+step 16: accuracy=0.7720, sparsity=0.0833, loss=0.302313, regrown=0, time=22.9773s
+step 17: accuracy=0.7800, sparsity=0.1250, loss=0.310576, regrown=0, time=23.0553s
+step 18: accuracy=0.7800, sparsity=0.1250, loss=0.315674, regrown=0, time=22.9087s
+step 19: accuracy=0.7620, sparsity=0.1250, loss=0.330650, regrown=0, time=22.6972s
+step 20: accuracy=0.7800, sparsity=0.1250, loss=0.348768, regrown=0, time=23.1292s
+step 21: accuracy=0.7820, sparsity=0.1250, loss=0.354719, regrown=0, time=22.5865s
+step 22: accuracy=0.7860, sparsity=0.1250, loss=0.353648, regrown=0, time=22.7791s
+step 23: accuracy=0.7560, sparsity=0.1250, loss=0.369322, regrown=0, time=22.9457s
+step 24: accuracy=0.7800, sparsity=0.1250, loss=0.383919, regrown=0, time=23.0234s
+step 25: accuracy=0.7820, sparsity=0.1250, loss=0.392030, regrown=0, time=22.6142s
+step 26: accuracy=0.7980, sparsity=0.1250, loss=0.388517, regrown=0, time=23.0342s
+step 27: accuracy=0.7700, sparsity=0.1250, loss=0.400148, regrown=0, time=22.6081s
+step 28: accuracy=0.7940, sparsity=0.1250, loss=0.403799, regrown=0, time=22.8873s
+step 29: accuracy=0.7800, sparsity=0.1250, loss=0.402304, regrown=0, time=22.9801s
+step 30: accuracy=0.7900, sparsity=0.1250, loss=0.397605, regrown=0, time=22.8302s
+step 31: accuracy=0.7700, sparsity=0.1250, loss=0.402460, regrown=0, time=22.6173s
+step 32: accuracy=0.7820, sparsity=0.1250, loss=0.407230, regrown=0, time=23.0137s
+step 33: accuracy=0.7800, sparsity=0.1250, loss=0.404982, regrown=0, time=22.6015s
+step 34: accuracy=0.7840, sparsity=0.1250, loss=0.395835, regrown=0, time=22.9360s
+step 35: accuracy=0.7820, sparsity=0.1250, loss=0.398125, regrown=0, time=23.1052s
+step 36: accuracy=0.7820, sparsity=0.1250, loss=0.401403, regrown=0, time=22.9305s
+step 37: accuracy=0.7820, sparsity=0.1250, loss=0.399723, regrown=0, time=22.6995s
+step 38: accuracy=0.7920, sparsity=0.1250, loss=0.396007, regrown=0, time=22.9933s
+step 39: accuracy=0.7680, sparsity=0.1250, loss=0.400120, regrown=0, time=22.6049s
+step 40: accuracy=0.7900, sparsity=0.1250, loss=0.405947, regrown=0, time=22.8629s
+cumulative result: accuracy=0.7900, sparsity=0.1250, loss=0.405947, time=0:15:17.540000 (917.5438s)
+(validation accuracy on held-out set: 0.7433)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.6720, sparsity=0.0000, loss=0.331001, regrown=0, time=22.6523s
+step 2: accuracy=0.7160, sparsity=0.0000, loss=0.235867, regrown=0, time=22.6810s
+step 3: accuracy=0.7340, sparsity=0.0000, loss=0.225919, regrown=0, time=22.6884s
+step 4: accuracy=0.7520, sparsity=0.0000, loss=0.223939, regrown=0, time=22.7419s
+step 5: accuracy=0.7680, sparsity=0.0000, loss=0.226039, regrown=0, time=22.7088s
+step 6: accuracy=0.7600, sparsity=0.0000, loss=0.228586, regrown=0, time=22.7718s
+step 7: accuracy=0.7040, sparsity=0.0000, loss=0.231532, regrown=0, time=22.5054s
+step 8: accuracy=0.7200, sparsity=0.0000, loss=0.294506, regrown=0, time=22.6896s
+step 9: accuracy=0.7620, sparsity=0.0000, loss=0.276371, regrown=0, time=22.8413s
+step 10: accuracy=0.7520, sparsity=0.0000, loss=0.252003, regrown=0, time=22.7449s
+step 11: accuracy=0.7520, sparsity=0.0000, loss=0.268813, regrown=0, time=22.5623s
+step 12: accuracy=0.7740, sparsity=0.0000, loss=0.280952, regrown=0, time=22.9344s
+step 13: accuracy=0.7800, sparsity=0.0833, loss=0.276562, regrown=0, time=22.5956s
+step 14: accuracy=0.7740, sparsity=0.0833, loss=0.279161, regrown=0, time=22.7383s
+step 15: accuracy=0.7720, sparsity=0.0833, loss=0.290246, regrown=0, time=22.9045s
+step 16: accuracy=0.7720, sparsity=0.0833, loss=0.302313, regrown=0, time=22.7027s
+step 17: accuracy=0.7800, sparsity=0.1667, loss=0.310576, regrown=0, time=22.5140s
+step 18: accuracy=0.7820, sparsity=0.1667, loss=0.317170, regrown=0, time=22.9413s
+step 19: accuracy=0.7720, sparsity=0.1667, loss=0.330840, regrown=0, time=22.7795s
+step 20: accuracy=0.7880, sparsity=0.1667, loss=0.343455, regrown=0, time=22.4777s
+step 21: accuracy=0.7800, sparsity=0.2500, loss=0.346980, regrown=0, time=22.9177s
+step 22: accuracy=0.7680, sparsity=0.2500, loss=0.355836, regrown=0, time=22.5587s
+step 23: accuracy=0.7680, sparsity=0.2500, loss=0.371626, regrown=0, time=22.7669s
+step 24: accuracy=0.7740, sparsity=0.2500, loss=0.375727, regrown=0, time=22.8402s
+step 25: accuracy=0.7800, sparsity=0.2500, loss=0.383947, regrown=0, time=22.7544s
+step 26: accuracy=0.7800, sparsity=0.2500, loss=0.388714, regrown=0, time=22.5132s
+step 27: accuracy=0.7680, sparsity=0.2500, loss=0.400718, regrown=0, time=22.9155s
+step 28: accuracy=0.7780, sparsity=0.2500, loss=0.406234, regrown=0, time=22.7412s
+step 29: accuracy=0.7680, sparsity=0.2500, loss=0.405634, regrown=0, time=22.5179s
+step 30: accuracy=0.7820, sparsity=0.2500, loss=0.400156, regrown=0, time=23.0161s
+step 31: accuracy=0.7540, sparsity=0.2500, loss=0.407821, regrown=0, time=22.5425s
+step 32: accuracy=0.7800, sparsity=0.2500, loss=0.414981, regrown=0, time=22.7940s
+step 33: accuracy=0.7780, sparsity=0.2500, loss=0.405314, regrown=0, time=23.0054s
+step 34: accuracy=0.7740, sparsity=0.2500, loss=0.396841, regrown=0, time=22.7898s
+step 35: accuracy=0.7680, sparsity=0.2500, loss=0.399005, regrown=0, time=22.5215s
+step 36: accuracy=0.7780, sparsity=0.2500, loss=0.401808, regrown=0, time=22.9292s
+step 37: accuracy=0.7700, sparsity=0.2500, loss=0.402232, regrown=0, time=22.5054s
+step 38: accuracy=0.7860, sparsity=0.2500, loss=0.396886, regrown=0, time=22.6413s
+step 39: accuracy=0.7580, sparsity=0.2500, loss=0.401964, regrown=0, time=22.8668s
+step 40: accuracy=0.7800, sparsity=0.2500, loss=0.409778, regrown=0, time=22.8004s
+cumulative result: accuracy=0.7800, sparsity=0.2500, loss=0.409778, time=0:15:12.880000 (912.8797s)
+(validation accuracy on held-out set: 0.7467)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.6720, sparsity=0.0000, loss=0.331001, regrown=0, time=22.6327s
+step 2: accuracy=0.7160, sparsity=0.0000, loss=0.235867, regrown=0, time=22.6679s
+step 3: accuracy=0.7340, sparsity=0.0000, loss=0.225919, regrown=0, time=22.5215s
+step 4: accuracy=0.7520, sparsity=0.0000, loss=0.223939, regrown=0, time=22.9215s
+step 5: accuracy=0.7680, sparsity=0.0000, loss=0.226039, regrown=0, time=22.7729s
+step 6: accuracy=0.7600, sparsity=0.0000, loss=0.228586, regrown=0, time=22.5764s
+step 7: accuracy=0.7040, sparsity=0.0000, loss=0.231532, regrown=0, time=22.9886s
+step 8: accuracy=0.7200, sparsity=0.0000, loss=0.294506, regrown=0, time=35.3737s
+step 9: accuracy=0.7620, sparsity=0.0000, loss=0.276371, regrown=0, time=36.6008s
+step 10: accuracy=0.7520, sparsity=0.0000, loss=0.252003, regrown=0, time=33.7686s
+step 11: accuracy=0.7520, sparsity=0.0000, loss=0.268813, regrown=0, time=33.1894s
+step 12: accuracy=0.7740, sparsity=0.0000, loss=0.280952, regrown=0, time=22.4929s
+step 13: accuracy=0.7800, sparsity=0.0833, loss=0.276562, regrown=0, time=22.9579s
+step 14: accuracy=0.7740, sparsity=0.0833, loss=0.279161, regrown=0, time=34.2226s
+step 15: accuracy=0.7720, sparsity=0.0833, loss=0.290246, regrown=0, time=27.7928s
+step 16: accuracy=0.7720, sparsity=0.0833, loss=0.302313, regrown=0, time=22.8997s
+step 17: accuracy=0.7800, sparsity=0.1667, loss=0.310576, regrown=0, time=22.7965s
+step 18: accuracy=0.7820, sparsity=0.1667, loss=0.317170, regrown=0, time=28.3040s
+step 19: accuracy=0.7720, sparsity=0.1667, loss=0.330840, regrown=0, time=26.0694s
+step 20: accuracy=0.7880, sparsity=0.1667, loss=0.343455, regrown=0, time=22.5797s
+step 21: accuracy=0.7800, sparsity=0.2500, loss=0.346980, regrown=0, time=26.6955s
+step 22: accuracy=0.7680, sparsity=0.2500, loss=0.355836, regrown=0, time=23.9051s
+step 23: accuracy=0.7680, sparsity=0.2500, loss=0.371626, regrown=0, time=22.9131s
+step 24: accuracy=0.7740, sparsity=0.2500, loss=0.375727, regrown=0, time=22.6042s
+step 25: accuracy=0.7800, sparsity=0.3333, loss=0.383947, regrown=0, time=23.0776s
+step 26: accuracy=0.7640, sparsity=0.3333, loss=0.392284, regrown=0, time=22.5905s
+step 27: accuracy=0.7760, sparsity=0.3333, loss=0.397284, regrown=0, time=34.0282s
+step 28: accuracy=0.7700, sparsity=0.3333, loss=0.395832, regrown=0, time=38.2505s
+step 29: accuracy=0.7740, sparsity=0.4167, loss=0.395452, regrown=0, time=37.3602s
+step 30: accuracy=0.7240, sparsity=0.4167, loss=0.501953, regrown=0, time=23.0966s
+step 31: accuracy=0.7780, sparsity=0.4167, loss=0.448478, regrown=0, time=24.5079s
+step 32: accuracy=0.7760, sparsity=0.4167, loss=0.419611, regrown=0, time=22.4563s
+step 33: accuracy=0.7700, sparsity=0.4167, loss=0.408541, regrown=0, time=22.7287s
+step 34: accuracy=0.7680, sparsity=0.4167, loss=0.406171, regrown=0, time=22.9319s
+step 35: accuracy=0.7680, sparsity=0.4167, loss=0.404012, regrown=0, time=22.8642s
+step 36: accuracy=0.7680, sparsity=0.4167, loss=0.402922, regrown=0, time=22.4797s
+step 37: accuracy=0.7640, sparsity=0.4167, loss=0.402279, regrown=0, time=22.9347s
+step 38: accuracy=0.7660, sparsity=0.4167, loss=0.401865, regrown=0, time=22.4903s
+step 39: accuracy=0.7660, sparsity=0.4167, loss=0.401338, regrown=0, time=22.7041s
+step 40: accuracy=0.7660, sparsity=0.4167, loss=0.400988, regrown=0, time=27.4975s
+cumulative result: accuracy=0.7660, sparsity=0.4167, loss=0.400988, time=0:17:20.020000 (1040.0175s)
+(validation accuracy on held-out set: 0.7467)
+
+##############################################################################
+[3/16] dataset=mnist qubits=4 seed=2
+##############################################################################
+using lightning.gpu (cuQuantum), wires=4, shots=None
+[mnist/q4/seed2] circuit device: cuda (lightning.gpu)
+
+training without pruning (dense teacher):
+step 1: accuracy=0.7260, loss=0.707550, time=22.5538s
+step 2: accuracy=0.7420, loss=0.561329, time=19.2617s
+step 3: accuracy=0.7460, loss=0.529950, time=24.8037s
+step 4: accuracy=0.7480, loss=0.523803, time=19.3658s
+step 5: accuracy=0.7440, loss=0.520169, time=19.1768s
+step 6: accuracy=0.7540, loss=0.517850, time=19.2339s
+step 7: accuracy=0.7580, loss=0.516536, time=19.3728s
+step 8: accuracy=0.7540, loss=0.516327, time=28.3145s
+step 9: accuracy=0.7500, loss=0.517496, time=26.7894s
+step 10: accuracy=0.7520, loss=0.520541, time=20.9717s
+step 11: accuracy=0.7480, loss=0.520984, time=23.9932s
+step 12: accuracy=0.7600, loss=0.518695, time=20.0431s
+step 13: accuracy=0.7600, loss=0.515620, time=31.5031s
+step 14: accuracy=0.7540, loss=0.513901, time=27.3257s
+step 15: accuracy=0.7560, loss=0.512351, time=19.3688s
+step 16: accuracy=0.7600, loss=0.511771, time=19.5549s
+step 17: accuracy=0.7520, loss=0.510654, time=19.1092s
+step 18: accuracy=0.7620, loss=0.510241, time=25.2924s
+step 19: accuracy=0.7540, loss=0.508949, time=25.0554s
+step 20: accuracy=0.7560, loss=0.508158, time=21.5932s
+step 21: accuracy=0.7520, loss=0.506891, time=19.3935s
+step 22: accuracy=0.7540, loss=0.505957, time=19.3697s
+step 23: accuracy=0.7540, loss=0.504962, time=25.1557s
+step 24: accuracy=0.7580, loss=0.504388, time=23.4399s
+step 25: accuracy=0.7540, loss=0.504327, time=20.0036s
+step 26: accuracy=0.7520, loss=0.504861, time=31.9405s
+step 27: accuracy=0.7520, loss=0.505477, time=30.8978s
+step 28: accuracy=0.7520, loss=0.504051, time=27.6540s
+step 29: accuracy=0.7640, loss=0.501726, time=33.9522s
+step 30: accuracy=0.7540, loss=0.499838, time=31.5963s
+step 31: accuracy=0.7600, loss=0.498297, time=29.1244s
+step 32: accuracy=0.7620, loss=0.497509, time=19.4536s
+step 33: accuracy=0.7620, loss=0.496847, time=21.2085s
+step 34: accuracy=0.7620, loss=0.496816, time=19.1574s
+step 35: accuracy=0.7660, loss=0.496941, time=19.3370s
+step 36: accuracy=0.7700, loss=0.498048, time=19.3390s
+step 37: accuracy=0.7640, loss=0.498285, time=19.2947s
+step 38: accuracy=0.7660, loss=0.499109, time=19.5048s
+step 39: accuracy=0.7620, loss=0.497580, time=19.3340s
+step 40: accuracy=0.7660, loss=0.497504, time=19.1340s
+cumulative result: accuracy=0.7660, loss=0.497504, time=0:15:24.750000 (924.7480s)
+(validation accuracy on held-out set: 0.7833)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.7260, sparsity=0.0000, loss=0.301601, regrown=0, time=22.7809s
+step 2: accuracy=0.7460, sparsity=0.0000, loss=0.202358, regrown=0, time=22.5244s
+step 3: accuracy=0.7460, sparsity=0.0000, loss=0.189705, regrown=0, time=22.6994s
+step 4: accuracy=0.7380, sparsity=0.0000, loss=0.196067, regrown=0, time=22.7731s
+step 5: accuracy=0.7400, sparsity=0.0000, loss=0.204370, regrown=0, time=22.6245s
+step 6: accuracy=0.7440, sparsity=0.0000, loss=0.213002, regrown=0, time=22.8880s
+step 7: accuracy=0.7580, sparsity=0.0000, loss=0.221050, regrown=0, time=23.6088s
+step 8: accuracy=0.7480, sparsity=0.0000, loss=0.231721, regrown=0, time=22.8082s
+step 9: accuracy=0.7420, sparsity=0.0000, loss=0.254721, regrown=0, time=22.7748s
+step 10: accuracy=0.7160, sparsity=0.0000, loss=0.272890, regrown=0, time=22.4861s
+step 11: accuracy=0.7480, sparsity=0.0000, loss=0.298013, regrown=0, time=23.0190s
+step 12: accuracy=0.7500, sparsity=0.0000, loss=0.297660, regrown=0, time=22.7731s
+step 13: accuracy=0.7380, sparsity=0.0833, loss=0.282090, regrown=0, time=22.5572s
+step 14: accuracy=0.7640, sparsity=0.0833, loss=0.288285, regrown=0, time=22.9296s
+step 15: accuracy=0.7520, sparsity=0.0833, loss=0.299243, regrown=0, time=22.8166s
+step 16: accuracy=0.7540, sparsity=0.0833, loss=0.313970, regrown=0, time=22.5406s
+step 17: accuracy=0.7480, sparsity=0.1250, loss=0.323629, regrown=0, time=22.9781s
+step 18: accuracy=0.7520, sparsity=0.1250, loss=0.324304, regrown=0, time=22.4956s
+step 19: accuracy=0.7580, sparsity=0.1250, loss=0.335063, regrown=0, time=22.7391s
+step 20: accuracy=0.7580, sparsity=0.1250, loss=0.347330, regrown=0, time=23.0041s
+step 21: accuracy=0.7480, sparsity=0.1250, loss=0.359827, regrown=0, time=22.7467s
+step 22: accuracy=0.7520, sparsity=0.1250, loss=0.360508, regrown=0, time=22.5198s
+step 23: accuracy=0.7480, sparsity=0.1250, loss=0.374840, regrown=0, time=22.9547s
+step 24: accuracy=0.7460, sparsity=0.1250, loss=0.390588, regrown=0, time=22.8314s
+step 25: accuracy=0.7460, sparsity=0.1250, loss=0.398850, regrown=0, time=22.7296s
+step 26: accuracy=0.7600, sparsity=0.1250, loss=0.394530, regrown=0, time=23.0525s
+step 27: accuracy=0.7640, sparsity=0.1250, loss=0.407104, regrown=0, time=22.6045s
+step 28: accuracy=0.7460, sparsity=0.1250, loss=0.417226, regrown=0, time=22.6620s
+step 29: accuracy=0.7560, sparsity=0.1250, loss=0.418752, regrown=0, time=23.0066s
+step 30: accuracy=0.7640, sparsity=0.1250, loss=0.404455, regrown=0, time=22.7748s
+step 31: accuracy=0.7480, sparsity=0.1250, loss=0.413384, regrown=0, time=22.5962s
+step 32: accuracy=0.7680, sparsity=0.1250, loss=0.425770, regrown=0, time=23.0051s
+step 33: accuracy=0.7700, sparsity=0.1250, loss=0.403544, regrown=0, time=22.5764s
+step 34: accuracy=0.7620, sparsity=0.1250, loss=0.398609, regrown=0, time=22.7894s
+step 35: accuracy=0.7580, sparsity=0.1250, loss=0.401329, regrown=0, time=22.9314s
+step 36: accuracy=0.7540, sparsity=0.1250, loss=0.407019, regrown=0, time=22.7484s
+step 37: accuracy=0.7680, sparsity=0.1250, loss=0.406082, regrown=0, time=22.5717s
+step 38: accuracy=0.7560, sparsity=0.1250, loss=0.397446, regrown=0, time=23.3527s
+step 39: accuracy=0.7640, sparsity=0.1250, loss=0.400022, regrown=0, time=22.9127s
+step 40: accuracy=0.7540, sparsity=0.1250, loss=0.403021, regrown=0, time=23.0168s
+cumulative result: accuracy=0.7540, sparsity=0.1250, loss=0.403021, time=0:15:15.950000 (915.9546s)
+(validation accuracy on held-out set: 0.7433)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.7260, sparsity=0.0000, loss=0.301601, regrown=0, time=22.6763s
+step 2: accuracy=0.7460, sparsity=0.0000, loss=0.202358, regrown=0, time=22.6028s
+step 3: accuracy=0.7460, sparsity=0.0000, loss=0.189705, regrown=0, time=22.6329s
+step 4: accuracy=0.7380, sparsity=0.0000, loss=0.196067, regrown=0, time=22.5704s
+step 5: accuracy=0.7400, sparsity=0.0000, loss=0.204370, regrown=0, time=22.7403s
+step 6: accuracy=0.7440, sparsity=0.0000, loss=0.213002, regrown=0, time=22.7806s
+step 7: accuracy=0.7580, sparsity=0.0000, loss=0.221050, regrown=0, time=22.4923s
+step 8: accuracy=0.7480, sparsity=0.0000, loss=0.231721, regrown=0, time=22.7052s
+step 9: accuracy=0.7420, sparsity=0.0000, loss=0.254721, regrown=0, time=22.9935s
+step 10: accuracy=0.7160, sparsity=0.0000, loss=0.272890, regrown=0, time=22.9055s
+step 11: accuracy=0.7480, sparsity=0.0000, loss=0.298013, regrown=0, time=22.5647s
+step 12: accuracy=0.7500, sparsity=0.0000, loss=0.297660, regrown=0, time=23.0058s
+step 13: accuracy=0.7380, sparsity=0.0833, loss=0.282090, regrown=0, time=22.5687s
+step 14: accuracy=0.7640, sparsity=0.0833, loss=0.288285, regrown=0, time=22.7727s
+step 15: accuracy=0.7520, sparsity=0.0833, loss=0.299243, regrown=0, time=22.9643s
+step 16: accuracy=0.7540, sparsity=0.0833, loss=0.313970, regrown=0, time=22.7941s
+step 17: accuracy=0.7480, sparsity=0.1667, loss=0.323629, regrown=0, time=22.5338s
+step 18: accuracy=0.7520, sparsity=0.1667, loss=0.324287, regrown=0, time=22.9645s
+step 19: accuracy=0.7560, sparsity=0.1667, loss=0.334977, regrown=0, time=22.8392s
+step 20: accuracy=0.7500, sparsity=0.1667, loss=0.347013, regrown=0, time=22.5131s
+step 21: accuracy=0.7460, sparsity=0.2500, loss=0.359744, regrown=0, time=22.9525s
+step 22: accuracy=0.7460, sparsity=0.2500, loss=0.373601, regrown=0, time=22.5766s
+step 23: accuracy=0.7480, sparsity=0.2500, loss=0.392377, regrown=0, time=22.7043s
+step 24: accuracy=0.7360, sparsity=0.2500, loss=0.395130, regrown=0, time=22.9009s
+step 25: accuracy=0.7520, sparsity=0.2500, loss=0.398667, regrown=0, time=22.7779s
+step 26: accuracy=0.7540, sparsity=0.2500, loss=0.395588, regrown=0, time=22.5681s
+step 27: accuracy=0.7660, sparsity=0.2500, loss=0.405026, regrown=0, time=22.9291s
+step 28: accuracy=0.7520, sparsity=0.2500, loss=0.407007, regrown=0, time=22.7964s
+step 29: accuracy=0.7660, sparsity=0.2500, loss=0.406628, regrown=0, time=22.5736s
+step 30: accuracy=0.7500, sparsity=0.2500, loss=0.403036, regrown=0, time=22.9447s
+step 31: accuracy=0.7620, sparsity=0.2500, loss=0.408414, regrown=0, time=22.5134s
+step 32: accuracy=0.7460, sparsity=0.2500, loss=0.414931, regrown=0, time=22.7786s
+step 33: accuracy=0.7620, sparsity=0.2500, loss=0.407749, regrown=0, time=22.9714s
+step 34: accuracy=0.7480, sparsity=0.2500, loss=0.401424, regrown=0, time=22.8344s
+step 35: accuracy=0.7640, sparsity=0.2500, loss=0.403840, regrown=0, time=22.5444s
+step 36: accuracy=0.7460, sparsity=0.2500, loss=0.407705, regrown=0, time=22.9531s
+step 37: accuracy=0.7480, sparsity=0.2500, loss=0.409560, regrown=0, time=22.5538s
+step 38: accuracy=0.7560, sparsity=0.2500, loss=0.402674, regrown=0, time=22.7292s
+step 39: accuracy=0.7460, sparsity=0.2500, loss=0.413559, regrown=0, time=22.8923s
+step 40: accuracy=0.7520, sparsity=0.2500, loss=0.417095, regrown=0, time=22.7048s
+cumulative result: accuracy=0.7520, sparsity=0.2500, loss=0.417095, time=0:15:13.570000 (913.5683s)
+(validation accuracy on held-out set: 0.7600)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.7260, sparsity=0.0000, loss=0.301601, regrown=0, time=22.7289s
+step 2: accuracy=0.7460, sparsity=0.0000, loss=0.202358, regrown=0, time=22.6606s
+step 3: accuracy=0.7460, sparsity=0.0000, loss=0.189705, regrown=0, time=22.5088s
+step 4: accuracy=0.7380, sparsity=0.0000, loss=0.196067, regrown=0, time=22.8633s
+step 5: accuracy=0.7400, sparsity=0.0000, loss=0.204370, regrown=0, time=22.7752s
+step 6: accuracy=0.7440, sparsity=0.0000, loss=0.213002, regrown=0, time=22.4745s
+step 7: accuracy=0.7580, sparsity=0.0000, loss=0.221050, regrown=0, time=22.9705s
+step 8: accuracy=0.7480, sparsity=0.0000, loss=0.231721, regrown=0, time=22.4013s
+step 9: accuracy=0.7420, sparsity=0.0000, loss=0.254721, regrown=0, time=22.7172s
+step 10: accuracy=0.7160, sparsity=0.0000, loss=0.272890, regrown=0, time=22.8305s
+step 11: accuracy=0.7480, sparsity=0.0000, loss=0.298013, regrown=0, time=22.8466s
+step 12: accuracy=0.7500, sparsity=0.0000, loss=0.297660, regrown=0, time=22.5021s
+step 13: accuracy=0.7380, sparsity=0.0833, loss=0.282090, regrown=0, time=22.9799s
+step 14: accuracy=0.7640, sparsity=0.0833, loss=0.288285, regrown=0, time=22.5505s
+step 15: accuracy=0.7520, sparsity=0.0833, loss=0.299243, regrown=0, time=22.8122s
+step 16: accuracy=0.7540, sparsity=0.0833, loss=0.313970, regrown=0, time=22.9341s
+step 17: accuracy=0.7480, sparsity=0.1667, loss=0.323629, regrown=0, time=22.9142s
+step 18: accuracy=0.7520, sparsity=0.1667, loss=0.324287, regrown=0, time=22.5151s
+step 19: accuracy=0.7560, sparsity=0.1667, loss=0.334977, regrown=0, time=22.9680s
+step 20: accuracy=0.7500, sparsity=0.1667, loss=0.347013, regrown=0, time=22.5981s
+step 21: accuracy=0.7460, sparsity=0.2500, loss=0.359744, regrown=0, time=22.7076s
+step 22: accuracy=0.7460, sparsity=0.2500, loss=0.373601, regrown=0, time=22.9112s
+step 23: accuracy=0.7480, sparsity=0.2500, loss=0.392377, regrown=0, time=22.9490s
+step 24: accuracy=0.7360, sparsity=0.2500, loss=0.395130, regrown=0, time=22.6108s
+step 25: accuracy=0.7520, sparsity=0.3333, loss=0.398667, regrown=0, time=23.1387s
+step 26: accuracy=0.7420, sparsity=0.3333, loss=0.416297, regrown=0, time=22.6201s
+step 27: accuracy=0.7600, sparsity=0.3333, loss=0.415162, regrown=0, time=23.0374s
+step 28: accuracy=0.7560, sparsity=0.3333, loss=0.411275, regrown=0, time=23.2886s
+step 29: accuracy=0.7540, sparsity=0.4167, loss=0.408589, regrown=0, time=22.8838s
+step 30: accuracy=0.7420, sparsity=0.4167, loss=0.417490, regrown=0, time=22.5961s
+step 31: accuracy=0.7460, sparsity=0.4167, loss=0.416193, regrown=0, time=23.0365s
+step 32: accuracy=0.7440, sparsity=0.4167, loss=0.419257, regrown=0, time=22.6156s
+step 33: accuracy=0.7440, sparsity=0.4167, loss=0.416600, regrown=0, time=23.1968s
+step 34: accuracy=0.7400, sparsity=0.4167, loss=0.412841, regrown=0, time=23.2949s
+step 35: accuracy=0.7420, sparsity=0.4167, loss=0.419152, regrown=0, time=22.9392s
+step 36: accuracy=0.7460, sparsity=0.4167, loss=0.424435, regrown=0, time=22.7913s
+step 37: accuracy=0.7460, sparsity=0.4167, loss=0.413112, regrown=0, time=23.0423s
+step 38: accuracy=0.7400, sparsity=0.4167, loss=0.409309, regrown=0, time=22.4822s
+step 39: accuracy=0.7480, sparsity=0.4167, loss=0.410652, regrown=0, time=22.7447s
+step 40: accuracy=0.7460, sparsity=0.4167, loss=0.412793, regrown=0, time=23.1802s
+cumulative result: accuracy=0.7460, sparsity=0.4167, loss=0.412793, time=0:15:16.400000 (916.4020s)
+(validation accuracy on held-out set: 0.7400)
+
+##############################################################################
+[4/16] dataset=mnist qubits=4 seed=3
+##############################################################################
+using lightning.gpu (cuQuantum), wires=4, shots=None
+[mnist/q4/seed3] circuit device: cuda (lightning.gpu)
+
+training without pruning (dense teacher):
+step 1: accuracy=0.7080, loss=0.682904, time=19.2835s
+step 2: accuracy=0.7180, loss=0.583512, time=19.2617s
+step 3: accuracy=0.7380, loss=0.563176, time=19.2899s
+step 4: accuracy=0.7360, loss=0.544699, time=19.2959s
+step 5: accuracy=0.7620, loss=0.530205, time=19.1606s
+step 6: accuracy=0.7420, loss=0.518669, time=19.2768s
+step 7: accuracy=0.7640, loss=0.511569, time=19.2913s
+step 8: accuracy=0.7520, loss=0.504633, time=19.3080s
+step 9: accuracy=0.7660, loss=0.500839, time=19.4831s
+step 10: accuracy=0.7600, loss=0.497923, time=19.3526s
+step 11: accuracy=0.7700, loss=0.494878, time=19.2143s
+step 12: accuracy=0.7580, loss=0.492602, time=19.2977s
+step 13: accuracy=0.7720, loss=0.489974, time=19.3576s
+step 14: accuracy=0.7640, loss=0.488393, time=19.3505s
+step 15: accuracy=0.7740, loss=0.486960, time=19.3173s
+step 16: accuracy=0.7700, loss=0.486237, time=19.5541s
+step 17: accuracy=0.7700, loss=0.485654, time=19.2921s
+step 18: accuracy=0.7660, loss=0.485806, time=19.4338s
+step 19: accuracy=0.7600, loss=0.486004, time=19.3336s
+step 20: accuracy=0.7700, loss=0.487558, time=19.3547s
+step 21: accuracy=0.7620, loss=0.488221, time=19.3239s
+step 22: accuracy=0.7800, loss=0.490198, time=19.5549s
+step 23: accuracy=0.7560, loss=0.487492, time=19.7129s
+step 24: accuracy=0.7720, loss=0.486524, time=19.6723s
+step 25: accuracy=0.7660, loss=0.484249, time=19.5884s
+step 26: accuracy=0.7740, loss=0.483650, time=19.6080s
+step 27: accuracy=0.7700, loss=0.482830, time=19.3581s
+step 28: accuracy=0.7760, loss=0.482811, time=19.2240s
+step 29: accuracy=0.7700, loss=0.482659, time=19.4030s
+step 30: accuracy=0.7720, loss=0.483401, time=19.3535s
+step 31: accuracy=0.7680, loss=0.484510, time=19.3477s
+step 32: accuracy=0.7700, loss=0.488864, time=19.5882s
+step 33: accuracy=0.7560, loss=0.491434, time=19.4529s
+step 34: accuracy=0.7720, loss=0.493462, time=19.1583s
+step 35: accuracy=0.7700, loss=0.485112, time=19.3225s
+step 36: accuracy=0.7780, loss=0.484126, time=19.3242s
+step 37: accuracy=0.7720, loss=0.482517, time=19.4413s
+step 38: accuracy=0.7840, loss=0.482725, time=19.5376s
+step 39: accuracy=0.7740, loss=0.482729, time=19.6670s
+step 40: accuracy=0.7760, loss=0.483876, time=19.4662s
+cumulative result: accuracy=0.7760, loss=0.483876, time=0:12:59.460000 (779.4617s)
+(validation accuracy on held-out set: 0.7767)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.7080, sparsity=0.0000, loss=0.299788, regrown=0, time=22.9421s
+step 2: accuracy=0.7060, sparsity=0.0000, loss=0.231200, regrown=0, time=23.2079s
+step 3: accuracy=0.7460, sparsity=0.0000, loss=0.223496, regrown=0, time=22.8564s
+step 4: accuracy=0.7240, sparsity=0.0000, loss=0.220957, regrown=0, time=22.9096s
+step 5: accuracy=0.7480, sparsity=0.0000, loss=0.221349, regrown=0, time=22.6142s
+step 6: accuracy=0.7080, sparsity=0.0000, loss=0.223291, regrown=0, time=22.9023s
+step 7: accuracy=0.7240, sparsity=0.0000, loss=0.247223, regrown=0, time=22.8431s
+step 8: accuracy=0.7320, sparsity=0.0000, loss=0.272859, regrown=0, time=22.7312s
+step 9: accuracy=0.7620, sparsity=0.0000, loss=0.247732, regrown=0, time=22.9784s
+step 10: accuracy=0.7560, sparsity=0.0000, loss=0.243381, regrown=0, time=22.6401s
+step 11: accuracy=0.7720, sparsity=0.0000, loss=0.251521, regrown=0, time=23.0369s
+step 12: accuracy=0.7660, sparsity=0.0000, loss=0.266316, regrown=0, time=22.6835s
+step 13: accuracy=0.7740, sparsity=0.0833, loss=0.266077, regrown=0, time=22.6581s
+step 14: accuracy=0.7560, sparsity=0.0833, loss=0.271650, regrown=0, time=23.0094s
+step 15: accuracy=0.7600, sparsity=0.0833, loss=0.284798, regrown=0, time=22.7715s
+step 16: accuracy=0.7500, sparsity=0.0833, loss=0.302451, regrown=0, time=22.5866s
+step 17: accuracy=0.7700, sparsity=0.1250, loss=0.303193, regrown=0, time=23.0720s
+step 18: accuracy=0.7660, sparsity=0.1250, loss=0.307808, regrown=0, time=22.6920s
+step 19: accuracy=0.7520, sparsity=0.1250, loss=0.323711, regrown=0, time=22.9112s
+step 20: accuracy=0.7560, sparsity=0.1250, loss=0.342218, regrown=0, time=22.9537s
+step 21: accuracy=0.7700, sparsity=0.1250, loss=0.337961, regrown=0, time=22.9379s
+step 22: accuracy=0.7780, sparsity=0.1250, loss=0.341434, regrown=0, time=22.6451s
+step 23: accuracy=0.7540, sparsity=0.1250, loss=0.353170, regrown=0, time=23.2674s
+step 24: accuracy=0.7760, sparsity=0.1250, loss=0.367921, regrown=0, time=23.0905s
+step 25: accuracy=0.7680, sparsity=0.1250, loss=0.375149, regrown=0, time=22.7228s
+step 26: accuracy=0.7680, sparsity=0.1250, loss=0.380158, regrown=0, time=23.1207s
+step 27: accuracy=0.7340, sparsity=0.1250, loss=0.398543, regrown=0, time=22.5987s
+step 28: accuracy=0.7600, sparsity=0.1250, loss=0.414547, regrown=0, time=22.7826s
+step 29: accuracy=0.7700, sparsity=0.1250, loss=0.392664, regrown=0, time=22.8268s
+step 30: accuracy=0.7660, sparsity=0.1250, loss=0.389060, regrown=0, time=22.8819s
+step 31: accuracy=0.7720, sparsity=0.1250, loss=0.400772, regrown=0, time=22.6583s
+step 32: accuracy=0.7640, sparsity=0.1250, loss=0.403603, regrown=0, time=23.0900s
+step 33: accuracy=0.7700, sparsity=0.1250, loss=0.390242, regrown=0, time=22.5462s
+step 34: accuracy=0.7740, sparsity=0.1250, loss=0.386550, regrown=0, time=22.8023s
+step 35: accuracy=0.7440, sparsity=0.1250, loss=0.393048, regrown=0, time=23.0702s
+step 36: accuracy=0.7620, sparsity=0.1250, loss=0.407815, regrown=0, time=22.8800s
+step 37: accuracy=0.7700, sparsity=0.1250, loss=0.397437, regrown=0, time=22.5897s
+step 38: accuracy=0.7740, sparsity=0.1250, loss=0.388244, regrown=0, time=23.0068s
+step 39: accuracy=0.7540, sparsity=0.1250, loss=0.393983, regrown=0, time=22.6657s
+step 40: accuracy=0.7780, sparsity=0.1250, loss=0.403825, regrown=0, time=22.6999s
+cumulative result: accuracy=0.7780, sparsity=0.1250, loss=0.403825, time=0:15:17.650000 (917.6460s)
+(validation accuracy on held-out set: 0.7833)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.7080, sparsity=0.0000, loss=0.299788, regrown=0, time=22.6768s
+step 2: accuracy=0.7060, sparsity=0.0000, loss=0.231200, regrown=0, time=22.6747s
+step 3: accuracy=0.7460, sparsity=0.0000, loss=0.223496, regrown=0, time=22.6230s
+step 4: accuracy=0.7240, sparsity=0.0000, loss=0.220957, regrown=0, time=22.7561s
+step 5: accuracy=0.7480, sparsity=0.0000, loss=0.221349, regrown=0, time=22.8723s
+step 6: accuracy=0.7080, sparsity=0.0000, loss=0.223291, regrown=0, time=22.8790s
+step 7: accuracy=0.7240, sparsity=0.0000, loss=0.247223, regrown=0, time=22.6270s
+step 8: accuracy=0.7320, sparsity=0.0000, loss=0.272859, regrown=0, time=22.7060s
+step 9: accuracy=0.7620, sparsity=0.0000, loss=0.247732, regrown=0, time=22.9505s
+step 10: accuracy=0.7560, sparsity=0.0000, loss=0.243381, regrown=0, time=22.7458s
+step 11: accuracy=0.7720, sparsity=0.0000, loss=0.251521, regrown=0, time=22.6367s
+step 12: accuracy=0.7660, sparsity=0.0000, loss=0.266316, regrown=0, time=22.9248s
+step 13: accuracy=0.7740, sparsity=0.0833, loss=0.266077, regrown=0, time=22.5607s
+step 14: accuracy=0.7560, sparsity=0.0833, loss=0.271650, regrown=0, time=22.7201s
+step 15: accuracy=0.7600, sparsity=0.0833, loss=0.284798, regrown=0, time=22.9107s
+step 16: accuracy=0.7500, sparsity=0.0833, loss=0.302451, regrown=0, time=22.7786s
+step 17: accuracy=0.7700, sparsity=0.1667, loss=0.303193, regrown=0, time=22.5655s
+step 18: accuracy=0.7520, sparsity=0.1667, loss=0.312108, regrown=0, time=22.8942s
+step 19: accuracy=0.7560, sparsity=0.1667, loss=0.330308, regrown=0, time=22.7723s
+step 20: accuracy=0.7700, sparsity=0.1667, loss=0.336134, regrown=0, time=22.5165s
+step 21: accuracy=0.7740, sparsity=0.2500, loss=0.336443, regrown=0, time=22.9872s
+step 22: accuracy=0.7500, sparsity=0.2500, loss=0.345425, regrown=0, time=22.4895s
+step 23: accuracy=0.7660, sparsity=0.2500, loss=0.357456, regrown=0, time=22.7832s
+step 24: accuracy=0.7560, sparsity=0.2500, loss=0.376744, regrown=0, time=23.0122s
+step 25: accuracy=0.7700, sparsity=0.2500, loss=0.377535, regrown=0, time=22.7919s
+step 26: accuracy=0.7740, sparsity=0.2500, loss=0.375950, regrown=0, time=22.6464s
+step 27: accuracy=0.7760, sparsity=0.2500, loss=0.385596, regrown=0, time=23.0455s
+step 28: accuracy=0.7740, sparsity=0.2500, loss=0.388855, regrown=0, time=22.8005s
+step 29: accuracy=0.7700, sparsity=0.2500, loss=0.394150, regrown=0, time=22.9132s
+step 30: accuracy=0.7680, sparsity=0.2500, loss=0.390250, regrown=0, time=23.1063s
+step 31: accuracy=0.7380, sparsity=0.2500, loss=0.405994, regrown=0, time=22.5126s
+step 32: accuracy=0.7700, sparsity=0.2500, loss=0.406524, regrown=0, time=22.7043s
+step 33: accuracy=0.7720, sparsity=0.2500, loss=0.399565, regrown=0, time=22.8649s
+step 34: accuracy=0.7700, sparsity=0.2500, loss=0.385600, regrown=0, time=22.7765s
+step 35: accuracy=0.7800, sparsity=0.2500, loss=0.386329, regrown=0, time=22.5002s
+step 36: accuracy=0.7640, sparsity=0.2500, loss=0.388551, regrown=0, time=22.9613s
+step 37: accuracy=0.7760, sparsity=0.2500, loss=0.390458, regrown=0, time=22.5209s
+step 38: accuracy=0.7580, sparsity=0.2500, loss=0.386928, regrown=0, time=22.7290s
+step 39: accuracy=0.7560, sparsity=0.2500, loss=0.394503, regrown=0, time=22.8659s
+step 40: accuracy=0.7680, sparsity=0.2500, loss=0.401055, regrown=0, time=22.8184s
+cumulative result: accuracy=0.7680, sparsity=0.2500, loss=0.401055, time=0:15:14.370000 (914.3707s)
+(validation accuracy on held-out set: 0.7933)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.7080, sparsity=0.0000, loss=0.299788, regrown=0, time=22.7293s
+step 2: accuracy=0.7060, sparsity=0.0000, loss=0.231200, regrown=0, time=22.7715s
+step 3: accuracy=0.7460, sparsity=0.0000, loss=0.223496, regrown=0, time=22.4770s
+step 4: accuracy=0.7240, sparsity=0.0000, loss=0.220957, regrown=0, time=22.8365s
+step 5: accuracy=0.7480, sparsity=0.0000, loss=0.221349, regrown=0, time=22.7774s
+step 6: accuracy=0.7080, sparsity=0.0000, loss=0.223291, regrown=0, time=22.5141s
+step 7: accuracy=0.7240, sparsity=0.0000, loss=0.247223, regrown=0, time=22.9236s
+step 8: accuracy=0.7320, sparsity=0.0000, loss=0.272859, regrown=0, time=22.5254s
+step 9: accuracy=0.7620, sparsity=0.0000, loss=0.247732, regrown=0, time=22.7284s
+step 10: accuracy=0.7560, sparsity=0.0000, loss=0.243381, regrown=0, time=22.8919s
+step 11: accuracy=0.7720, sparsity=0.0000, loss=0.251521, regrown=0, time=22.7678s
+step 12: accuracy=0.7660, sparsity=0.0000, loss=0.266316, regrown=0, time=22.5883s
+step 13: accuracy=0.7740, sparsity=0.0833, loss=0.266077, regrown=0, time=22.9737s
+step 14: accuracy=0.7560, sparsity=0.0833, loss=0.271650, regrown=0, time=22.5357s
+step 15: accuracy=0.7600, sparsity=0.0833, loss=0.284798, regrown=0, time=22.7517s
+step 16: accuracy=0.7500, sparsity=0.0833, loss=0.302451, regrown=0, time=22.8954s
+step 17: accuracy=0.7700, sparsity=0.1667, loss=0.303193, regrown=0, time=22.8068s
+step 18: accuracy=0.7520, sparsity=0.1667, loss=0.312108, regrown=0, time=22.7914s
+step 19: accuracy=0.7560, sparsity=0.1667, loss=0.330308, regrown=0, time=22.8760s
+step 20: accuracy=0.7700, sparsity=0.1667, loss=0.336134, regrown=0, time=22.4161s
+step 21: accuracy=0.7740, sparsity=0.2500, loss=0.336443, regrown=0, time=22.5567s
+step 22: accuracy=0.7500, sparsity=0.2500, loss=0.345425, regrown=0, time=22.8802s
+step 23: accuracy=0.7660, sparsity=0.2500, loss=0.357456, regrown=0, time=22.8211s
+step 24: accuracy=0.7560, sparsity=0.2500, loss=0.376744, regrown=0, time=22.6289s
+step 25: accuracy=0.7700, sparsity=0.3333, loss=0.377535, regrown=0, time=22.8578s
+step 26: accuracy=0.6820, sparsity=0.3333, loss=0.475099, regrown=0, time=22.3675s
+step 27: accuracy=0.7460, sparsity=0.3333, loss=0.477310, regrown=0, time=22.5781s
+step 28: accuracy=0.7440, sparsity=0.3333, loss=0.434333, regrown=0, time=22.8448s
+step 29: accuracy=0.7480, sparsity=0.4167, loss=0.417992, regrown=0, time=22.8045s
+step 30: accuracy=0.7480, sparsity=0.4167, loss=0.459433, regrown=0, time=22.5942s
+step 31: accuracy=0.7380, sparsity=0.4167, loss=0.442814, regrown=0, time=22.8868s
+step 32: accuracy=0.7440, sparsity=0.4167, loss=0.440950, regrown=0, time=22.6365s
+step 33: accuracy=0.7460, sparsity=0.4167, loss=0.433743, regrown=0, time=22.7255s
+step 34: accuracy=0.7520, sparsity=0.4167, loss=0.430688, regrown=0, time=22.9321s
+step 35: accuracy=0.7460, sparsity=0.4167, loss=0.428076, regrown=0, time=22.7779s
+step 36: accuracy=0.7620, sparsity=0.4167, loss=0.425088, regrown=0, time=22.5940s
+step 37: accuracy=0.7500, sparsity=0.4167, loss=0.421809, regrown=0, time=22.9982s
+step 38: accuracy=0.7620, sparsity=0.4167, loss=0.418847, regrown=0, time=22.5931s
+step 39: accuracy=0.7380, sparsity=0.4167, loss=0.415856, regrown=0, time=22.8053s
+step 40: accuracy=0.7560, sparsity=0.4167, loss=0.415303, regrown=0, time=22.9822s
+cumulative result: accuracy=0.7560, sparsity=0.4167, loss=0.415303, time=0:15:13.200000 (913.2026s)
+(validation accuracy on held-out set: 0.7933)
+
+##############################################################################
+[5/16] dataset=mnist qubits=4 seed=4
+##############################################################################
+using lightning.gpu (cuQuantum), wires=4, shots=None
+[mnist/q4/seed4] circuit device: cuda (lightning.gpu)
+
+training without pruning (dense teacher):
+step 1: accuracy=0.4560, loss=0.997302, time=19.2590s
+step 2: accuracy=0.6580, loss=0.759416, time=19.2915s
+step 3: accuracy=0.6880, loss=0.644361, time=19.2774s
+step 4: accuracy=0.6780, loss=0.617319, time=19.3181s
+step 5: accuracy=0.7000, loss=0.603002, time=19.0991s
+step 6: accuracy=0.6940, loss=0.593077, time=19.2775s
+step 7: accuracy=0.6920, loss=0.585096, time=19.2964s
+step 8: accuracy=0.7060, loss=0.578315, time=19.4755s
+step 9: accuracy=0.7180, loss=0.573325, time=19.5490s
+step 10: accuracy=0.7160, loss=0.570202, time=19.3485s
+step 11: accuracy=0.7200, loss=0.568276, time=19.1331s
+step 12: accuracy=0.6980, loss=0.567499, time=19.3370s
+step 13: accuracy=0.7040, loss=0.567125, time=19.2975s
+step 14: accuracy=0.7100, loss=0.567229, time=19.3636s
+step 15: accuracy=0.7100, loss=0.565620, time=19.3562s
+step 16: accuracy=0.7060, loss=0.563146, time=19.5066s
+step 17: accuracy=0.7180, loss=0.560183, time=19.0848s
+step 18: accuracy=0.7100, loss=0.557020, time=19.3419s
+step 19: accuracy=0.7140, loss=0.554630, time=19.3338s
+step 20: accuracy=0.7180, loss=0.552674, time=19.2971s
+step 21: accuracy=0.7140, loss=0.551850, time=19.3412s
+step 22: accuracy=0.7100, loss=0.551867, time=19.3296s
+step 23: accuracy=0.7200, loss=0.553595, time=19.3294s
+step 24: accuracy=0.7040, loss=0.555304, time=19.2806s
+step 25: accuracy=0.7140, loss=0.554440, time=19.2982s
+step 26: accuracy=0.6980, loss=0.552774, time=19.4853s
+step 27: accuracy=0.7120, loss=0.551141, time=19.3357s
+step 28: accuracy=0.7100, loss=0.550204, time=19.1178s
+step 29: accuracy=0.7100, loss=0.550020, time=19.2634s
+step 30: accuracy=0.7040, loss=0.550922, time=19.3052s
+step 31: accuracy=0.7120, loss=0.553523, time=19.2859s
+step 32: accuracy=0.6980, loss=0.554703, time=19.3290s
+step 33: accuracy=0.7120, loss=0.553128, time=19.3409s
+step 34: accuracy=0.7120, loss=0.551957, time=19.5328s
+step 35: accuracy=0.7080, loss=0.550653, time=19.1085s
+step 36: accuracy=0.7220, loss=0.550515, time=19.2863s
+step 37: accuracy=0.7020, loss=0.550305, time=19.3603s
+step 38: accuracy=0.7200, loss=0.550712, time=19.3226s
+step 39: accuracy=0.7020, loss=0.550866, time=19.3419s
+step 40: accuracy=0.7180, loss=0.551181, time=19.3276s
+cumulative result: accuracy=0.7180, loss=0.551181, time=0:12:56.320000 (776.3185s)
+(validation accuracy on held-out set: 0.7267)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.4560, sparsity=0.0000, loss=0.554814, regrown=0, time=22.7843s
+step 2: accuracy=0.6460, sparsity=0.0000, loss=0.351299, regrown=0, time=22.6279s
+step 3: accuracy=0.6780, sparsity=0.0000, loss=0.268204, regrown=0, time=22.7475s
+step 4: accuracy=0.6960, sparsity=0.0000, loss=0.258473, regrown=0, time=22.7387s
+step 5: accuracy=0.7040, sparsity=0.0000, loss=0.257336, regrown=0, time=22.5351s
+step 6: accuracy=0.6980, sparsity=0.0000, loss=0.257706, regrown=0, time=23.0669s
+step 7: accuracy=0.7020, sparsity=0.0000, loss=0.252597, regrown=0, time=22.5395s
+step 8: accuracy=0.6780, sparsity=0.0000, loss=0.258633, regrown=0, time=22.6873s
+step 9: accuracy=0.6860, sparsity=0.0000, loss=0.283116, regrown=0, time=22.9431s
+step 10: accuracy=0.6580, sparsity=0.0000, loss=0.291408, regrown=0, time=22.7953s
+step 11: accuracy=0.6800, sparsity=0.0000, loss=0.323623, regrown=0, time=22.4868s
+step 12: accuracy=0.7120, sparsity=0.0000, loss=0.314072, regrown=0, time=22.7542s
+step 13: accuracy=0.7160, sparsity=0.0833, loss=0.303727, regrown=0, time=22.9554s
+step 14: accuracy=0.7260, sparsity=0.0833, loss=0.312142, regrown=0, time=22.8250s
+step 15: accuracy=0.7140, sparsity=0.0833, loss=0.322209, regrown=0, time=22.5830s
+step 16: accuracy=0.7180, sparsity=0.0833, loss=0.333578, regrown=0, time=22.9517s
+step 17: accuracy=0.7160, sparsity=0.1250, loss=0.342901, regrown=0, time=22.5291s
+step 18: accuracy=0.7200, sparsity=0.1250, loss=0.352273, regrown=0, time=22.7560s
+step 19: accuracy=0.7140, sparsity=0.1250, loss=0.363843, regrown=0, time=22.9469s
+step 20: accuracy=0.7160, sparsity=0.1250, loss=0.377911, regrown=0, time=22.7872s
+step 21: accuracy=0.7120, sparsity=0.1250, loss=0.383392, regrown=0, time=22.5178s
+step 22: accuracy=0.6900, sparsity=0.1250, loss=0.394795, regrown=0, time=22.9705s
+step 23: accuracy=0.6940, sparsity=0.1250, loss=0.427467, regrown=0, time=22.8149s
+step 24: accuracy=0.7080, sparsity=0.1250, loss=0.432799, regrown=0, time=22.5702s
+step 25: accuracy=0.7160, sparsity=0.1250, loss=0.423857, regrown=0, time=22.9607s
+step 26: accuracy=0.7080, sparsity=0.1250, loss=0.431935, regrown=0, time=22.5558s
+step 27: accuracy=0.7200, sparsity=0.1250, loss=0.443519, regrown=0, time=22.7428s
+step 28: accuracy=0.6840, sparsity=0.1250, loss=0.447342, regrown=0, time=22.9538s
+step 29: accuracy=0.7160, sparsity=0.1250, loss=0.451527, regrown=0, time=22.9023s
+step 30: accuracy=0.7080, sparsity=0.1250, loss=0.443224, regrown=0, time=22.5905s
+step 31: accuracy=0.6940, sparsity=0.1250, loss=0.449250, regrown=0, time=22.9799s
+step 32: accuracy=0.7000, sparsity=0.1250, loss=0.454841, regrown=0, time=22.4676s
+step 33: accuracy=0.7180, sparsity=0.1250, loss=0.450632, regrown=0, time=22.6365s
+step 34: accuracy=0.7200, sparsity=0.1250, loss=0.441770, regrown=0, time=22.8067s
+step 35: accuracy=0.7120, sparsity=0.1250, loss=0.444319, regrown=0, time=22.7864s
+step 36: accuracy=0.7020, sparsity=0.1250, loss=0.447925, regrown=0, time=22.4235s
+step 37: accuracy=0.7220, sparsity=0.1250, loss=0.449724, regrown=0, time=22.9482s
+step 38: accuracy=0.7020, sparsity=0.1250, loss=0.441883, regrown=0, time=22.5124s
+step 39: accuracy=0.7160, sparsity=0.1250, loss=0.446710, regrown=0, time=22.6911s
+step 40: accuracy=0.6940, sparsity=0.1250, loss=0.450594, regrown=0, time=22.9298s
+cumulative result: accuracy=0.6940, sparsity=0.1250, loss=0.450594, time=0:15:13.550000 (913.5530s)
+(validation accuracy on held-out set: 0.7033)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.4560, sparsity=0.0000, loss=0.554814, regrown=0, time=22.5721s
+step 2: accuracy=0.6460, sparsity=0.0000, loss=0.351299, regrown=0, time=22.4950s
+step 3: accuracy=0.6780, sparsity=0.0000, loss=0.268204, regrown=0, time=22.6557s
+step 4: accuracy=0.6960, sparsity=0.0000, loss=0.258473, regrown=0, time=22.5748s
+step 5: accuracy=0.7040, sparsity=0.0000, loss=0.257336, regrown=0, time=22.6988s
+step 6: accuracy=0.6980, sparsity=0.0000, loss=0.257706, regrown=0, time=22.4385s
+step 7: accuracy=0.7020, sparsity=0.0000, loss=0.252597, regrown=0, time=22.8519s
+step 8: accuracy=0.6780, sparsity=0.0000, loss=0.258633, regrown=0, time=22.6249s
+step 9: accuracy=0.6860, sparsity=0.0000, loss=0.283116, regrown=0, time=22.4702s
+step 10: accuracy=0.6580, sparsity=0.0000, loss=0.291408, regrown=0, time=22.8016s
+step 11: accuracy=0.6800, sparsity=0.0000, loss=0.323623, regrown=0, time=22.7724s
+step 12: accuracy=0.7120, sparsity=0.0000, loss=0.314072, regrown=0, time=22.5440s
+step 13: accuracy=0.7160, sparsity=0.0833, loss=0.303727, regrown=0, time=22.9007s
+step 14: accuracy=0.7260, sparsity=0.0833, loss=0.312142, regrown=0, time=22.4462s
+step 15: accuracy=0.7140, sparsity=0.0833, loss=0.322209, regrown=0, time=22.6501s
+step 16: accuracy=0.7180, sparsity=0.0833, loss=0.333578, regrown=0, time=22.8329s
+step 17: accuracy=0.7160, sparsity=0.1667, loss=0.342901, regrown=0, time=22.8118s
+step 18: accuracy=0.7200, sparsity=0.1667, loss=0.352498, regrown=0, time=22.5095s
+step 19: accuracy=0.7120, sparsity=0.1667, loss=0.363734, regrown=0, time=22.9143s
+step 20: accuracy=0.7180, sparsity=0.1667, loss=0.377107, regrown=0, time=22.5239s
+step 21: accuracy=0.7100, sparsity=0.2500, loss=0.383584, regrown=0, time=22.7134s
+step 22: accuracy=0.7180, sparsity=0.2500, loss=0.392984, regrown=0, time=22.8536s
+step 23: accuracy=0.6960, sparsity=0.2500, loss=0.404483, regrown=0, time=22.7765s
+step 24: accuracy=0.7120, sparsity=0.2500, loss=0.427615, regrown=0, time=22.5495s
+step 25: accuracy=0.7300, sparsity=0.2500, loss=0.427857, regrown=0, time=22.9570s
+step 26: accuracy=0.7120, sparsity=0.2500, loss=0.433047, regrown=0, time=22.5621s
+step 27: accuracy=0.7140, sparsity=0.2500, loss=0.444970, regrown=0, time=22.6354s
+step 28: accuracy=0.7120, sparsity=0.2500, loss=0.447867, regrown=0, time=22.8709s
+step 29: accuracy=0.7340, sparsity=0.2500, loss=0.444213, regrown=0, time=22.7947s
+step 30: accuracy=0.7120, sparsity=0.2500, loss=0.441819, regrown=0, time=22.4698s
+step 31: accuracy=0.7080, sparsity=0.2500, loss=0.445511, regrown=0, time=22.8672s
+step 32: accuracy=0.6900, sparsity=0.2500, loss=0.453010, regrown=0, time=22.4745s
+step 33: accuracy=0.7160, sparsity=0.2500, loss=0.453841, regrown=0, time=22.6365s
+step 34: accuracy=0.7180, sparsity=0.2500, loss=0.441515, regrown=0, time=22.8435s
+step 35: accuracy=0.7080, sparsity=0.2500, loss=0.443559, regrown=0, time=22.6904s
+step 36: accuracy=0.7160, sparsity=0.2500, loss=0.446119, regrown=0, time=22.3919s
+step 37: accuracy=0.7280, sparsity=0.2500, loss=0.445872, regrown=0, time=22.8922s
+step 38: accuracy=0.7200, sparsity=0.2500, loss=0.441156, regrown=0, time=22.5231s
+step 39: accuracy=0.7040, sparsity=0.2500, loss=0.443558, regrown=0, time=22.7163s
+step 40: accuracy=0.7080, sparsity=0.2500, loss=0.447850, regrown=0, time=22.8908s
+cumulative result: accuracy=0.7080, sparsity=0.2500, loss=0.447850, time=0:15:10.980000 (910.9754s)
+(validation accuracy on held-out set: 0.7067)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.4560, sparsity=0.0000, loss=0.554814, regrown=0, time=22.7228s
+step 2: accuracy=0.6460, sparsity=0.0000, loss=0.351299, regrown=0, time=22.5962s
+step 3: accuracy=0.6780, sparsity=0.0000, loss=0.268204, regrown=0, time=22.7366s
+step 4: accuracy=0.6960, sparsity=0.0000, loss=0.258473, regrown=0, time=22.5906s
+step 5: accuracy=0.7040, sparsity=0.0000, loss=0.257336, regrown=0, time=22.6568s
+step 6: accuracy=0.6980, sparsity=0.0000, loss=0.257706, regrown=0, time=22.4709s
+step 7: accuracy=0.7020, sparsity=0.0000, loss=0.252597, regrown=0, time=22.9704s
+step 8: accuracy=0.6780, sparsity=0.0000, loss=0.258633, regrown=0, time=22.6718s
+step 9: accuracy=0.6860, sparsity=0.0000, loss=0.283116, regrown=0, time=22.4204s
+step 10: accuracy=0.6580, sparsity=0.0000, loss=0.291408, regrown=0, time=22.8587s
+step 11: accuracy=0.6800, sparsity=0.0000, loss=0.323623, regrown=0, time=22.7438s
+step 12: accuracy=0.7120, sparsity=0.0000, loss=0.314072, regrown=0, time=22.5295s
+step 13: accuracy=0.7160, sparsity=0.0833, loss=0.303727, regrown=0, time=22.9669s
+step 14: accuracy=0.7260, sparsity=0.0833, loss=0.312142, regrown=0, time=22.5784s
+step 15: accuracy=0.7140, sparsity=0.0833, loss=0.322209, regrown=0, time=22.7049s
+step 16: accuracy=0.7180, sparsity=0.0833, loss=0.333578, regrown=0, time=22.8448s
+step 17: accuracy=0.7160, sparsity=0.1667, loss=0.342901, regrown=0, time=22.8819s
+step 18: accuracy=0.7200, sparsity=0.1667, loss=0.352498, regrown=0, time=22.5010s
+step 19: accuracy=0.7120, sparsity=0.1667, loss=0.363734, regrown=0, time=22.9263s
+step 20: accuracy=0.7180, sparsity=0.1667, loss=0.377107, regrown=0, time=22.5771s
+step 21: accuracy=0.7100, sparsity=0.2500, loss=0.383584, regrown=0, time=22.7237s
+step 22: accuracy=0.7180, sparsity=0.2500, loss=0.392984, regrown=0, time=22.9254s
+step 23: accuracy=0.6960, sparsity=0.2500, loss=0.404483, regrown=0, time=22.7993s
+step 24: accuracy=0.7120, sparsity=0.2500, loss=0.427615, regrown=0, time=22.4985s
+step 25: accuracy=0.7300, sparsity=0.3333, loss=0.427857, regrown=0, time=23.1222s
+step 26: accuracy=0.6820, sparsity=0.3333, loss=0.455552, regrown=0, time=22.5499s
+step 27: accuracy=0.7020, sparsity=0.3333, loss=0.469534, regrown=0, time=22.7756s
+step 28: accuracy=0.7020, sparsity=0.3333, loss=0.452724, regrown=0, time=22.9075s
+step 29: accuracy=0.7120, sparsity=0.4167, loss=0.446424, regrown=0, time=22.7897s
+step 30: accuracy=0.7060, sparsity=0.4167, loss=0.487533, regrown=0, time=22.5722s
+step 31: accuracy=0.7200, sparsity=0.4167, loss=0.461524, regrown=0, time=22.9937s
+step 32: accuracy=0.7240, sparsity=0.4167, loss=0.447163, regrown=0, time=22.6298s
+step 33: accuracy=0.7200, sparsity=0.4167, loss=0.445325, regrown=0, time=22.7505s
+step 34: accuracy=0.7240, sparsity=0.4167, loss=0.444783, regrown=0, time=22.8803s
+step 35: accuracy=0.7220, sparsity=0.4167, loss=0.444427, regrown=0, time=22.6681s
+step 36: accuracy=0.7240, sparsity=0.4167, loss=0.444302, regrown=0, time=22.6369s
+step 37: accuracy=0.7220, sparsity=0.4167, loss=0.444231, regrown=0, time=23.0227s
+step 38: accuracy=0.7220, sparsity=0.4167, loss=0.444180, regrown=0, time=22.5969s
+step 39: accuracy=0.7220, sparsity=0.4167, loss=0.444109, regrown=0, time=22.8151s
+step 40: accuracy=0.7200, sparsity=0.4167, loss=0.444052, regrown=0, time=22.9448s
+cumulative result: accuracy=0.7200, sparsity=0.4167, loss=0.444052, time=0:15:13.320000 (913.3203s)
+(validation accuracy on held-out set: 0.7200)
+
+##############################################################################
+[6/16] dataset=mnist qubits=4 seed=5
+##############################################################################
+using lightning.gpu (cuQuantum), wires=4, shots=None
+[mnist/q4/seed5] circuit device: cuda (lightning.gpu)
+
+training without pruning (dense teacher):
+step 1: accuracy=0.5160, loss=0.859991, time=19.3116s
+step 2: accuracy=0.6400, loss=0.746594, time=19.2653s
+step 3: accuracy=0.6780, loss=0.640246, time=19.0579s
+step 4: accuracy=0.7060, loss=0.604975, time=19.4864s
+step 5: accuracy=0.7200, loss=0.575508, time=19.1898s
+step 6: accuracy=0.7180, loss=0.562929, time=19.2940s
+step 7: accuracy=0.7280, loss=0.555505, time=19.2845s
+step 8: accuracy=0.7240, loss=0.551561, time=19.2598s
+step 9: accuracy=0.7240, loss=0.546569, time=19.3577s
+step 10: accuracy=0.7320, loss=0.544096, time=19.2894s
+step 11: accuracy=0.7220, loss=0.541788, time=19.3471s
+step 12: accuracy=0.7360, loss=0.540252, time=19.3273s
+step 13: accuracy=0.7240, loss=0.538892, time=19.2953s
+step 14: accuracy=0.7280, loss=0.538446, time=19.5061s
+step 15: accuracy=0.7280, loss=0.538489, time=19.1578s
+step 16: accuracy=0.7280, loss=0.539524, time=19.3559s
+step 17: accuracy=0.7220, loss=0.540201, time=19.3103s
+step 18: accuracy=0.7280, loss=0.538461, time=19.3047s
+step 19: accuracy=0.7160, loss=0.537264, time=19.3166s
+step 20: accuracy=0.7240, loss=0.535862, time=19.3235s
+step 21: accuracy=0.7180, loss=0.535188, time=19.3407s
+step 22: accuracy=0.7260, loss=0.534756, time=19.3028s
+step 23: accuracy=0.7140, loss=0.534094, time=19.2967s
+step 24: accuracy=0.7300, loss=0.533668, time=19.4667s
+step 25: accuracy=0.7240, loss=0.532217, time=19.3099s
+step 26: accuracy=0.7260, loss=0.531512, time=19.1439s
+step 27: accuracy=0.7240, loss=0.530118, time=19.3098s
+step 28: accuracy=0.7380, loss=0.530488, time=19.3308s
+step 29: accuracy=0.7440, loss=0.532514, time=19.3024s
+step 30: accuracy=0.7360, loss=0.536760, time=19.3361s
+step 31: accuracy=0.7460, loss=0.537445, time=19.5177s
+step 32: accuracy=0.7360, loss=0.533352, time=19.3515s
+step 33: accuracy=0.7420, loss=0.530681, time=19.1187s
+step 34: accuracy=0.7400, loss=0.527558, time=19.2556s
+step 35: accuracy=0.7380, loss=0.526292, time=19.2969s
+step 36: accuracy=0.7380, loss=0.525088, time=19.3364s
+step 37: accuracy=0.7360, loss=0.524596, time=19.2842s
+step 38: accuracy=0.7420, loss=0.524150, time=19.5437s
+step 39: accuracy=0.7380, loss=0.524142, time=19.1549s
+step 40: accuracy=0.7440, loss=0.524106, time=19.3479s
+cumulative result: accuracy=0.7440, loss=0.524106, time=0:12:56.130000 (776.1329s)
+(validation accuracy on held-out set: 0.6767)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.4940, sparsity=0.0000, loss=0.467469, regrown=0, time=22.7372s
+step 2: accuracy=0.6160, sparsity=0.0000, loss=0.371992, regrown=0, time=22.7155s
+step 3: accuracy=0.6660, sparsity=0.0000, loss=0.285799, regrown=0, time=22.7696s
+step 4: accuracy=0.7060, sparsity=0.0000, loss=0.265388, regrown=0, time=22.6337s
+step 5: accuracy=0.7060, sparsity=0.0000, loss=0.261448, regrown=0, time=22.7357s
+step 6: accuracy=0.7260, sparsity=0.0000, loss=0.259318, regrown=0, time=22.5099s
+step 7: accuracy=0.7180, sparsity=0.0000, loss=0.269052, regrown=0, time=22.7396s
+step 8: accuracy=0.7280, sparsity=0.0000, loss=0.274467, regrown=0, time=22.8916s
+step 9: accuracy=0.7160, sparsity=0.0000, loss=0.273337, regrown=0, time=22.8832s
+step 10: accuracy=0.7140, sparsity=0.0000, loss=0.273911, regrown=0, time=22.6051s
+step 11: accuracy=0.7020, sparsity=0.0000, loss=0.281199, regrown=0, time=23.0113s
+step 12: accuracy=0.7080, sparsity=0.0000, loss=0.289561, regrown=0, time=22.5587s
+step 13: accuracy=0.7080, sparsity=0.0833, loss=0.297548, regrown=0, time=22.8059s
+step 14: accuracy=0.7220, sparsity=0.0833, loss=0.305017, regrown=0, time=23.0153s
+step 15: accuracy=0.7140, sparsity=0.0833, loss=0.313705, regrown=0, time=22.8293s
+step 16: accuracy=0.7160, sparsity=0.0833, loss=0.329087, regrown=0, time=22.5040s
+step 17: accuracy=0.7300, sparsity=0.1250, loss=0.333702, regrown=0, time=23.0479s
+step 18: accuracy=0.7260, sparsity=0.1250, loss=0.335305, regrown=0, time=22.6188s
+step 19: accuracy=0.7180, sparsity=0.1250, loss=0.344740, regrown=0, time=22.7532s
+step 20: accuracy=0.7260, sparsity=0.1250, loss=0.359120, regrown=0, time=22.8776s
+step 21: accuracy=0.7400, sparsity=0.1250, loss=0.362825, regrown=0, time=22.7736s
+step 22: accuracy=0.7440, sparsity=0.1250, loss=0.366209, regrown=0, time=22.5593s
+step 23: accuracy=0.7340, sparsity=0.1250, loss=0.376785, regrown=0, time=23.0859s
+step 24: accuracy=0.7420, sparsity=0.1250, loss=0.388553, regrown=0, time=22.5703s
+step 25: accuracy=0.7420, sparsity=0.1250, loss=0.400652, regrown=0, time=22.8347s
+step 26: accuracy=0.7460, sparsity=0.1250, loss=0.410155, regrown=0, time=22.9721s
+step 27: accuracy=0.7140, sparsity=0.1250, loss=0.443102, regrown=0, time=22.7539s
+step 28: accuracy=0.7320, sparsity=0.1250, loss=0.447398, regrown=0, time=22.5596s
+step 29: accuracy=0.7480, sparsity=0.1250, loss=0.421615, regrown=0, time=22.9824s
+step 30: accuracy=0.7460, sparsity=0.1250, loss=0.413825, regrown=0, time=22.5523s
+step 31: accuracy=0.7460, sparsity=0.1250, loss=0.413212, regrown=0, time=22.8422s
+step 32: accuracy=0.7500, sparsity=0.1250, loss=0.413688, regrown=0, time=22.9697s
+step 33: accuracy=0.7420, sparsity=0.1250, loss=0.413829, regrown=0, time=22.7991s
+step 34: accuracy=0.7520, sparsity=0.1250, loss=0.412081, regrown=0, time=22.5322s
+step 35: accuracy=0.7160, sparsity=0.1250, loss=0.419526, regrown=0, time=23.0721s
+step 36: accuracy=0.7400, sparsity=0.1250, loss=0.432909, regrown=0, time=22.5639s
+step 37: accuracy=0.7400, sparsity=0.1250, loss=0.423931, regrown=0, time=22.7517s
+step 38: accuracy=0.7520, sparsity=0.1250, loss=0.411901, regrown=0, time=22.8939s
+step 39: accuracy=0.7300, sparsity=0.1250, loss=0.416768, regrown=0, time=22.8042s
+step 40: accuracy=0.7460, sparsity=0.1250, loss=0.426635, regrown=0, time=22.5051s
+cumulative result: accuracy=0.7460, sparsity=0.1250, loss=0.426635, time=0:15:14.550000 (914.5509s)
+(validation accuracy on held-out set: 0.6733)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.4940, sparsity=0.0000, loss=0.467469, regrown=0, time=22.6395s
+step 2: accuracy=0.6160, sparsity=0.0000, loss=0.371992, regrown=0, time=22.6312s
+step 3: accuracy=0.6660, sparsity=0.0000, loss=0.285799, regrown=0, time=22.6637s
+step 4: accuracy=0.7060, sparsity=0.0000, loss=0.265388, regrown=0, time=22.4817s
+step 5: accuracy=0.7060, sparsity=0.0000, loss=0.261448, regrown=0, time=22.6763s
+step 6: accuracy=0.7260, sparsity=0.0000, loss=0.259318, regrown=0, time=22.8497s
+step 7: accuracy=0.7180, sparsity=0.0000, loss=0.269052, regrown=0, time=22.6988s
+step 8: accuracy=0.7280, sparsity=0.0000, loss=0.274467, regrown=0, time=22.4947s
+step 9: accuracy=0.7160, sparsity=0.0000, loss=0.273337, regrown=0, time=22.8560s
+step 10: accuracy=0.7140, sparsity=0.0000, loss=0.273911, regrown=0, time=22.5705s
+step 11: accuracy=0.7020, sparsity=0.0000, loss=0.281199, regrown=0, time=22.7545s
+step 12: accuracy=0.7080, sparsity=0.0000, loss=0.289561, regrown=0, time=22.8258s
+step 13: accuracy=0.7080, sparsity=0.0833, loss=0.297548, regrown=0, time=22.7738s
+step 14: accuracy=0.7220, sparsity=0.0833, loss=0.305017, regrown=0, time=22.4903s
+step 15: accuracy=0.7140, sparsity=0.0833, loss=0.313705, regrown=0, time=22.9056s
+step 16: accuracy=0.7160, sparsity=0.0833, loss=0.329087, regrown=0, time=22.7329s
+step 17: accuracy=0.7300, sparsity=0.1667, loss=0.333702, regrown=0, time=22.5147s
+step 18: accuracy=0.7160, sparsity=0.1667, loss=0.341027, regrown=0, time=22.8978s
+step 19: accuracy=0.7240, sparsity=0.1667, loss=0.348355, regrown=0, time=22.5609s
+step 20: accuracy=0.7260, sparsity=0.1667, loss=0.358440, regrown=0, time=22.7928s
+step 21: accuracy=0.7380, sparsity=0.2500, loss=0.363090, regrown=0, time=22.8819s
+step 22: accuracy=0.7180, sparsity=0.2500, loss=0.378081, regrown=0, time=22.7152s
+step 23: accuracy=0.7260, sparsity=0.2500, loss=0.385685, regrown=0, time=22.5463s
+step 24: accuracy=0.7220, sparsity=0.2500, loss=0.395265, regrown=0, time=22.8612s
+step 25: accuracy=0.7340, sparsity=0.2500, loss=0.403361, regrown=0, time=22.4307s
+step 26: accuracy=0.7260, sparsity=0.2500, loss=0.410723, regrown=0, time=22.7147s
+step 27: accuracy=0.7240, sparsity=0.2500, loss=0.428445, regrown=0, time=22.8626s
+step 28: accuracy=0.7300, sparsity=0.2500, loss=0.440656, regrown=0, time=22.7207s
+step 29: accuracy=0.7320, sparsity=0.2500, loss=0.425555, regrown=0, time=22.5278s
+step 30: accuracy=0.7360, sparsity=0.2500, loss=0.417900, regrown=0, time=22.8429s
+step 31: accuracy=0.7460, sparsity=0.2500, loss=0.420773, regrown=0, time=22.3535s
+step 32: accuracy=0.7280, sparsity=0.2500, loss=0.423891, regrown=0, time=22.6314s
+step 33: accuracy=0.7360, sparsity=0.2500, loss=0.424187, regrown=0, time=22.7801s
+step 34: accuracy=0.7380, sparsity=0.2500, loss=0.416613, regrown=0, time=22.7293s
+step 35: accuracy=0.7380, sparsity=0.2500, loss=0.418846, regrown=0, time=22.5292s
+step 36: accuracy=0.7320, sparsity=0.2500, loss=0.421200, regrown=0, time=22.8981s
+step 37: accuracy=0.7300, sparsity=0.2500, loss=0.421430, regrown=0, time=22.5174s
+step 38: accuracy=0.7360, sparsity=0.2500, loss=0.416725, regrown=0, time=22.7040s
+step 39: accuracy=0.7280, sparsity=0.2500, loss=0.419765, regrown=0, time=22.9409s
+step 40: accuracy=0.7260, sparsity=0.2500, loss=0.423579, regrown=0, time=22.7796s
+cumulative result: accuracy=0.7260, sparsity=0.2500, loss=0.423579, time=0:15:11.540000 (911.5382s)
+(validation accuracy on held-out set: 0.6700)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.4940, sparsity=0.0000, loss=0.467469, regrown=0, time=22.7809s
+step 2: accuracy=0.6160, sparsity=0.0000, loss=0.371992, regrown=0, time=22.6683s
+step 3: accuracy=0.6660, sparsity=0.0000, loss=0.285799, regrown=0, time=22.5431s
+step 4: accuracy=0.7060, sparsity=0.0000, loss=0.265388, regrown=0, time=22.8919s
+step 5: accuracy=0.7060, sparsity=0.0000, loss=0.261448, regrown=0, time=22.7263s
+step 6: accuracy=0.7260, sparsity=0.0000, loss=0.259318, regrown=0, time=22.5102s
+step 7: accuracy=0.7180, sparsity=0.0000, loss=0.269052, regrown=0, time=22.9130s
+step 8: accuracy=0.7280, sparsity=0.0000, loss=0.274467, regrown=0, time=22.5768s
+step 9: accuracy=0.7160, sparsity=0.0000, loss=0.273337, regrown=0, time=22.7287s
+step 10: accuracy=0.7140, sparsity=0.0000, loss=0.273911, regrown=0, time=22.8323s
+step 11: accuracy=0.7020, sparsity=0.0000, loss=0.281199, regrown=0, time=24.7087s
+step 12: accuracy=0.7080, sparsity=0.0000, loss=0.289561, regrown=0, time=27.2976s
+step 13: accuracy=0.7080, sparsity=0.0833, loss=0.297548, regrown=0, time=23.3372s
+step 14: accuracy=0.7220, sparsity=0.0833, loss=0.305017, regrown=0, time=23.2038s
+step 15: accuracy=0.7140, sparsity=0.0833, loss=0.313705, regrown=0, time=23.6350s
+step 16: accuracy=0.7160, sparsity=0.0833, loss=0.329087, regrown=0, time=23.5805s
+step 17: accuracy=0.7300, sparsity=0.1667, loss=0.333702, regrown=0, time=23.5660s
+step 18: accuracy=0.7160, sparsity=0.1667, loss=0.341027, regrown=0, time=23.1918s
+step 19: accuracy=0.7240, sparsity=0.1667, loss=0.348355, regrown=0, time=23.4283s
+step 20: accuracy=0.7260, sparsity=0.1667, loss=0.358440, regrown=0, time=23.2396s
+step 21: accuracy=0.7380, sparsity=0.2500, loss=0.363090, regrown=0, time=24.3446s
+step 22: accuracy=0.7180, sparsity=0.2500, loss=0.378081, regrown=0, time=24.8454s
+step 23: accuracy=0.7260, sparsity=0.2500, loss=0.385685, regrown=0, time=24.6576s
+step 24: accuracy=0.7220, sparsity=0.2500, loss=0.395265, regrown=0, time=24.2471s
+step 25: accuracy=0.7340, sparsity=0.3333, loss=0.403361, regrown=0, time=25.0645s
+step 26: accuracy=0.7260, sparsity=0.3333, loss=0.419237, regrown=0, time=24.1873s
+step 27: accuracy=0.7260, sparsity=0.3333, loss=0.424383, regrown=0, time=24.5475s
+step 28: accuracy=0.7120, sparsity=0.3333, loss=0.427700, regrown=0, time=24.6682s
+step 29: accuracy=0.7380, sparsity=0.4167, loss=0.428946, regrown=0, time=24.4491s
+step 30: accuracy=0.6680, sparsity=0.4167, loss=0.533692, regrown=0, time=24.2010s
+step 31: accuracy=0.6700, sparsity=0.4167, loss=0.494865, regrown=0, time=24.8233s
+step 32: accuracy=0.6740, sparsity=0.4167, loss=0.479007, regrown=0, time=24.1914s
+step 33: accuracy=0.6760, sparsity=0.4167, loss=0.472707, regrown=0, time=24.3026s
+step 34: accuracy=0.6780, sparsity=0.4167, loss=0.470257, regrown=0, time=24.6216s
+step 35: accuracy=0.6800, sparsity=0.4167, loss=0.467468, regrown=0, time=24.6053s
+step 36: accuracy=0.6760, sparsity=0.4167, loss=0.465549, regrown=0, time=24.1248s
+step 37: accuracy=0.6820, sparsity=0.4167, loss=0.464134, regrown=0, time=24.5773s
+step 38: accuracy=0.6820, sparsity=0.4167, loss=0.463084, regrown=0, time=24.0954s
+step 39: accuracy=0.6760, sparsity=0.4167, loss=0.461723, regrown=0, time=24.2611s
+step 40: accuracy=0.6880, sparsity=0.4167, loss=0.460908, regrown=0, time=24.5988s
+cumulative result: accuracy=0.6880, sparsity=0.4167, loss=0.460908, time=0:15:59.910000 (959.9092s)
+(validation accuracy on held-out set: 0.6600)
+
+##############################################################################
+[7/16] dataset=mnist qubits=4 seed=6
+##############################################################################
+using lightning.gpu (cuQuantum), wires=4, shots=None
+[mnist/q4/seed6] circuit device: cuda (lightning.gpu)
+
+training without pruning (dense teacher):
+step 1: accuracy=0.6400, loss=0.775253, time=20.4910s
+step 2: accuracy=0.6700, loss=0.626759, time=20.7900s
+step 3: accuracy=0.7080, loss=0.577855, time=20.7977s
+step 4: accuracy=0.7000, loss=0.560209, time=20.8596s
+step 5: accuracy=0.7180, loss=0.547800, time=24.4152s
+step 6: accuracy=0.7140, loss=0.543646, time=26.0445s
+step 7: accuracy=0.7060, loss=0.540880, time=25.4659s
+step 8: accuracy=0.7100, loss=0.541249, time=24.5997s
+step 9: accuracy=0.7080, loss=0.541688, time=20.8018s
+step 10: accuracy=0.7100, loss=0.544040, time=20.7613s
+step 11: accuracy=0.7080, loss=0.542594, time=20.3897s
+step 12: accuracy=0.7120, loss=0.543542, time=20.6952s
+step 13: accuracy=0.7120, loss=0.540741, time=20.7990s
+step 14: accuracy=0.7080, loss=0.541100, time=20.7785s
+step 15: accuracy=0.7160, loss=0.539271, time=20.7034s
+step 16: accuracy=0.7120, loss=0.539897, time=21.0169s
+step 17: accuracy=0.7180, loss=0.538610, time=20.4858s
+step 18: accuracy=0.7100, loss=0.539474, time=20.5633s
+step 19: accuracy=0.7140, loss=0.538467, time=20.6093s
+step 20: accuracy=0.7100, loss=0.539514, time=20.6270s
+step 21: accuracy=0.7080, loss=0.538646, time=20.6739s
+step 22: accuracy=0.7060, loss=0.539784, time=20.6472s
+step 23: accuracy=0.7100, loss=0.538891, time=20.7236s
+step 24: accuracy=0.7060, loss=0.539950, time=20.7481s
+step 25: accuracy=0.7100, loss=0.538910, time=20.9011s
+step 26: accuracy=0.7060, loss=0.539786, time=20.8060s
+step 27: accuracy=0.7120, loss=0.538658, time=20.7251s
+step 28: accuracy=0.7060, loss=0.539435, time=20.2531s
+step 29: accuracy=0.7100, loss=0.538348, time=20.6649s
+step 30: accuracy=0.7080, loss=0.539150, time=20.6669s
+step 31: accuracy=0.7100, loss=0.538129, time=20.5923s
+step 32: accuracy=0.7080, loss=0.538989, time=20.5683s
+step 33: accuracy=0.7100, loss=0.537989, time=20.6774s
+step 34: accuracy=0.7080, loss=0.538863, time=20.9805s
+step 35: accuracy=0.7100, loss=0.537838, time=20.7643s
+step 36: accuracy=0.7100, loss=0.538657, time=20.9720s
+step 37: accuracy=0.7140, loss=0.537592, time=20.7511s
+step 38: accuracy=0.7100, loss=0.538309, time=20.8370s
+step 39: accuracy=0.7140, loss=0.537212, time=20.5755s
+step 40: accuracy=0.7100, loss=0.537831, time=20.7005s
+cumulative result: accuracy=0.7100, loss=0.537831, time=0:14:10.130000 (850.1289s)
+(validation accuracy on held-out set: 0.7133)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.6400, sparsity=0.0000, loss=0.345254, regrown=0, time=24.3962s
+step 2: accuracy=0.6700, sparsity=0.0000, loss=0.253718, regrown=0, time=24.1574s
+step 3: accuracy=0.7140, sparsity=0.0000, loss=0.219879, regrown=0, time=24.0533s
+step 4: accuracy=0.6880, sparsity=0.0000, loss=0.214508, regrown=0, time=24.1856s
+step 5: accuracy=0.7100, sparsity=0.0000, loss=0.216585, regrown=0, time=23.8636s
+step 6: accuracy=0.6720, sparsity=0.0000, loss=0.223806, regrown=0, time=24.4629s
+step 7: accuracy=0.6960, sparsity=0.0000, loss=0.265012, regrown=0, time=24.1839s
+step 8: accuracy=0.7180, sparsity=0.0000, loss=0.308788, regrown=0, time=24.1967s
+step 9: accuracy=0.7120, sparsity=0.0000, loss=0.258395, regrown=0, time=24.5093s
+step 10: accuracy=0.7080, sparsity=0.0000, loss=0.258227, regrown=0, time=24.2640s
+step 11: accuracy=0.7040, sparsity=0.0000, loss=0.268692, regrown=0, time=24.0468s
+step 12: accuracy=0.7040, sparsity=0.0000, loss=0.283463, regrown=0, time=24.1535s
+step 13: accuracy=0.7140, sparsity=0.0833, loss=0.294482, regrown=0, time=24.5297s
+step 14: accuracy=0.6960, sparsity=0.0833, loss=0.302737, regrown=0, time=24.0394s
+step 15: accuracy=0.7100, sparsity=0.0833, loss=0.331678, regrown=0, time=24.0409s
+step 16: accuracy=0.7160, sparsity=0.0833, loss=0.362590, regrown=0, time=24.3442s
+step 17: accuracy=0.7200, sparsity=0.1250, loss=0.333905, regrown=0, time=24.0186s
+step 18: accuracy=0.7040, sparsity=0.1250, loss=0.339675, regrown=0, time=24.0781s
+step 19: accuracy=0.7260, sparsity=0.1250, loss=0.358686, regrown=0, time=24.3876s
+step 20: accuracy=0.7000, sparsity=0.1250, loss=0.385150, regrown=0, time=24.0897s
+step 21: accuracy=0.7340, sparsity=0.1250, loss=0.373268, regrown=0, time=23.8443s
+step 22: accuracy=0.6940, sparsity=0.1250, loss=0.381362, regrown=0, time=24.6558s
+step 23: accuracy=0.7180, sparsity=0.1250, loss=0.402773, regrown=0, time=24.3412s
+step 24: accuracy=0.7060, sparsity=0.1250, loss=0.430428, regrown=0, time=23.9168s
+step 25: accuracy=0.7260, sparsity=0.1250, loss=0.414719, regrown=0, time=24.4284s
+step 26: accuracy=0.7000, sparsity=0.1250, loss=0.421799, regrown=0, time=23.9773s
+step 27: accuracy=0.7120, sparsity=0.1250, loss=0.442043, regrown=0, time=24.1219s
+step 28: accuracy=0.7120, sparsity=0.1250, loss=0.456811, regrown=0, time=24.3590s
+step 29: accuracy=0.7120, sparsity=0.1250, loss=0.440373, regrown=0, time=24.2729s
+step 30: accuracy=0.7100, sparsity=0.1250, loss=0.433707, regrown=0, time=24.0073s
+step 31: accuracy=0.7060, sparsity=0.1250, loss=0.443037, regrown=0, time=24.6795s
+step 32: accuracy=0.6860, sparsity=0.1250, loss=0.448595, regrown=0, time=24.3607s
+step 33: accuracy=0.7220, sparsity=0.1250, loss=0.441931, regrown=0, time=24.5684s
+step 34: accuracy=0.7040, sparsity=0.1250, loss=0.433986, regrown=0, time=27.7650s
+step 35: accuracy=0.7140, sparsity=0.1250, loss=0.448791, regrown=0, time=29.8807s
+step 36: accuracy=0.7040, sparsity=0.1250, loss=0.468162, regrown=0, time=29.8795s
+step 37: accuracy=0.7180, sparsity=0.1250, loss=0.429012, regrown=0, time=30.5328s
+step 38: accuracy=0.7120, sparsity=0.1250, loss=0.427958, regrown=0, time=30.2269s
+step 39: accuracy=0.7340, sparsity=0.1250, loss=0.430308, regrown=0, time=30.0464s
+step 40: accuracy=0.7040, sparsity=0.1250, loss=0.437405, regrown=0, time=30.4009s
+cumulative result: accuracy=0.7040, sparsity=0.1250, loss=0.437405, time=0:16:53.290000 (1013.2855s)
+(validation accuracy on held-out set: 0.7000)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.6400, sparsity=0.0000, loss=0.345254, regrown=0, time=29.5225s
+step 2: accuracy=0.6700, sparsity=0.0000, loss=0.253718, regrown=0, time=30.0131s
+step 3: accuracy=0.7140, sparsity=0.0000, loss=0.219879, regrown=0, time=30.6997s
+step 4: accuracy=0.6880, sparsity=0.0000, loss=0.214508, regrown=0, time=25.6402s
+step 5: accuracy=0.7100, sparsity=0.0000, loss=0.216585, regrown=0, time=24.0616s
+step 6: accuracy=0.6720, sparsity=0.0000, loss=0.223806, regrown=0, time=23.7665s
+step 7: accuracy=0.6960, sparsity=0.0000, loss=0.265012, regrown=0, time=24.2308s
+step 8: accuracy=0.7180, sparsity=0.0000, loss=0.308788, regrown=0, time=24.3932s
+step 9: accuracy=0.7120, sparsity=0.0000, loss=0.258395, regrown=0, time=24.1962s
+step 10: accuracy=0.7080, sparsity=0.0000, loss=0.258227, regrown=0, time=24.5191s
+step 11: accuracy=0.7040, sparsity=0.0000, loss=0.268692, regrown=0, time=24.3373s
+step 12: accuracy=0.7040, sparsity=0.0000, loss=0.283463, regrown=0, time=24.2068s
+step 13: accuracy=0.7140, sparsity=0.0833, loss=0.294482, regrown=0, time=24.5818s
+step 14: accuracy=0.6960, sparsity=0.0833, loss=0.302737, regrown=0, time=24.0435s
+step 15: accuracy=0.7100, sparsity=0.0833, loss=0.331678, regrown=0, time=24.2796s
+step 16: accuracy=0.7160, sparsity=0.0833, loss=0.362590, regrown=0, time=24.5401s
+step 17: accuracy=0.7200, sparsity=0.1667, loss=0.333905, regrown=0, time=24.2855s
+step 18: accuracy=0.6980, sparsity=0.1667, loss=0.340215, regrown=0, time=23.8928s
+step 19: accuracy=0.7180, sparsity=0.1667, loss=0.356073, regrown=0, time=24.4471s
+step 20: accuracy=0.7000, sparsity=0.1667, loss=0.373502, regrown=0, time=23.8279s
+step 21: accuracy=0.7260, sparsity=0.2500, loss=0.372707, regrown=0, time=24.0446s
+step 22: accuracy=0.7000, sparsity=0.2500, loss=0.386777, regrown=0, time=24.2230s
+step 23: accuracy=0.7160, sparsity=0.2500, loss=0.398834, regrown=0, time=24.2721s
+step 24: accuracy=0.7060, sparsity=0.2500, loss=0.414779, regrown=0, time=23.9496s
+step 25: accuracy=0.7240, sparsity=0.2500, loss=0.416786, regrown=0, time=24.2611s
+step 26: accuracy=0.7100, sparsity=0.2500, loss=0.421905, regrown=0, time=23.7265s
+step 27: accuracy=0.7040, sparsity=0.2500, loss=0.438020, regrown=0, time=24.0296s
+step 28: accuracy=0.7140, sparsity=0.2500, loss=0.448801, regrown=0, time=24.1626s
+step 29: accuracy=0.7020, sparsity=0.2500, loss=0.437157, regrown=0, time=24.3693s
+step 30: accuracy=0.7360, sparsity=0.2500, loss=0.434329, regrown=0, time=24.1332s
+step 31: accuracy=0.7060, sparsity=0.2500, loss=0.444598, regrown=0, time=24.3922s
+step 32: accuracy=0.7220, sparsity=0.2500, loss=0.455220, regrown=0, time=24.0520s
+step 33: accuracy=0.6940, sparsity=0.2500, loss=0.435472, regrown=0, time=24.0750s
+step 34: accuracy=0.7300, sparsity=0.2500, loss=0.430449, regrown=0, time=24.5489s
+step 35: accuracy=0.7020, sparsity=0.2500, loss=0.436952, regrown=0, time=24.3158s
+step 36: accuracy=0.7260, sparsity=0.2500, loss=0.443330, regrown=0, time=24.0818s
+step 37: accuracy=0.6980, sparsity=0.2500, loss=0.435997, regrown=0, time=24.5000s
+step 38: accuracy=0.7240, sparsity=0.2500, loss=0.429388, regrown=0, time=24.1538s
+step 39: accuracy=0.7060, sparsity=0.2500, loss=0.434715, regrown=0, time=24.1718s
+step 40: accuracy=0.7200, sparsity=0.2500, loss=0.447474, regrown=0, time=24.1881s
+cumulative result: accuracy=0.7200, sparsity=0.2500, loss=0.447474, time=0:16:31.170000 (991.1715s)
+(validation accuracy on held-out set: 0.7067)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.6400, sparsity=0.0000, loss=0.345254, regrown=0, time=24.0796s
+step 2: accuracy=0.6700, sparsity=0.0000, loss=0.253718, regrown=0, time=24.0515s
+step 3: accuracy=0.7140, sparsity=0.0000, loss=0.219879, regrown=0, time=23.9482s
+step 4: accuracy=0.6880, sparsity=0.0000, loss=0.214508, regrown=0, time=23.9389s
+step 5: accuracy=0.7100, sparsity=0.0000, loss=0.216585, regrown=0, time=24.0629s
+step 6: accuracy=0.6720, sparsity=0.0000, loss=0.223806, regrown=0, time=24.1036s
+step 7: accuracy=0.6960, sparsity=0.0000, loss=0.265012, regrown=0, time=24.5584s
+step 8: accuracy=0.7180, sparsity=0.0000, loss=0.308788, regrown=0, time=24.1838s
+step 9: accuracy=0.7120, sparsity=0.0000, loss=0.258395, regrown=0, time=23.7871s
+step 10: accuracy=0.7080, sparsity=0.0000, loss=0.258227, regrown=0, time=24.1662s
+step 11: accuracy=0.7040, sparsity=0.0000, loss=0.268692, regrown=0, time=24.0835s
+step 12: accuracy=0.7040, sparsity=0.0000, loss=0.283463, regrown=0, time=24.0775s
+step 13: accuracy=0.7140, sparsity=0.0833, loss=0.294482, regrown=0, time=24.1918s
+step 14: accuracy=0.6960, sparsity=0.0833, loss=0.302737, regrown=0, time=23.8328s
+step 15: accuracy=0.7100, sparsity=0.0833, loss=0.331678, regrown=0, time=24.6558s
+step 16: accuracy=0.7160, sparsity=0.0833, loss=0.362590, regrown=0, time=24.5476s
+step 17: accuracy=0.7200, sparsity=0.1667, loss=0.333905, regrown=0, time=24.1121s
+step 18: accuracy=0.6980, sparsity=0.1667, loss=0.340215, regrown=0, time=23.8241s
+step 19: accuracy=0.7180, sparsity=0.1667, loss=0.356073, regrown=0, time=24.1922s
+step 20: accuracy=0.7000, sparsity=0.1667, loss=0.373502, regrown=0, time=23.7455s
+step 21: accuracy=0.7260, sparsity=0.2500, loss=0.372707, regrown=0, time=23.8951s
+step 22: accuracy=0.7000, sparsity=0.2500, loss=0.386777, regrown=0, time=24.0569s
+step 23: accuracy=0.7160, sparsity=0.2500, loss=0.398834, regrown=0, time=23.9176s
+step 24: accuracy=0.7060, sparsity=0.2500, loss=0.414779, regrown=0, time=23.7578s
+step 25: accuracy=0.7240, sparsity=0.3333, loss=0.416786, regrown=0, time=24.2094s
+step 26: accuracy=0.7300, sparsity=0.3333, loss=0.443371, regrown=0, time=23.7658s
+step 27: accuracy=0.7080, sparsity=0.3333, loss=0.442242, regrown=0, time=23.9451s
+step 28: accuracy=0.7220, sparsity=0.3333, loss=0.440562, regrown=0, time=24.0497s
+step 29: accuracy=0.7220, sparsity=0.4167, loss=0.438902, regrown=0, time=24.0438s
+step 30: accuracy=0.7000, sparsity=0.4167, loss=0.520199, regrown=0, time=23.6894s
+step 31: accuracy=0.7040, sparsity=0.4167, loss=0.478726, regrown=0, time=24.1167s
+step 32: accuracy=0.7220, sparsity=0.4167, loss=0.451347, regrown=0, time=23.7092s
+step 33: accuracy=0.7260, sparsity=0.4167, loss=0.442797, regrown=0, time=23.9182s
+step 34: accuracy=0.7220, sparsity=0.4167, loss=0.439504, regrown=0, time=24.1224s
+step 35: accuracy=0.7200, sparsity=0.4167, loss=0.437006, regrown=0, time=24.0192s
+step 36: accuracy=0.7220, sparsity=0.4167, loss=0.436274, regrown=0, time=23.7290s
+step 37: accuracy=0.7200, sparsity=0.4167, loss=0.436012, regrown=0, time=24.2149s
+step 38: accuracy=0.7240, sparsity=0.4167, loss=0.435892, regrown=0, time=23.7588s
+step 39: accuracy=0.7180, sparsity=0.4167, loss=0.435865, regrown=0, time=23.9579s
+step 40: accuracy=0.7240, sparsity=0.4167, loss=0.435926, regrown=0, time=24.0929s
+cumulative result: accuracy=0.7240, sparsity=0.4167, loss=0.435926, time=0:16:05.160000 (965.1593s)
+(validation accuracy on held-out set: 0.7100)
+
+##############################################################################
+[8/16] dataset=mnist qubits=4 seed=7
+##############################################################################
+using lightning.gpu (cuQuantum), wires=4, shots=None
+[mnist/q4/seed7] circuit device: cuda (lightning.gpu)
+
+training without pruning (dense teacher):
+step 1: accuracy=0.6800, loss=0.747790, time=20.2715s
+step 2: accuracy=0.7360, loss=0.623684, time=20.3320s
+step 3: accuracy=0.8120, loss=0.549819, time=20.1429s
+step 4: accuracy=0.8160, loss=0.493638, time=20.5168s
+step 5: accuracy=0.8240, loss=0.472879, time=20.1633s
+step 6: accuracy=0.8180, loss=0.459068, time=20.3372s
+step 7: accuracy=0.8340, loss=0.450788, time=20.3345s
+step 8: accuracy=0.8300, loss=0.444559, time=20.3572s
+step 9: accuracy=0.8220, loss=0.439693, time=20.3237s
+step 10: accuracy=0.8300, loss=0.438626, time=20.3192s
+step 11: accuracy=0.8280, loss=0.438168, time=20.3288s
+step 12: accuracy=0.8280, loss=0.435627, time=20.3593s
+step 13: accuracy=0.8300, loss=0.432862, time=20.3295s
+step 14: accuracy=0.8200, loss=0.431360, time=20.5933s
+step 15: accuracy=0.8320, loss=0.430500, time=20.1807s
+step 16: accuracy=0.8260, loss=0.430645, time=20.3590s
+step 17: accuracy=0.8280, loss=0.430480, time=20.3313s
+step 18: accuracy=0.8300, loss=0.430738, time=20.3275s
+step 19: accuracy=0.8260, loss=0.428815, time=20.3210s
+step 20: accuracy=0.8340, loss=0.427984, time=20.3389s
+step 21: accuracy=0.8320, loss=0.426244, time=20.3377s
+step 22: accuracy=0.8280, loss=0.425754, time=20.3535s
+step 23: accuracy=0.8300, loss=0.425068, time=20.3757s
+step 24: accuracy=0.8260, loss=0.425146, time=20.5491s
+step 25: accuracy=0.8260, loss=0.424894, time=20.3361s
+step 26: accuracy=0.8280, loss=0.425153, time=20.1420s
+step 27: accuracy=0.8260, loss=0.424740, time=20.3606s
+step 28: accuracy=0.8300, loss=0.425076, time=20.3503s
+step 29: accuracy=0.8240, loss=0.424686, time=20.3554s
+step 30: accuracy=0.8280, loss=0.425289, time=20.3679s
+step 31: accuracy=0.8260, loss=0.425026, time=20.5367s
+step 32: accuracy=0.8260, loss=0.425638, time=20.3755s
+step 33: accuracy=0.8260, loss=0.425287, time=20.1617s
+step 34: accuracy=0.8260, loss=0.425307, time=20.4160s
+step 35: accuracy=0.8300, loss=0.424645, time=20.2971s
+step 36: accuracy=0.8240, loss=0.423824, time=20.3515s
+step 37: accuracy=0.8320, loss=0.422950, time=20.3557s
+step 38: accuracy=0.8300, loss=0.422216, time=20.5670s
+step 39: accuracy=0.8320, loss=0.421764, time=20.1757s
+step 40: accuracy=0.8300, loss=0.421661, time=20.3332s
+cumulative result: accuracy=0.8300, loss=0.421661, time=0:13:37.690000 (817.6879s)
+(validation accuracy on held-out set: 0.7967)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.6800, sparsity=0.0000, loss=0.366422, regrown=0, time=23.9480s
+step 2: accuracy=0.6980, sparsity=0.0000, loss=0.279111, regrown=0, time=23.8372s
+step 3: accuracy=0.7980, sparsity=0.0000, loss=0.242333, regrown=0, time=23.7862s
+step 4: accuracy=0.7980, sparsity=0.0000, loss=0.215875, regrown=0, time=23.7632s
+step 5: accuracy=0.8280, sparsity=0.0000, loss=0.201034, regrown=0, time=23.8632s
+step 6: accuracy=0.8040, sparsity=0.0000, loss=0.195997, regrown=0, time=23.6493s
+step 7: accuracy=0.7860, sparsity=0.0000, loss=0.206297, regrown=0, time=23.8851s
+step 8: accuracy=0.8140, sparsity=0.0000, loss=0.234425, regrown=0, time=24.0258s
+step 9: accuracy=0.8340, sparsity=0.0000, loss=0.221804, regrown=0, time=23.9555s
+step 10: accuracy=0.8160, sparsity=0.0000, loss=0.214180, regrown=0, time=23.6373s
+step 11: accuracy=0.8260, sparsity=0.0000, loss=0.224605, regrown=0, time=24.1256s
+step 12: accuracy=0.8160, sparsity=0.0000, loss=0.237765, regrown=0, time=23.6114s
+step 13: accuracy=0.8280, sparsity=0.0833, loss=0.241592, regrown=0, time=23.9798s
+step 14: accuracy=0.7920, sparsity=0.0833, loss=0.246879, regrown=0, time=24.1171s
+step 15: accuracy=0.7840, sparsity=0.0833, loss=0.275171, regrown=0, time=23.9537s
+step 16: accuracy=0.8280, sparsity=0.0833, loss=0.295182, regrown=0, time=23.6520s
+step 17: accuracy=0.8360, sparsity=0.1250, loss=0.267864, regrown=0, time=24.1438s
+step 18: accuracy=0.8280, sparsity=0.1250, loss=0.269260, regrown=0, time=23.8210s
+step 19: accuracy=0.8440, sparsity=0.1250, loss=0.276779, regrown=0, time=23.9247s
+step 20: accuracy=0.8300, sparsity=0.1250, loss=0.286042, regrown=0, time=24.1090s
+step 21: accuracy=0.8400, sparsity=0.1250, loss=0.294690, regrown=0, time=23.9478s
+step 22: accuracy=0.8200, sparsity=0.1250, loss=0.301778, regrown=0, time=23.7419s
+step 23: accuracy=0.8000, sparsity=0.1250, loss=0.320554, regrown=0, time=24.1758s
+step 24: accuracy=0.8120, sparsity=0.1250, loss=0.347334, regrown=0, time=23.6612s
+step 25: accuracy=0.8320, sparsity=0.1250, loss=0.336960, regrown=0, time=23.9402s
+step 26: accuracy=0.8280, sparsity=0.1250, loss=0.333965, regrown=0, time=24.1178s
+step 27: accuracy=0.8100, sparsity=0.1250, loss=0.345835, regrown=0, time=23.8601s
+step 28: accuracy=0.8160, sparsity=0.1250, loss=0.354655, regrown=0, time=23.6148s
+step 29: accuracy=0.8320, sparsity=0.1250, loss=0.349794, regrown=0, time=24.1028s
+step 30: accuracy=0.8220, sparsity=0.1250, loss=0.342292, regrown=0, time=23.6622s
+step 31: accuracy=0.8100, sparsity=0.1250, loss=0.349240, regrown=0, time=23.8238s
+step 32: accuracy=0.8140, sparsity=0.1250, loss=0.360347, regrown=0, time=24.0502s
+step 33: accuracy=0.8320, sparsity=0.1250, loss=0.350343, regrown=0, time=23.8717s
+step 34: accuracy=0.8220, sparsity=0.1250, loss=0.340322, regrown=0, time=23.6379s
+step 35: accuracy=0.8120, sparsity=0.1250, loss=0.344373, regrown=0, time=24.1678s
+step 36: accuracy=0.8160, sparsity=0.1250, loss=0.352827, regrown=0, time=23.7050s
+step 37: accuracy=0.8340, sparsity=0.1250, loss=0.348800, regrown=0, time=23.9802s
+step 38: accuracy=0.8240, sparsity=0.1250, loss=0.340858, regrown=0, time=24.0634s
+step 39: accuracy=0.8040, sparsity=0.1250, loss=0.348558, regrown=0, time=23.9452s
+step 40: accuracy=0.8260, sparsity=0.1250, loss=0.360483, regrown=0, time=23.7321s
+cumulative result: accuracy=0.8260, sparsity=0.1250, loss=0.360483, time=0:15:59.810000 (959.8115s)
+(validation accuracy on held-out set: 0.7900)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.6800, sparsity=0.0000, loss=0.366422, regrown=0, time=23.8002s
+step 2: accuracy=0.6980, sparsity=0.0000, loss=0.279111, regrown=0, time=23.7592s
+step 3: accuracy=0.7980, sparsity=0.0000, loss=0.242333, regrown=0, time=23.8438s
+step 4: accuracy=0.7980, sparsity=0.0000, loss=0.215875, regrown=0, time=23.5864s
+step 5: accuracy=0.8280, sparsity=0.0000, loss=0.201034, regrown=0, time=23.7892s
+step 6: accuracy=0.8040, sparsity=0.0000, loss=0.195997, regrown=0, time=23.9563s
+step 7: accuracy=0.7860, sparsity=0.0000, loss=0.206297, regrown=0, time=23.8467s
+step 8: accuracy=0.8140, sparsity=0.0000, loss=0.234425, regrown=0, time=23.6000s
+step 9: accuracy=0.8340, sparsity=0.0000, loss=0.221804, regrown=0, time=24.0526s
+step 10: accuracy=0.8160, sparsity=0.0000, loss=0.214180, regrown=0, time=23.6051s
+step 11: accuracy=0.8260, sparsity=0.0000, loss=0.224605, regrown=0, time=23.8233s
+step 12: accuracy=0.8160, sparsity=0.0000, loss=0.237765, regrown=0, time=24.0078s
+step 13: accuracy=0.8280, sparsity=0.0833, loss=0.241592, regrown=0, time=23.8259s
+step 14: accuracy=0.7920, sparsity=0.0833, loss=0.246879, regrown=0, time=23.6582s
+step 15: accuracy=0.7840, sparsity=0.0833, loss=0.275171, regrown=0, time=24.0614s
+step 16: accuracy=0.8280, sparsity=0.0833, loss=0.295182, regrown=0, time=23.9096s
+step 17: accuracy=0.8360, sparsity=0.1667, loss=0.267864, regrown=0, time=23.6838s
+step 18: accuracy=0.8260, sparsity=0.1667, loss=0.269459, regrown=0, time=24.1383s
+step 19: accuracy=0.8460, sparsity=0.1667, loss=0.276465, regrown=0, time=23.7198s
+step 20: accuracy=0.8300, sparsity=0.1667, loss=0.284980, regrown=0, time=23.8894s
+step 21: accuracy=0.8380, sparsity=0.2500, loss=0.293163, regrown=0, time=24.0657s
+step 22: accuracy=0.8180, sparsity=0.2500, loss=0.303614, regrown=0, time=23.9073s
+step 23: accuracy=0.8260, sparsity=0.2500, loss=0.309703, regrown=0, time=23.6781s
+step 24: accuracy=0.8260, sparsity=0.2500, loss=0.317796, regrown=0, time=24.0302s
+step 25: accuracy=0.8240, sparsity=0.2500, loss=0.326490, regrown=0, time=23.6817s
+step 26: accuracy=0.8140, sparsity=0.2500, loss=0.334617, regrown=0, time=23.7428s
+step 27: accuracy=0.7960, sparsity=0.2500, loss=0.350498, regrown=0, time=24.0354s
+step 28: accuracy=0.8140, sparsity=0.2500, loss=0.365191, regrown=0, time=23.8522s
+step 29: accuracy=0.8240, sparsity=0.2500, loss=0.354635, regrown=0, time=23.6980s
+step 30: accuracy=0.8180, sparsity=0.2500, loss=0.343685, regrown=0, time=24.1005s
+step 31: accuracy=0.8200, sparsity=0.2500, loss=0.346530, regrown=0, time=23.7116s
+step 32: accuracy=0.8200, sparsity=0.2500, loss=0.348863, regrown=0, time=23.8227s
+step 33: accuracy=0.8280, sparsity=0.2500, loss=0.345333, regrown=0, time=24.0232s
+step 34: accuracy=0.8240, sparsity=0.2500, loss=0.342084, regrown=0, time=23.9064s
+step 35: accuracy=0.8340, sparsity=0.2500, loss=0.344230, regrown=0, time=23.6201s
+step 36: accuracy=0.8220, sparsity=0.2500, loss=0.347243, regrown=0, time=24.0289s
+step 37: accuracy=0.8320, sparsity=0.2500, loss=0.345037, regrown=0, time=23.6367s
+step 38: accuracy=0.8220, sparsity=0.2500, loss=0.342453, regrown=0, time=23.8455s
+step 39: accuracy=0.8160, sparsity=0.2500, loss=0.346156, regrown=0, time=24.0122s
+step 40: accuracy=0.8200, sparsity=0.2500, loss=0.352437, regrown=0, time=23.8969s
+cumulative result: accuracy=0.8200, sparsity=0.2500, loss=0.352437, time=0:15:57.890000 (957.8921s)
+(validation accuracy on held-out set: 0.8100)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.6800, sparsity=0.0000, loss=0.366422, regrown=0, time=23.7965s
+step 2: accuracy=0.6980, sparsity=0.0000, loss=0.279111, regrown=0, time=23.8029s
+step 3: accuracy=0.7980, sparsity=0.0000, loss=0.242333, regrown=0, time=23.6921s
+step 4: accuracy=0.7980, sparsity=0.0000, loss=0.215875, regrown=0, time=23.9917s
+step 5: accuracy=0.8280, sparsity=0.0000, loss=0.201034, regrown=0, time=23.9560s
+step 6: accuracy=0.8040, sparsity=0.0000, loss=0.195997, regrown=0, time=23.6408s
+step 7: accuracy=0.7860, sparsity=0.0000, loss=0.206297, regrown=0, time=24.0808s
+step 8: accuracy=0.8140, sparsity=0.0000, loss=0.234425, regrown=0, time=23.6365s
+step 9: accuracy=0.8340, sparsity=0.0000, loss=0.221804, regrown=0, time=23.8351s
+step 10: accuracy=0.8160, sparsity=0.0000, loss=0.214180, regrown=0, time=24.0190s
+step 11: accuracy=0.8260, sparsity=0.0000, loss=0.224605, regrown=0, time=23.9403s
+step 12: accuracy=0.8160, sparsity=0.0000, loss=0.237765, regrown=0, time=23.7489s
+step 13: accuracy=0.8280, sparsity=0.0833, loss=0.241592, regrown=0, time=24.1090s
+step 14: accuracy=0.7920, sparsity=0.0833, loss=0.246879, regrown=0, time=23.7371s
+step 15: accuracy=0.7840, sparsity=0.0833, loss=0.275171, regrown=0, time=23.8982s
+step 16: accuracy=0.8280, sparsity=0.0833, loss=0.295182, regrown=0, time=24.1123s
+step 17: accuracy=0.8360, sparsity=0.1667, loss=0.267864, regrown=0, time=23.9530s
+step 18: accuracy=0.8260, sparsity=0.1667, loss=0.269459, regrown=0, time=23.6656s
+step 19: accuracy=0.8460, sparsity=0.1667, loss=0.276465, regrown=0, time=24.1930s
+step 20: accuracy=0.8300, sparsity=0.1667, loss=0.284980, regrown=0, time=23.7090s
+step 21: accuracy=0.8380, sparsity=0.2500, loss=0.293163, regrown=0, time=23.9841s
+step 22: accuracy=0.8180, sparsity=0.2500, loss=0.303614, regrown=0, time=24.0508s
+step 23: accuracy=0.8260, sparsity=0.2500, loss=0.309703, regrown=0, time=24.0012s
+step 24: accuracy=0.8260, sparsity=0.2500, loss=0.317796, regrown=0, time=23.7376s
+step 25: accuracy=0.8240, sparsity=0.3333, loss=0.326490, regrown=0, time=24.1260s
+step 26: accuracy=0.7660, sparsity=0.3333, loss=0.482630, regrown=0, time=23.7174s
+step 27: accuracy=0.7940, sparsity=0.3333, loss=0.450889, regrown=0, time=23.8246s
+step 28: accuracy=0.8140, sparsity=0.3333, loss=0.405904, regrown=0, time=24.0137s
+step 29: accuracy=0.8220, sparsity=0.4167, loss=0.384543, regrown=0, time=23.8748s
+step 30: accuracy=0.7960, sparsity=0.4167, loss=0.439007, regrown=0, time=23.5774s
+step 31: accuracy=0.7800, sparsity=0.4167, loss=0.410995, regrown=0, time=24.1381s
+step 32: accuracy=0.7980, sparsity=0.4167, loss=0.398533, regrown=0, time=23.7505s
+step 33: accuracy=0.7940, sparsity=0.4167, loss=0.387140, regrown=0, time=23.9363s
+step 34: accuracy=0.8060, sparsity=0.4167, loss=0.382010, regrown=0, time=24.0639s
+step 35: accuracy=0.7840, sparsity=0.4167, loss=0.390776, regrown=0, time=23.9121s
+step 36: accuracy=0.8080, sparsity=0.4167, loss=0.395397, regrown=0, time=23.6729s
+step 37: accuracy=0.7960, sparsity=0.4167, loss=0.380433, regrown=0, time=24.1646s
+step 38: accuracy=0.8000, sparsity=0.4167, loss=0.372538, regrown=0, time=23.5518s
+step 39: accuracy=0.8020, sparsity=0.4167, loss=0.371406, regrown=0, time=23.7663s
+step 40: accuracy=0.8060, sparsity=0.4167, loss=0.371185, regrown=0, time=24.0801s
+cumulative result: accuracy=0.8060, sparsity=0.4167, loss=0.371185, time=0:15:59.500000 (959.4953s)
+(validation accuracy on held-out set: 0.7833)
+
+##############################################################################
+[9/16] dataset=fashionmnist qubits=4 seed=0
+##############################################################################
+using lightning.gpu (cuQuantum), wires=4, shots=None
+[fashionmnist/q4/seed0] circuit device: cuda (lightning.gpu)
+
+training without pruning (dense teacher):
+step 1: accuracy=0.6360, loss=0.738184, time=20.2469s
+step 2: accuracy=0.6400, loss=0.647728, time=20.3340s
+step 3: accuracy=0.6580, loss=0.621329, time=20.3790s
+step 4: accuracy=0.6600, loss=0.611899, time=20.3444s
+step 5: accuracy=0.6780, loss=0.605338, time=20.1966s
+step 6: accuracy=0.6500, loss=0.601709, time=20.2828s
+step 7: accuracy=0.6700, loss=0.608042, time=20.2998s
+step 8: accuracy=0.6520, loss=0.615577, time=20.2979s
+step 9: accuracy=0.6760, loss=0.604741, time=20.5241s
+step 10: accuracy=0.6760, loss=0.596654, time=20.4153s
+step 11: accuracy=0.6700, loss=0.594426, time=20.1669s
+step 12: accuracy=0.6900, loss=0.593735, time=20.3451s
+step 13: accuracy=0.6540, loss=0.593765, time=20.3650s
+step 14: accuracy=0.6900, loss=0.594435, time=20.3661s
+step 15: accuracy=0.6540, loss=0.593628, time=20.3656s
+step 16: accuracy=0.6880, loss=0.592969, time=20.5922s
+step 17: accuracy=0.6560, loss=0.591531, time=20.1787s
+step 18: accuracy=0.6840, loss=0.590881, time=20.3567s
+step 19: accuracy=0.6680, loss=0.590145, time=20.3554s
+step 20: accuracy=0.6800, loss=0.589869, time=20.3918s
+step 21: accuracy=0.6680, loss=0.589615, time=20.3241s
+step 22: accuracy=0.6800, loss=0.590068, time=20.4043s
+step 23: accuracy=0.6800, loss=0.590907, time=20.3013s
+step 24: accuracy=0.6680, loss=0.592807, time=20.3395s
+step 25: accuracy=0.6780, loss=0.593071, time=20.3467s
+step 26: accuracy=0.6720, loss=0.591655, time=20.5018s
+step 27: accuracy=0.6880, loss=0.589733, time=20.4072s
+step 28: accuracy=0.6640, loss=0.588095, time=20.1836s
+step 29: accuracy=0.7060, loss=0.587771, time=20.3421s
+step 30: accuracy=0.6400, loss=0.588323, time=20.3224s
+step 31: accuracy=0.7140, loss=0.590602, time=20.3443s
+step 32: accuracy=0.6460, loss=0.588869, time=20.3226s
+step 33: accuracy=0.7060, loss=0.587754, time=20.3389s
+step 34: accuracy=0.6600, loss=0.585710, time=20.5639s
+step 35: accuracy=0.7020, loss=0.585175, time=20.1173s
+step 36: accuracy=0.6660, loss=0.584704, time=20.3513s
+step 37: accuracy=0.6940, loss=0.584881, time=20.3611s
+step 38: accuracy=0.6640, loss=0.584817, time=20.3459s
+step 39: accuracy=0.6900, loss=0.585020, time=20.4201s
+step 40: accuracy=0.6680, loss=0.584315, time=20.3425s
+cumulative result: accuracy=0.6680, loss=0.584315, time=0:13:37.800000 (817.8028s)
+(validation accuracy on held-out set: 0.6700)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.6300, sparsity=0.0000, loss=0.323999, regrown=0, time=23.8755s
+step 2: accuracy=0.6300, sparsity=0.0000, loss=0.229139, regrown=0, time=23.8615s
+step 3: accuracy=0.6260, sparsity=0.0000, loss=0.222720, regrown=0, time=23.7881s
+step 4: accuracy=0.6340, sparsity=0.0000, loss=0.230285, regrown=0, time=23.8719s
+step 5: accuracy=0.6340, sparsity=0.0000, loss=0.241592, regrown=0, time=23.6751s
+step 6: accuracy=0.6460, sparsity=0.0000, loss=0.251953, regrown=0, time=24.0059s
+step 7: accuracy=0.6120, sparsity=0.0000, loss=0.299721, regrown=0, time=23.7223s
+step 8: accuracy=0.6420, sparsity=0.0000, loss=0.292476, regrown=0, time=23.8960s
+step 9: accuracy=0.6520, sparsity=0.0000, loss=0.281480, regrown=0, time=24.0213s
+step 10: accuracy=0.6800, sparsity=0.0000, loss=0.287432, regrown=0, time=23.8164s
+step 11: accuracy=0.6420, sparsity=0.0000, loss=0.298720, regrown=0, time=23.6458s
+step 12: accuracy=0.6800, sparsity=0.0000, loss=0.316626, regrown=0, time=23.9763s
+step 13: accuracy=0.6440, sparsity=0.0833, loss=0.323373, regrown=0, time=24.1119s
+step 14: accuracy=0.6940, sparsity=0.0833, loss=0.328589, regrown=0, time=24.0291s
+step 15: accuracy=0.6320, sparsity=0.0833, loss=0.340741, regrown=0, time=23.7197s
+step 16: accuracy=0.7020, sparsity=0.0833, loss=0.353938, regrown=0, time=24.0403s
+step 17: accuracy=0.6600, sparsity=0.1250, loss=0.361206, regrown=0, time=23.7826s
+step 18: accuracy=0.6860, sparsity=0.1250, loss=0.371892, regrown=0, time=23.9287s
+step 19: accuracy=0.6240, sparsity=0.1250, loss=0.398295, regrown=0, time=24.1512s
+step 20: accuracy=0.6780, sparsity=0.1250, loss=0.415925, regrown=0, time=24.0085s
+step 21: accuracy=0.6580, sparsity=0.1250, loss=0.409765, regrown=0, time=23.7276s
+step 22: accuracy=0.7000, sparsity=0.1250, loss=0.413704, regrown=0, time=24.1622s
+step 23: accuracy=0.6480, sparsity=0.1250, loss=0.424902, regrown=0, time=23.9762s
+step 24: accuracy=0.6940, sparsity=0.1250, loss=0.437649, regrown=0, time=23.6688s
+step 25: accuracy=0.6640, sparsity=0.1250, loss=0.447514, regrown=0, time=24.1602s
+step 26: accuracy=0.6960, sparsity=0.1250, loss=0.457271, regrown=0, time=23.7532s
+step 27: accuracy=0.6420, sparsity=0.1250, loss=0.470957, regrown=0, time=23.9003s
+step 28: accuracy=0.7040, sparsity=0.1250, loss=0.475450, regrown=0, time=24.0969s
+step 29: accuracy=0.6640, sparsity=0.1250, loss=0.469857, regrown=0, time=23.8764s
+step 30: accuracy=0.7020, sparsity=0.1250, loss=0.467263, regrown=0, time=23.7267s
+step 31: accuracy=0.6480, sparsity=0.1250, loss=0.469438, regrown=0, time=24.0641s
+step 32: accuracy=0.6980, sparsity=0.1250, loss=0.476310, regrown=0, time=23.7112s
+step 33: accuracy=0.6660, sparsity=0.1250, loss=0.474540, regrown=0, time=23.9188s
+step 34: accuracy=0.6760, sparsity=0.1250, loss=0.469351, regrown=0, time=24.1566s
+step 35: accuracy=0.6660, sparsity=0.1250, loss=0.478281, regrown=0, time=23.9992s
+step 36: accuracy=0.6640, sparsity=0.1250, loss=0.484554, regrown=0, time=23.7406s
+step 37: accuracy=0.6760, sparsity=0.1250, loss=0.475183, regrown=0, time=24.1035s
+step 38: accuracy=0.6700, sparsity=0.1250, loss=0.466823, regrown=0, time=23.6868s
+step 39: accuracy=0.6620, sparsity=0.1250, loss=0.467119, regrown=0, time=23.9147s
+step 40: accuracy=0.6840, sparsity=0.1250, loss=0.469664, regrown=0, time=24.0450s
+cumulative result: accuracy=0.6840, sparsity=0.1250, loss=0.469664, time=0:16:00.350000 (960.3467s)
+(validation accuracy on held-out set: 0.6933)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.6300, sparsity=0.0000, loss=0.323999, regrown=0, time=23.7260s
+step 2: accuracy=0.6300, sparsity=0.0000, loss=0.229139, regrown=0, time=23.8192s
+step 3: accuracy=0.6260, sparsity=0.0000, loss=0.222720, regrown=0, time=23.8877s
+step 4: accuracy=0.6340, sparsity=0.0000, loss=0.230285, regrown=0, time=23.7647s
+step 5: accuracy=0.6340, sparsity=0.0000, loss=0.241592, regrown=0, time=23.8535s
+step 6: accuracy=0.6460, sparsity=0.0000, loss=0.251953, regrown=0, time=23.6348s
+step 7: accuracy=0.6120, sparsity=0.0000, loss=0.299721, regrown=0, time=24.0071s
+step 8: accuracy=0.6420, sparsity=0.0000, loss=0.292476, regrown=0, time=23.8280s
+step 9: accuracy=0.6520, sparsity=0.0000, loss=0.281480, regrown=0, time=23.5970s
+step 10: accuracy=0.6800, sparsity=0.0000, loss=0.287432, regrown=0, time=24.0321s
+step 11: accuracy=0.6420, sparsity=0.0000, loss=0.298720, regrown=0, time=23.8662s
+step 12: accuracy=0.6800, sparsity=0.0000, loss=0.316626, regrown=0, time=23.6269s
+step 13: accuracy=0.6440, sparsity=0.0833, loss=0.323373, regrown=0, time=24.0543s
+step 14: accuracy=0.6940, sparsity=0.0833, loss=0.328589, regrown=0, time=23.6341s
+step 15: accuracy=0.6320, sparsity=0.0833, loss=0.340741, regrown=0, time=23.8501s
+step 16: accuracy=0.7020, sparsity=0.0833, loss=0.353938, regrown=0, time=24.0469s
+step 17: accuracy=0.6600, sparsity=0.1667, loss=0.361206, regrown=0, time=23.9374s
+step 18: accuracy=0.6860, sparsity=0.1667, loss=0.372047, regrown=0, time=23.6602s
+step 19: accuracy=0.6220, sparsity=0.1667, loss=0.397126, regrown=0, time=24.0853s
+step 20: accuracy=0.6680, sparsity=0.1667, loss=0.411905, regrown=0, time=23.6028s
+step 21: accuracy=0.6620, sparsity=0.2500, loss=0.409090, regrown=0, time=23.9050s
+step 22: accuracy=0.6660, sparsity=0.2500, loss=0.421928, regrown=0, time=24.0438s
+step 23: accuracy=0.6640, sparsity=0.2500, loss=0.429558, regrown=0, time=23.9754s
+step 24: accuracy=0.6720, sparsity=0.2500, loss=0.439346, regrown=0, time=23.6474s
+step 25: accuracy=0.6640, sparsity=0.2500, loss=0.450239, regrown=0, time=24.1979s
+step 26: accuracy=0.6700, sparsity=0.2500, loss=0.461363, regrown=0, time=23.6661s
+step 27: accuracy=0.6520, sparsity=0.2500, loss=0.472915, regrown=0, time=23.9093s
+step 28: accuracy=0.6820, sparsity=0.2500, loss=0.474146, regrown=0, time=24.1097s
+step 29: accuracy=0.6380, sparsity=0.2500, loss=0.475671, regrown=0, time=23.9822s
+step 30: accuracy=0.6960, sparsity=0.2500, loss=0.476113, regrown=0, time=23.6547s
+step 31: accuracy=0.6200, sparsity=0.2500, loss=0.485965, regrown=0, time=24.0614s
+step 32: accuracy=0.6840, sparsity=0.2500, loss=0.494614, regrown=0, time=23.5809s
+step 33: accuracy=0.6440, sparsity=0.2500, loss=0.486366, regrown=0, time=23.8233s
+step 34: accuracy=0.6700, sparsity=0.2500, loss=0.480357, regrown=0, time=24.0203s
+step 35: accuracy=0.6240, sparsity=0.2500, loss=0.494338, regrown=0, time=23.8775s
+step 36: accuracy=0.6680, sparsity=0.2500, loss=0.492840, regrown=0, time=23.6292s
+step 37: accuracy=0.6640, sparsity=0.2500, loss=0.476134, regrown=0, time=24.0143s
+step 38: accuracy=0.6680, sparsity=0.2500, loss=0.473998, regrown=0, time=23.6593s
+step 39: accuracy=0.6640, sparsity=0.2500, loss=0.473422, regrown=0, time=23.8860s
+step 40: accuracy=0.6720, sparsity=0.2500, loss=0.473238, regrown=0, time=23.9994s
+cumulative result: accuracy=0.6720, sparsity=0.2500, loss=0.473238, time=0:15:58.170000 (958.1714s)
+(validation accuracy on held-out set: 0.6700)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.6300, sparsity=0.0000, loss=0.323999, regrown=0, time=23.8239s
+step 2: accuracy=0.6300, sparsity=0.0000, loss=0.229139, regrown=0, time=23.8119s
+step 3: accuracy=0.6260, sparsity=0.0000, loss=0.222720, regrown=0, time=23.8141s
+step 4: accuracy=0.6340, sparsity=0.0000, loss=0.230285, regrown=0, time=23.8366s
+step 5: accuracy=0.6340, sparsity=0.0000, loss=0.241592, regrown=0, time=23.9577s
+step 6: accuracy=0.6460, sparsity=0.0000, loss=0.251953, regrown=0, time=23.6490s
+step 7: accuracy=0.6120, sparsity=0.0000, loss=0.299721, regrown=0, time=24.1569s
+step 8: accuracy=0.6420, sparsity=0.0000, loss=0.292476, regrown=0, time=23.9110s
+step 9: accuracy=0.6520, sparsity=0.0000, loss=0.281480, regrown=0, time=23.7610s
+step 10: accuracy=0.6800, sparsity=0.0000, loss=0.287432, regrown=0, time=23.9849s
+step 11: accuracy=0.6420, sparsity=0.0000, loss=0.298720, regrown=0, time=23.9062s
+step 12: accuracy=0.6800, sparsity=0.0000, loss=0.316626, regrown=0, time=23.6440s
+step 13: accuracy=0.6440, sparsity=0.0833, loss=0.323373, regrown=0, time=24.1584s
+step 14: accuracy=0.6940, sparsity=0.0833, loss=0.328589, regrown=0, time=23.6130s
+step 15: accuracy=0.6320, sparsity=0.0833, loss=0.340741, regrown=0, time=23.8395s
+step 16: accuracy=0.7020, sparsity=0.0833, loss=0.353938, regrown=0, time=24.0667s
+step 17: accuracy=0.6600, sparsity=0.1667, loss=0.361206, regrown=0, time=23.9559s
+step 18: accuracy=0.6860, sparsity=0.1667, loss=0.372047, regrown=0, time=23.6591s
+step 19: accuracy=0.6220, sparsity=0.1667, loss=0.397126, regrown=0, time=24.1484s
+step 20: accuracy=0.6680, sparsity=0.1667, loss=0.411905, regrown=0, time=23.7515s
+step 21: accuracy=0.6620, sparsity=0.2500, loss=0.409090, regrown=0, time=23.8935s
+step 22: accuracy=0.6660, sparsity=0.2500, loss=0.421928, regrown=0, time=24.0549s
+step 23: accuracy=0.6640, sparsity=0.2500, loss=0.429558, regrown=0, time=23.9186s
+step 24: accuracy=0.6720, sparsity=0.2500, loss=0.439346, regrown=0, time=23.6746s
+step 25: accuracy=0.6640, sparsity=0.3333, loss=0.450239, regrown=0, time=24.1370s
+step 26: accuracy=0.6440, sparsity=0.3333, loss=0.495632, regrown=0, time=23.7769s
+step 27: accuracy=0.6440, sparsity=0.3333, loss=0.493435, regrown=0, time=23.9284s
+step 28: accuracy=0.6780, sparsity=0.3333, loss=0.486120, regrown=0, time=24.0528s
+step 29: accuracy=0.6280, sparsity=0.4167, loss=0.485070, regrown=0, time=24.0285s
+step 30: accuracy=0.6560, sparsity=0.4167, loss=0.505184, regrown=0, time=23.6900s
+step 31: accuracy=0.6380, sparsity=0.4167, loss=0.495561, regrown=0, time=24.1967s
+step 32: accuracy=0.6460, sparsity=0.4167, loss=0.493446, regrown=0, time=23.6776s
+step 33: accuracy=0.6560, sparsity=0.4167, loss=0.484380, regrown=0, time=23.8452s
+step 34: accuracy=0.6660, sparsity=0.4167, loss=0.481998, regrown=0, time=24.0321s
+step 35: accuracy=0.6520, sparsity=0.4167, loss=0.481489, regrown=0, time=24.0079s
+step 36: accuracy=0.6720, sparsity=0.4167, loss=0.482340, regrown=0, time=23.6311s
+step 37: accuracy=0.6440, sparsity=0.4167, loss=0.483051, regrown=0, time=24.1003s
+step 38: accuracy=0.6780, sparsity=0.4167, loss=0.482813, regrown=0, time=23.6841s
+step 39: accuracy=0.6540, sparsity=0.4167, loss=0.489142, regrown=0, time=23.8607s
+step 40: accuracy=0.6700, sparsity=0.4167, loss=0.492944, regrown=0, time=24.0411s
+cumulative result: accuracy=0.6700, sparsity=0.4167, loss=0.492944, time=0:15:59.710000 (959.7136s)
+(validation accuracy on held-out set: 0.6667)
+
+##############################################################################
+[10/16] dataset=fashionmnist qubits=4 seed=1
+##############################################################################
+using lightning.gpu (cuQuantum), wires=4, shots=None
+[fashionmnist/q4/seed1] circuit device: cuda (lightning.gpu)
+
+training without pruning (dense teacher):
+step 1: accuracy=0.6000, loss=0.742935, time=20.3072s
+step 2: accuracy=0.6800, loss=0.650291, time=20.2954s
+step 3: accuracy=0.6220, loss=0.625013, time=20.0799s
+step 4: accuracy=0.7300, loss=0.619867, time=20.5369s
+step 5: accuracy=0.6480, loss=0.606870, time=20.2369s
+step 6: accuracy=0.7280, loss=0.602574, time=20.3798s
+step 7: accuracy=0.6660, loss=0.599765, time=20.3811s
+step 8: accuracy=0.7260, loss=0.598707, time=20.3603s
+step 9: accuracy=0.6580, loss=0.598495, time=20.4176s
+step 10: accuracy=0.7280, loss=0.599845, time=20.3806s
+step 11: accuracy=0.6320, loss=0.601812, time=20.4126s
+step 12: accuracy=0.7260, loss=0.604901, time=20.3667s
+step 13: accuracy=0.6380, loss=0.603169, time=20.3142s
+step 14: accuracy=0.7220, loss=0.602703, time=20.5770s
+step 15: accuracy=0.6600, loss=0.597852, time=20.2057s
+step 16: accuracy=0.7240, loss=0.597183, time=20.3715s
+step 17: accuracy=0.6600, loss=0.595018, time=20.3854s
+step 18: accuracy=0.7220, loss=0.595728, time=20.3759s
+step 19: accuracy=0.6420, loss=0.594902, time=20.4040s
+step 20: accuracy=0.7280, loss=0.597370, time=20.3782s
+step 21: accuracy=0.6300, loss=0.595501, time=20.4469s
+step 22: accuracy=0.7280, loss=0.597894, time=20.4535s
+step 23: accuracy=0.6380, loss=0.593164, time=20.3783s
+step 24: accuracy=0.7340, loss=0.593951, time=20.5966s
+step 25: accuracy=0.6440, loss=0.590385, time=20.4181s
+step 26: accuracy=0.7340, loss=0.591317, time=20.1640s
+step 27: accuracy=0.6360, loss=0.589020, time=20.4480s
+step 28: accuracy=0.7340, loss=0.590607, time=20.3469s
+step 29: accuracy=0.6340, loss=0.588549, time=20.3896s
+step 30: accuracy=0.7320, loss=0.589985, time=20.3475s
+step 31: accuracy=0.6320, loss=0.587670, time=20.5869s
+step 32: accuracy=0.7320, loss=0.588172, time=20.4303s
+step 33: accuracy=0.6420, loss=0.586289, time=20.1746s
+step 34: accuracy=0.7340, loss=0.586377, time=20.3727s
+step 35: accuracy=0.6400, loss=0.585429, time=20.4228s
+step 36: accuracy=0.7340, loss=0.585515, time=20.3243s
+step 37: accuracy=0.6360, loss=0.585252, time=20.3826s
+step 38: accuracy=0.7320, loss=0.585117, time=20.5850s
+step 39: accuracy=0.6360, loss=0.585039, time=20.1524s
+step 40: accuracy=0.7320, loss=0.584556, time=20.3357s
+cumulative result: accuracy=0.7320, loss=0.584556, time=0:13:38.940000 (818.9447s)
+(validation accuracy on held-out set: 0.6633)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.6440, sparsity=0.0000, loss=0.288126, regrown=0, time=23.8572s
+step 2: accuracy=0.6080, sparsity=0.0000, loss=0.238071, regrown=0, time=23.7723s
+step 3: accuracy=0.6600, sparsity=0.0000, loss=0.240292, regrown=0, time=23.8812s
+step 4: accuracy=0.7140, sparsity=0.0000, loss=0.236152, regrown=0, time=23.8042s
+step 5: accuracy=0.6920, sparsity=0.0000, loss=0.235964, regrown=0, time=23.8852s
+step 6: accuracy=0.7000, sparsity=0.0000, loss=0.243562, regrown=0, time=23.6490s
+step 7: accuracy=0.6300, sparsity=0.0000, loss=0.260924, regrown=0, time=23.9180s
+step 8: accuracy=0.6240, sparsity=0.0000, loss=0.299641, regrown=0, time=24.0651s
+step 9: accuracy=0.6560, sparsity=0.0000, loss=0.307072, regrown=0, time=23.9397s
+step 10: accuracy=0.6560, sparsity=0.0000, loss=0.297717, regrown=0, time=23.6642s
+step 11: accuracy=0.6640, sparsity=0.0000, loss=0.314444, regrown=0, time=24.0990s
+step 12: accuracy=0.7140, sparsity=0.0000, loss=0.330150, regrown=0, time=23.6643s
+step 13: accuracy=0.6900, sparsity=0.0833, loss=0.327690, regrown=0, time=23.8679s
+step 14: accuracy=0.7340, sparsity=0.0833, loss=0.332584, regrown=0, time=24.0221s
+step 15: accuracy=0.6580, sparsity=0.0833, loss=0.344359, regrown=0, time=23.9293s
+step 16: accuracy=0.6820, sparsity=0.0833, loss=0.362337, regrown=0, time=23.6141s
+step 17: accuracy=0.6640, sparsity=0.1250, loss=0.378697, regrown=0, time=24.1196s
+step 18: accuracy=0.7000, sparsity=0.1250, loss=0.380735, regrown=0, time=23.6629s
+step 19: accuracy=0.6520, sparsity=0.1250, loss=0.399431, regrown=0, time=23.8958s
+step 20: accuracy=0.7160, sparsity=0.1250, loss=0.425557, regrown=0, time=24.0837s
+step 21: accuracy=0.6780, sparsity=0.1250, loss=0.419838, regrown=0, time=23.9289s
+step 22: accuracy=0.7340, sparsity=0.1250, loss=0.421780, regrown=0, time=23.7181s
+step 23: accuracy=0.6580, sparsity=0.1250, loss=0.431629, regrown=0, time=24.2290s
+step 24: accuracy=0.7180, sparsity=0.1250, loss=0.447344, regrown=0, time=23.7109s
+step 25: accuracy=0.6680, sparsity=0.1250, loss=0.461728, regrown=0, time=23.9717s
+step 26: accuracy=0.6960, sparsity=0.1250, loss=0.466501, regrown=0, time=24.1379s
+step 27: accuracy=0.6400, sparsity=0.1250, loss=0.491840, regrown=0, time=23.9457s
+step 28: accuracy=0.7340, sparsity=0.1250, loss=0.505924, regrown=0, time=23.7000s
+step 29: accuracy=0.6920, sparsity=0.1250, loss=0.480748, regrown=0, time=24.1492s
+step 30: accuracy=0.7300, sparsity=0.1250, loss=0.472826, regrown=0, time=23.6932s
+step 31: accuracy=0.6720, sparsity=0.1250, loss=0.470130, regrown=0, time=23.9499s
+step 32: accuracy=0.7320, sparsity=0.1250, loss=0.471986, regrown=0, time=24.0433s
+step 33: accuracy=0.6600, sparsity=0.1250, loss=0.475900, regrown=0, time=23.9274s
+step 34: accuracy=0.6840, sparsity=0.1250, loss=0.474355, regrown=0, time=23.7020s
+step 35: accuracy=0.6380, sparsity=0.1250, loss=0.496384, regrown=0, time=24.1209s
+step 36: accuracy=0.7220, sparsity=0.1250, loss=0.504592, regrown=0, time=23.7105s
+step 37: accuracy=0.6840, sparsity=0.1250, loss=0.478214, regrown=0, time=23.9434s
+step 38: accuracy=0.7380, sparsity=0.1250, loss=0.471484, regrown=0, time=24.0370s
+step 39: accuracy=0.6620, sparsity=0.1250, loss=0.469926, regrown=0, time=23.9278s
+step 40: accuracy=0.7240, sparsity=0.1250, loss=0.472562, regrown=0, time=23.6808s
+cumulative result: accuracy=0.7240, sparsity=0.1250, loss=0.472562, time=0:15:59.850000 (959.8467s)
+(validation accuracy on held-out set: 0.6467)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.6440, sparsity=0.0000, loss=0.288126, regrown=0, time=23.7351s
+step 2: accuracy=0.6080, sparsity=0.0000, loss=0.238071, regrown=0, time=23.7661s
+step 3: accuracy=0.6600, sparsity=0.0000, loss=0.240292, regrown=0, time=23.7723s
+step 4: accuracy=0.7140, sparsity=0.0000, loss=0.236152, regrown=0, time=23.5576s
+step 5: accuracy=0.6920, sparsity=0.0000, loss=0.235964, regrown=0, time=23.7490s
+step 6: accuracy=0.7000, sparsity=0.0000, loss=0.243562, regrown=0, time=23.9707s
+step 7: accuracy=0.6300, sparsity=0.0000, loss=0.260924, regrown=0, time=23.8057s
+step 8: accuracy=0.6240, sparsity=0.0000, loss=0.299641, regrown=0, time=23.6367s
+step 9: accuracy=0.6560, sparsity=0.0000, loss=0.307072, regrown=0, time=24.0428s
+step 10: accuracy=0.6560, sparsity=0.0000, loss=0.297717, regrown=0, time=23.6339s
+step 11: accuracy=0.6640, sparsity=0.0000, loss=0.314444, regrown=0, time=23.8416s
+step 12: accuracy=0.7140, sparsity=0.0000, loss=0.330150, regrown=0, time=24.0634s
+step 13: accuracy=0.6900, sparsity=0.0833, loss=0.327690, regrown=0, time=23.9441s
+step 14: accuracy=0.7340, sparsity=0.0833, loss=0.332584, regrown=0, time=23.6288s
+step 15: accuracy=0.6580, sparsity=0.0833, loss=0.344359, regrown=0, time=24.0844s
+step 16: accuracy=0.6820, sparsity=0.0833, loss=0.362337, regrown=0, time=23.9772s
+step 17: accuracy=0.6640, sparsity=0.1667, loss=0.378697, regrown=0, time=23.6729s
+step 18: accuracy=0.7000, sparsity=0.1667, loss=0.380731, regrown=0, time=24.0381s
+step 19: accuracy=0.6520, sparsity=0.1667, loss=0.399230, regrown=0, time=23.6531s
+step 20: accuracy=0.7140, sparsity=0.1667, loss=0.423753, regrown=0, time=23.8303s
+step 21: accuracy=0.6840, sparsity=0.2500, loss=0.418752, regrown=0, time=24.0902s
+step 22: accuracy=0.7380, sparsity=0.2500, loss=0.420241, regrown=0, time=23.9250s
+step 23: accuracy=0.6600, sparsity=0.2500, loss=0.431185, regrown=0, time=23.6709s
+step 24: accuracy=0.7280, sparsity=0.2500, loss=0.446729, regrown=0, time=24.0579s
+step 25: accuracy=0.6560, sparsity=0.2500, loss=0.459952, regrown=0, time=23.6938s
+step 26: accuracy=0.6820, sparsity=0.2500, loss=0.468171, regrown=0, time=23.8468s
+step 27: accuracy=0.6260, sparsity=0.2500, loss=0.502642, regrown=0, time=24.0546s
+step 28: accuracy=0.7380, sparsity=0.2500, loss=0.515187, regrown=0, time=23.8607s
+step 29: accuracy=0.6960, sparsity=0.2500, loss=0.475319, regrown=0, time=23.6836s
+step 30: accuracy=0.7260, sparsity=0.2500, loss=0.472325, regrown=0, time=24.1598s
+step 31: accuracy=0.6780, sparsity=0.2500, loss=0.470894, regrown=0, time=23.6563s
+step 32: accuracy=0.7380, sparsity=0.2500, loss=0.470998, regrown=0, time=23.8225s
+step 33: accuracy=0.6800, sparsity=0.2500, loss=0.471490, regrown=0, time=24.0285s
+step 34: accuracy=0.7020, sparsity=0.2500, loss=0.471777, regrown=0, time=23.8283s
+step 35: accuracy=0.6200, sparsity=0.2500, loss=0.489491, regrown=0, time=23.6977s
+step 36: accuracy=0.7340, sparsity=0.2500, loss=0.518192, regrown=0, time=24.0767s
+step 37: accuracy=0.6640, sparsity=0.2500, loss=0.480837, regrown=0, time=23.6672s
+step 38: accuracy=0.7320, sparsity=0.2500, loss=0.473894, regrown=0, time=23.8992s
+step 39: accuracy=0.6560, sparsity=0.2500, loss=0.474423, regrown=0, time=24.0547s
+step 40: accuracy=0.7360, sparsity=0.2500, loss=0.478895, regrown=0, time=23.8918s
+cumulative result: accuracy=0.7360, sparsity=0.2500, loss=0.478895, time=0:15:58.090000 (958.0893s)
+(validation accuracy on held-out set: 0.6533)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.6440, sparsity=0.0000, loss=0.288126, regrown=0, time=23.8299s
+step 2: accuracy=0.6080, sparsity=0.0000, loss=0.238071, regrown=0, time=23.8688s
+step 3: accuracy=0.6600, sparsity=0.0000, loss=0.240292, regrown=0, time=23.6758s
+step 4: accuracy=0.7140, sparsity=0.0000, loss=0.236152, regrown=0, time=24.0017s
+step 5: accuracy=0.6920, sparsity=0.0000, loss=0.235964, regrown=0, time=23.8783s
+step 6: accuracy=0.7000, sparsity=0.0000, loss=0.243562, regrown=0, time=23.6390s
+step 7: accuracy=0.6300, sparsity=0.0000, loss=0.260924, regrown=0, time=24.1445s
+step 8: accuracy=0.6240, sparsity=0.0000, loss=0.299641, regrown=0, time=23.6057s
+step 9: accuracy=0.6560, sparsity=0.0000, loss=0.307072, regrown=0, time=23.8682s
+step 10: accuracy=0.6560, sparsity=0.0000, loss=0.297717, regrown=0, time=24.0448s
+step 11: accuracy=0.6640, sparsity=0.0000, loss=0.314444, regrown=0, time=23.9711s
+step 12: accuracy=0.7140, sparsity=0.0000, loss=0.330150, regrown=0, time=23.6054s
+step 13: accuracy=0.6900, sparsity=0.0833, loss=0.327690, regrown=0, time=24.1105s
+step 14: accuracy=0.7340, sparsity=0.0833, loss=0.332584, regrown=0, time=23.6902s
+step 15: accuracy=0.6580, sparsity=0.0833, loss=0.344359, regrown=0, time=23.9687s
+step 16: accuracy=0.6820, sparsity=0.0833, loss=0.362337, regrown=0, time=24.0623s
+step 17: accuracy=0.6640, sparsity=0.1667, loss=0.378697, regrown=0, time=23.9895s
+step 18: accuracy=0.7000, sparsity=0.1667, loss=0.380731, regrown=0, time=23.6673s
+step 19: accuracy=0.6520, sparsity=0.1667, loss=0.399230, regrown=0, time=24.1993s
+step 20: accuracy=0.7140, sparsity=0.1667, loss=0.423753, regrown=0, time=23.6699s
+step 21: accuracy=0.6840, sparsity=0.2500, loss=0.418752, regrown=0, time=23.9172s
+step 22: accuracy=0.7380, sparsity=0.2500, loss=0.420241, regrown=0, time=24.0466s
+step 23: accuracy=0.6600, sparsity=0.2500, loss=0.431185, regrown=0, time=23.9881s
+step 24: accuracy=0.7280, sparsity=0.2500, loss=0.446729, regrown=0, time=23.6692s
+step 25: accuracy=0.6560, sparsity=0.3333, loss=0.459952, regrown=0, time=24.1586s
+step 26: accuracy=0.7020, sparsity=0.3333, loss=0.466129, regrown=0, time=23.7077s
+step 27: accuracy=0.6100, sparsity=0.3333, loss=0.494231, regrown=0, time=23.8624s
+step 28: accuracy=0.7260, sparsity=0.3333, loss=0.518522, regrown=0, time=24.1003s
+step 29: accuracy=0.6880, sparsity=0.4167, loss=0.482494, regrown=0, time=23.9790s
+step 30: accuracy=0.7020, sparsity=0.4167, loss=0.499554, regrown=0, time=23.7451s
+step 31: accuracy=0.7280, sparsity=0.4167, loss=0.482686, regrown=0, time=24.1247s
+step 32: accuracy=0.6780, sparsity=0.4167, loss=0.479565, regrown=0, time=23.6833s
+step 33: accuracy=0.7220, sparsity=0.4167, loss=0.480495, regrown=0, time=23.8426s
+step 34: accuracy=0.6140, sparsity=0.4167, loss=0.480901, regrown=0, time=24.1065s
+step 35: accuracy=0.6520, sparsity=0.4167, loss=0.504269, regrown=0, time=23.9038s
+step 36: accuracy=0.6160, sparsity=0.4167, loss=0.509159, regrown=0, time=23.6598s
+step 37: accuracy=0.7140, sparsity=0.4167, loss=0.489699, regrown=0, time=24.0547s
+step 38: accuracy=0.6860, sparsity=0.4167, loss=0.476177, regrown=0, time=23.6437s
+step 39: accuracy=0.7340, sparsity=0.4167, loss=0.477093, regrown=0, time=23.9151s
+step 40: accuracy=0.6720, sparsity=0.4167, loss=0.477975, regrown=0, time=24.0656s
+cumulative result: accuracy=0.6720, sparsity=0.4167, loss=0.477975, time=0:15:59.700000 (959.6952s)
+(validation accuracy on held-out set: 0.5767)
+
+##############################################################################
+[11/16] dataset=fashionmnist qubits=4 seed=2
+##############################################################################
+using lightning.gpu (cuQuantum), wires=4, shots=None
+[fashionmnist/q4/seed2] circuit device: cuda (lightning.gpu)
+
+training without pruning (dense teacher):
+step 1: accuracy=0.6040, loss=0.716996, time=20.3025s
+step 2: accuracy=0.6460, loss=0.666370, time=20.3682s
+step 3: accuracy=0.6460, loss=0.657772, time=20.3773s
+step 4: accuracy=0.6420, loss=0.651982, time=20.3705s
+step 5: accuracy=0.6380, loss=0.648037, time=20.2180s
+step 6: accuracy=0.6460, loss=0.645379, time=20.3041s
+step 7: accuracy=0.6180, loss=0.644562, time=20.4207s
+step 8: accuracy=0.6560, loss=0.643863, time=20.3974s
+step 9: accuracy=0.6220, loss=0.641254, time=20.5550s
+step 10: accuracy=0.6700, loss=0.637756, time=20.4437s
+step 11: accuracy=0.6420, loss=0.634267, time=20.2067s
+step 12: accuracy=0.6460, loss=0.632434, time=20.3382s
+step 13: accuracy=0.6000, loss=0.633281, time=20.3659s
+step 14: accuracy=0.6380, loss=0.641145, time=20.3706s
+step 15: accuracy=0.6520, loss=0.643679, time=20.3712s
+step 16: accuracy=0.6580, loss=0.636649, time=20.6076s
+step 17: accuracy=0.6680, loss=0.624824, time=20.1750s
+step 18: accuracy=0.6680, loss=0.622538, time=20.4236s
+step 19: accuracy=0.6660, loss=0.620910, time=20.3538s
+step 20: accuracy=0.6800, loss=0.620676, time=20.4350s
+step 21: accuracy=0.6540, loss=0.622947, time=20.3683s
+step 22: accuracy=0.6760, loss=0.631556, time=20.3407s
+step 23: accuracy=0.6620, loss=0.628622, time=20.3681s
+step 24: accuracy=0.6780, loss=0.628469, time=20.3853s
+step 25: accuracy=0.6640, loss=0.619705, time=20.4213s
+step 26: accuracy=0.6780, loss=0.618100, time=20.6556s
+step 27: accuracy=0.6620, loss=0.616983, time=20.4367s
+step 28: accuracy=0.6760, loss=0.617065, time=20.1946s
+step 29: accuracy=0.6680, loss=0.617631, time=20.3830s
+step 30: accuracy=0.6800, loss=0.619962, time=20.3668s
+step 31: accuracy=0.6680, loss=0.621504, time=20.3717s
+step 32: accuracy=0.6740, loss=0.623000, time=20.5210s
+step 33: accuracy=0.6680, loss=0.619973, time=20.5137s
+step 34: accuracy=0.6700, loss=0.618324, time=20.5682s
+step 35: accuracy=0.6520, loss=0.617633, time=20.1665s
+step 36: accuracy=0.6660, loss=0.616823, time=20.3649s
+step 37: accuracy=0.6600, loss=0.617239, time=20.3665s
+step 38: accuracy=0.6780, loss=0.616433, time=20.3729s
+step 39: accuracy=0.6700, loss=0.617534, time=20.3452s
+step 40: accuracy=0.6840, loss=0.619097, time=20.3513s
+cumulative result: accuracy=0.6840, loss=0.619097, time=0:13:39.290000 (819.2886s)
+(validation accuracy on held-out set: 0.6600)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.6040, sparsity=0.0000, loss=0.282164, regrown=0, time=23.8878s
+step 2: accuracy=0.6180, sparsity=0.0000, loss=0.240326, regrown=0, time=23.7663s
+step 3: accuracy=0.6400, sparsity=0.0000, loss=0.248921, regrown=0, time=23.8166s
+step 4: accuracy=0.6380, sparsity=0.0000, loss=0.254133, regrown=0, time=23.8137s
+step 5: accuracy=0.6520, sparsity=0.0000, loss=0.262348, regrown=0, time=23.6596s
+step 6: accuracy=0.6560, sparsity=0.0000, loss=0.271542, regrown=0, time=24.0929s
+step 7: accuracy=0.6580, sparsity=0.0000, loss=0.279945, regrown=0, time=23.7295s
+step 8: accuracy=0.6240, sparsity=0.0000, loss=0.291181, regrown=0, time=23.9964s
+step 9: accuracy=0.6580, sparsity=0.0000, loss=0.309539, regrown=0, time=24.0123s
+step 10: accuracy=0.6020, sparsity=0.0000, loss=0.313168, regrown=0, time=23.9429s
+step 11: accuracy=0.6260, sparsity=0.0000, loss=0.329463, regrown=0, time=23.6893s
+step 12: accuracy=0.6200, sparsity=0.0000, loss=0.348797, regrown=0, time=23.8646s
+step 13: accuracy=0.6700, sparsity=0.0833, loss=0.355594, regrown=0, time=24.0328s
+step 14: accuracy=0.6720, sparsity=0.0833, loss=0.358409, regrown=0, time=23.9506s
+step 15: accuracy=0.6460, sparsity=0.0833, loss=0.372215, regrown=0, time=23.7684s
+step 16: accuracy=0.6500, sparsity=0.0833, loss=0.389772, regrown=0, time=24.1833s
+step 17: accuracy=0.6680, sparsity=0.1250, loss=0.394786, regrown=0, time=23.6946s
+step 18: accuracy=0.6560, sparsity=0.1250, loss=0.403506, regrown=0, time=23.8941s
+step 19: accuracy=0.6420, sparsity=0.1250, loss=0.418896, regrown=0, time=24.0902s
+step 20: accuracy=0.6520, sparsity=0.1250, loss=0.438221, regrown=0, time=23.9054s
+step 21: accuracy=0.6600, sparsity=0.1250, loss=0.441606, regrown=0, time=23.6773s
+step 22: accuracy=0.6700, sparsity=0.1250, loss=0.449650, regrown=0, time=24.0358s
+step 23: accuracy=0.6680, sparsity=0.1250, loss=0.459917, regrown=0, time=23.9042s
+step 24: accuracy=0.6500, sparsity=0.1250, loss=0.472966, regrown=0, time=23.7012s
+step 25: accuracy=0.6640, sparsity=0.1250, loss=0.493984, regrown=0, time=24.1308s
+step 26: accuracy=0.6340, sparsity=0.1250, loss=0.501953, regrown=0, time=23.6903s
+step 27: accuracy=0.6220, sparsity=0.1250, loss=0.529728, regrown=0, time=23.8739s
+step 28: accuracy=0.6700, sparsity=0.1250, loss=0.518243, regrown=0, time=24.1692s
+step 29: accuracy=0.5960, sparsity=0.1250, loss=0.523587, regrown=0, time=23.9094s
+step 30: accuracy=0.6920, sparsity=0.1250, loss=0.516945, regrown=0, time=23.7119s
+step 31: accuracy=0.6660, sparsity=0.1250, loss=0.514341, regrown=0, time=24.1174s
+step 32: accuracy=0.6520, sparsity=0.1250, loss=0.505066, regrown=0, time=23.7170s
+step 33: accuracy=0.6620, sparsity=0.1250, loss=0.505503, regrown=0, time=23.9051s
+step 34: accuracy=0.6020, sparsity=0.1250, loss=0.508180, regrown=0, time=24.0987s
+step 35: accuracy=0.6560, sparsity=0.1250, loss=0.557618, regrown=0, time=23.8956s
+step 36: accuracy=0.6320, sparsity=0.1250, loss=0.516019, regrown=0, time=23.7625s
+step 37: accuracy=0.6760, sparsity=0.1250, loss=0.511149, regrown=0, time=24.1091s
+step 38: accuracy=0.6520, sparsity=0.1250, loss=0.504249, regrown=0, time=23.7401s
+step 39: accuracy=0.6740, sparsity=0.1250, loss=0.507443, regrown=0, time=23.9586s
+step 40: accuracy=0.6580, sparsity=0.1250, loss=0.512269, regrown=0, time=24.0747s
+cumulative result: accuracy=0.6580, sparsity=0.1250, loss=0.512269, time=0:16:00 (960.0017s)
+(validation accuracy on held-out set: 0.6467)
+
+training with QAdaPrune-R (v6) pruning:
+step 1: accuracy=0.6040, sparsity=0.0000, loss=0.282164, regrown=0, time=23.7521s
+step 2: accuracy=0.6180, sparsity=0.0000, loss=0.240326, regrown=0, time=23.7248s
+step 3: accuracy=0.6400, sparsity=0.0000, loss=0.248921, regrown=0, time=23.7972s
+step 4: accuracy=0.6380, sparsity=0.0000, loss=0.254133, regrown=0, time=23.7941s
+step 5: accuracy=0.6520, sparsity=0.0000, loss=0.262348, regrown=0, time=23.9179s
+step 6: accuracy=0.6560, sparsity=0.0000, loss=0.271542, regrown=0, time=23.6122s
+step 7: accuracy=0.6580, sparsity=0.0000, loss=0.279945, regrown=0, time=23.9855s
+step 8: accuracy=0.6240, sparsity=0.0000, loss=0.291181, regrown=0, time=23.8489s
+step 9: accuracy=0.6580, sparsity=0.0000, loss=0.309539, regrown=0, time=23.6639s
+step 10: accuracy=0.6020, sparsity=0.0000, loss=0.313168, regrown=0, time=23.9321s
+step 11: accuracy=0.6260, sparsity=0.0000, loss=0.329463, regrown=0, time=23.8419s
+step 12: accuracy=0.6200, sparsity=0.0000, loss=0.348797, regrown=0, time=23.6908s
+step 13: accuracy=0.6700, sparsity=0.0833, loss=0.355594, regrown=0, time=24.0655s
+step 14: accuracy=0.6720, sparsity=0.0833, loss=0.358409, regrown=0, time=23.7004s
+step 15: accuracy=0.6460, sparsity=0.0833, loss=0.372215, regrown=0, time=23.9000s
+step 16: accuracy=0.6500, sparsity=0.0833, loss=0.389772, regrown=0, time=24.0578s
+step 17: accuracy=0.6680, sparsity=0.1667, loss=0.394786, regrown=0, time=23.9007s
+step 18: accuracy=0.6580, sparsity=0.1667, loss=0.403428, regrown=0, time=23.6825s
+step 19: accuracy=0.6380, sparsity=0.1667, loss=0.419508, regrown=0, time=24.0384s
+step 20: accuracy=0.6680, sparsity=0.1667, loss=0.438532, regrown=0, time=23.6567s

@@ -1,0 +1,694 @@
+Torch device: cuda
+GPU: NVIDIA A40
+Run config:
+  datasets: ['mnist', 'fashionmnist']
+  qubits: [4]
+  sparsities: [0.1, 0.25, 0.4]
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7]
+  encoding: pca
+  noise_levels: [0.03, 0.05, 0.1]
+  layers: 3
+  steps: 80
+  win_sz: 5
+  shots: None
+  prune_start_frac: 0.15
+  prune_end_frac: 0.65
+  max_round_freeze_frac: 0.08
+  noise_eval_samples: 100
+  v5_grad_pts: 32
+  v5_imp_ema_beta: 0.9
+  v5_hysteresis_rounds: 2
+  v5_regrow_frac_init: 0.3
+  v5_protect_entangling_frac: 0.0
+  v5_distill_hardness_max: 0.7
+  v5_distill_hardness_min: 0.2
+  v5_lr_warm_mult: 2.0
+
+This sweep will train 64 models (16 combos x (1 no-pruning + 3 sparsities)).
+
+##############################################################################
+[1/16] dataset=mnist qubits=4 seed=0
+##############################################################################
+using lightning.gpu (cuQuantum), wires=4, shots=None
+[mnist/q4/seed0] circuit device: cuda (lightning.gpu)
+
+training without pruning (dense teacher):
+step 1: accuracy=0.7060, loss=0.704677, time=19.4688s
+step 2: accuracy=0.7240, loss=0.584760, time=19.2827s
+step 3: accuracy=0.7400, loss=0.557392, time=19.4644s
+step 4: accuracy=0.7460, loss=0.541821, time=19.7468s
+step 5: accuracy=0.7480, loss=0.532583, time=19.2769s
+step 6: accuracy=0.7440, loss=0.527062, time=19.5301s
+step 7: accuracy=0.7480, loss=0.523397, time=20.8415s
+step 8: accuracy=0.7380, loss=0.521194, time=19.8114s
+step 9: accuracy=0.7460, loss=0.520282, time=19.4116s
+step 10: accuracy=0.7340, loss=0.520725, time=19.4935s
+step 11: accuracy=0.7480, loss=0.523138, time=19.3257s
+step 12: accuracy=0.7400, loss=0.524769, time=19.3328s
+step 13: accuracy=0.7500, loss=0.525126, time=19.3630s
+step 14: accuracy=0.7440, loss=0.522364, time=19.5381s
+step 15: accuracy=0.7400, loss=0.521245, time=19.2342s
+step 16: accuracy=0.7460, loss=0.520099, time=19.0146s
+step 17: accuracy=0.7420, loss=0.519805, time=19.3490s
+step 18: accuracy=0.7440, loss=0.519465, time=19.2029s
+step 19: accuracy=0.7420, loss=0.519663, time=19.2443s
+step 20: accuracy=0.7440, loss=0.519726, time=19.5045s
+step 21: accuracy=0.7460, loss=0.520429, time=19.3182s
+step 22: accuracy=0.7400, loss=0.520670, time=19.8633s
+step 23: accuracy=0.7480, loss=0.521779, time=20.0333s
+step 24: accuracy=0.7440, loss=0.521511, time=19.8785s
+step 25: accuracy=0.7480, loss=0.522363, time=19.9455s
+step 26: accuracy=0.7380, loss=0.521441, time=19.7531s
+step 27: accuracy=0.7460, loss=0.522000, time=19.4112s
+step 28: accuracy=0.7480, loss=0.521492, time=18.9771s
+step 29: accuracy=0.7460, loss=0.522606, time=19.2331s
+step 30: accuracy=0.7320, loss=0.522388, time=19.2137s
+step 31: accuracy=0.7440, loss=0.522524, time=19.0832s
+step 32: accuracy=0.7400, loss=0.521057, time=19.4660s
+step 33: accuracy=0.7500, loss=0.520185, time=19.2927s
+step 34: accuracy=0.7520, loss=0.519337, time=19.0661s
+step 35: accuracy=0.7520, loss=0.518578, time=19.3867s
+step 36: accuracy=0.7520, loss=0.518171, time=19.4553s
+step 37: accuracy=0.7520, loss=0.517798, time=19.2195s
+step 38: accuracy=0.7500, loss=0.517741, time=19.3808s
+step 39: accuracy=0.7520, loss=0.517706, time=19.6718s
+step 40: accuracy=0.7420, loss=0.517929, time=19.2655s
+step 41: accuracy=0.7520, loss=0.518143, time=19.4636s
+step 42: accuracy=0.7420, loss=0.518437, time=19.5151s
+step 43: accuracy=0.7520, loss=0.518631, time=19.4656s
+step 44: accuracy=0.7380, loss=0.518559, time=19.5857s
+step 45: accuracy=0.7520, loss=0.518480, time=19.5620s
+step 46: accuracy=0.7380, loss=0.518154, time=19.2171s
+step 47: accuracy=0.7280, loss=0.518557, time=19.4085s
+step 48: accuracy=0.7300, loss=0.521338, time=19.4842s
+step 49: accuracy=0.7280, loss=0.528996, time=19.2586s
+step 50: accuracy=0.7360, loss=0.528637, time=19.5093s
+step 51: accuracy=0.7400, loss=0.524206, time=19.8122s
+step 52: accuracy=0.7360, loss=0.518037, time=19.2436s
+step 53: accuracy=0.7460, loss=0.516538, time=19.5607s
+step 54: accuracy=0.7400, loss=0.515714, time=19.3720s
+step 55: accuracy=0.7440, loss=0.515518, time=19.3377s
+step 56: accuracy=0.7400, loss=0.515506, time=19.5895s
+step 57: accuracy=0.7400, loss=0.515904, time=19.3783s
+step 58: accuracy=0.7320, loss=0.516524, time=20.1373s
+step 59: accuracy=0.7300, loss=0.517841, time=20.1336s
+step 60: accuracy=0.7340, loss=0.519105, time=19.2427s
+step 61: accuracy=0.7280, loss=0.520721, time=18.8233s
+step 62: accuracy=0.7360, loss=0.520509, time=19.0515s
+step 63: accuracy=0.7240, loss=0.520245, time=19.0378s
+step 64: accuracy=0.7360, loss=0.519013, time=18.6536s
+step 65: accuracy=0.7340, loss=0.518806, time=18.9576s
+step 66: accuracy=0.7360, loss=0.518574, time=18.8670s
+step 67: accuracy=0.7340, loss=0.518406, time=18.8669s
+step 68: accuracy=0.7380, loss=0.517780, time=19.0962s
+step 69: accuracy=0.7320, loss=0.517043, time=18.9054s
+step 70: accuracy=0.7360, loss=0.516733, time=18.9777s
+step 71: accuracy=0.7300, loss=0.517083, time=18.8732s
+step 72: accuracy=0.7320, loss=0.518082, time=18.8188s
+step 73: accuracy=0.7320, loss=0.520184, time=18.7857s
+step 74: accuracy=0.7380, loss=0.520980, time=19.0233s
+step 75: accuracy=0.7340, loss=0.520895, time=18.8192s
+step 76: accuracy=0.7380, loss=0.518886, time=18.6209s
+step 77: accuracy=0.7300, loss=0.517644, time=18.8653s
+step 78: accuracy=0.7320, loss=0.516887, time=18.7759s
+step 79: accuracy=0.7340, loss=0.516857, time=18.8460s
+step 80: accuracy=0.7360, loss=0.517245, time=19.0130s
+cumulative result: accuracy=0.7360, loss=0.517245, time=0:25:50.070000 (1550.0673s)
+(validation accuracy on held-out set: 0.7733)
+step 1: accuracy=0.7020, sparsity=0.0000, loss=0.321761, regrown=0, time=0.0000s
+step 2: accuracy=0.7280, sparsity=0.0000, loss=0.215725, regrown=0, time=0.0000s
+step 3: accuracy=0.7340, sparsity=0.0000, loss=0.194486, regrown=0, time=0.0000s
+step 4: accuracy=0.7440, sparsity=0.0000, loss=0.188622, regrown=0, time=0.0000s
+step 5: accuracy=0.7420, sparsity=0.0000, loss=0.188005, regrown=0, time=0.0000s
+step 6: accuracy=0.7420, sparsity=0.0000, loss=0.189546, regrown=0, time=0.0000s
+step 7: accuracy=0.7440, sparsity=0.0000, loss=0.192301, regrown=0, time=0.0000s
+step 8: accuracy=0.7440, sparsity=0.0000, loss=0.195781, regrown=0, time=0.0000s
+step 9: accuracy=0.7420, sparsity=0.0000, loss=0.199868, regrown=0, time=0.0000s
+step 10: accuracy=0.7440, sparsity=0.0000, loss=0.204688, regrown=0, time=0.0000s
+step 11: accuracy=0.7440, sparsity=0.0000, loss=0.210246, regrown=0, time=0.0000s
+step 12: accuracy=0.7480, sparsity=0.0000, loss=0.216790, regrown=0, time=0.0000s
+step 13: accuracy=0.7360, sparsity=0.0000, loss=0.222668, regrown=0, time=0.0000s
+step 14: accuracy=0.7480, sparsity=0.0000, loss=0.228767, regrown=0, time=0.0000s
+step 15: accuracy=0.7440, sparsity=0.0000, loss=0.232515, regrown=0, time=0.0000s
+step 16: accuracy=0.7440, sparsity=0.0417, loss=0.236616, regrown=0, time=0.0000s
+step 17: accuracy=0.7280, sparsity=0.0417, loss=0.240303, regrown=0, time=0.0000s
+step 18: accuracy=0.6820, sparsity=0.0417, loss=0.267458, regrown=0, time=0.0000s
+step 19: accuracy=0.7240, sparsity=0.0417, loss=0.305528, regrown=0, time=0.0000s
+step 20: accuracy=0.7480, sparsity=0.0417, loss=0.287353, regrown=0, time=0.0000s
+step 21: accuracy=0.7480, sparsity=0.0833, loss=0.260600, regrown=0, time=0.0000s
+step 22: accuracy=0.7300, sparsity=0.0833, loss=0.263347, regrown=0, time=0.0000s
+step 23: accuracy=0.7220, sparsity=0.0833, loss=0.274994, regrown=0, time=0.0000s
+step 24: accuracy=0.7320, sparsity=0.0833, loss=0.292125, regrown=0, time=0.0000s
+step 25: accuracy=0.7480, sparsity=0.0833, loss=0.287265, regrown=0, time=0.0000s
+step 26: accuracy=0.7480, sparsity=0.0833, loss=0.284173, regrown=0, time=0.0000s
+step 27: accuracy=0.7380, sparsity=0.0833, loss=0.286645, regrown=0, time=0.0000s
+step 28: accuracy=0.7440, sparsity=0.0833, loss=0.292438, regrown=0, time=0.0000s
+step 29: accuracy=0.7320, sparsity=0.0833, loss=0.301599, regrown=0, time=0.0000s
+step 30: accuracy=0.7160, sparsity=0.0833, loss=0.315180, regrown=0, time=0.0000s
+step 31: accuracy=0.7400, sparsity=0.1250, loss=0.320662, regrown=0, time=0.0000s
+step 32: accuracy=0.7460, sparsity=0.1250, loss=0.314474, regrown=0, time=0.0000s
+step 33: accuracy=0.7100, sparsity=0.1250, loss=0.328322, regrown=0, time=0.0000s
+step 34: accuracy=0.7200, sparsity=0.1250, loss=0.346263, regrown=0, time=0.0000s
+step 35: accuracy=0.7420, sparsity=0.1250, loss=0.337692, regrown=0, time=0.0000s
+step 36: accuracy=0.7520, sparsity=0.1250, loss=0.334820, regrown=0, time=0.0000s
+step 37: accuracy=0.7240, sparsity=0.1250, loss=0.337366, regrown=0, time=0.0000s
+step 38: accuracy=0.7180, sparsity=0.1250, loss=0.352040, regrown=0, time=0.0000s
+step 39: accuracy=0.7320, sparsity=0.1250, loss=0.370577, regrown=0, time=0.0000s
+step 40: accuracy=0.7520, sparsity=0.1250, loss=0.362280, regrown=0, time=0.0000s
+step 41: accuracy=0.7380, sparsity=0.1250, loss=0.357151, regrown=0, time=0.0000s
+step 42: accuracy=0.7480, sparsity=0.1250, loss=0.360095, regrown=0, time=0.0000s
+step 43: accuracy=0.7400, sparsity=0.1250, loss=0.365565, regrown=0, time=0.0000s
+step 44: accuracy=0.7340, sparsity=0.1250, loss=0.373853, regrown=0, time=0.0000s
+step 45: accuracy=0.7300, sparsity=0.1250, loss=0.386180, regrown=0, time=0.0000s
+step 46: accuracy=0.7460, sparsity=0.1250, loss=0.392071, regrown=0, time=0.0000s
+step 47: accuracy=0.7240, sparsity=0.1250, loss=0.388325, regrown=0, time=0.0000s
+step 48: accuracy=0.7140, sparsity=0.1250, loss=0.404854, regrown=0, time=0.0000s
+step 49: accuracy=0.7280, sparsity=0.1250, loss=0.424324, regrown=0, time=0.0000s
+step 50: accuracy=0.7440, sparsity=0.1250, loss=0.419383, regrown=0, time=0.0000s
+step 51: accuracy=0.7400, sparsity=0.1250, loss=0.407010, regrown=0, time=0.0000s
+step 52: accuracy=0.7480, sparsity=0.1250, loss=0.408578, regrown=0, time=0.0000s
+step 53: accuracy=0.7440, sparsity=0.1250, loss=0.413357, regrown=0, time=0.0000s
+step 54: accuracy=0.7480, sparsity=0.1250, loss=0.413892, regrown=0, time=0.0000s
+step 55: accuracy=0.7380, sparsity=0.1250, loss=0.415102, regrown=0, time=0.0000s
+step 56: accuracy=0.7480, sparsity=0.1250, loss=0.416312, regrown=0, time=0.0000s
+step 57: accuracy=0.7300, sparsity=0.1250, loss=0.415595, regrown=0, time=0.0000s
+step 58: accuracy=0.7080, sparsity=0.1250, loss=0.430040, regrown=0, time=0.0000s
+step 59: accuracy=0.7220, sparsity=0.1250, loss=0.447889, regrown=0, time=0.0000s
+step 60: accuracy=0.7300, sparsity=0.1250, loss=0.439736, regrown=0, time=0.0000s
+step 61: accuracy=0.7360, sparsity=0.1250, loss=0.422271, regrown=0, time=0.0000s
+step 62: accuracy=0.7260, sparsity=0.1250, loss=0.416766, regrown=0, time=0.0000s
+step 63: accuracy=0.7340, sparsity=0.1250, loss=0.423587, regrown=0, time=0.0000s
+step 64: accuracy=0.7340, sparsity=0.1250, loss=0.425657, regrown=0, time=0.0000s
+step 65: accuracy=0.7360, sparsity=0.1250, loss=0.415847, regrown=0, time=0.0000s
+step 66: accuracy=0.7420, sparsity=0.1250, loss=0.413028, regrown=0, time=0.0000s
+step 67: accuracy=0.7400, sparsity=0.1250, loss=0.412310, regrown=0, time=0.0000s
+step 68: accuracy=0.7460, sparsity=0.1250, loss=0.412583, regrown=0, time=0.0000s
+step 69: accuracy=0.7400, sparsity=0.1250, loss=0.414446, regrown=0, time=0.0000s
+step 70: accuracy=0.7200, sparsity=0.1250, loss=0.420347, regrown=0, time=0.0000s
+step 71: accuracy=0.7320, sparsity=0.1250, loss=0.428452, regrown=0, time=0.0000s
+step 72: accuracy=0.7060, sparsity=0.1250, loss=0.421551, regrown=0, time=0.0000s
+step 73: accuracy=0.7020, sparsity=0.1250, loss=0.446259, regrown=0, time=0.0000s
+step 74: accuracy=0.7160, sparsity=0.1250, loss=0.450593, regrown=0, time=0.0000s
+step 75: accuracy=0.7320, sparsity=0.1250, loss=0.427915, regrown=0, time=0.0000s
+step 76: accuracy=0.7380, sparsity=0.1250, loss=0.414797, regrown=0, time=0.0000s
+step 77: accuracy=0.7380, sparsity=0.1250, loss=0.412926, regrown=0, time=0.0000s
+step 78: accuracy=0.7420, sparsity=0.1250, loss=0.412384, regrown=0, time=0.0000s
+step 79: accuracy=0.7420, sparsity=0.1250, loss=0.412411, regrown=0, time=0.0000s
+step 80: accuracy=0.7420, sparsity=0.1250, loss=0.412735, regrown=0, time=0.0000s
+step 1: accuracy=0.7020, sparsity=0.0000, loss=0.321761, regrown=0, time=0.0000s
+step 2: accuracy=0.7280, sparsity=0.0000, loss=0.215725, regrown=0, time=0.0000s
+step 3: accuracy=0.7340, sparsity=0.0000, loss=0.194486, regrown=0, time=0.0000s
+step 4: accuracy=0.7440, sparsity=0.0000, loss=0.188622, regrown=0, time=0.0000s
+step 5: accuracy=0.7420, sparsity=0.0000, loss=0.188005, regrown=0, time=0.0000s
+step 6: accuracy=0.7420, sparsity=0.0000, loss=0.189546, regrown=0, time=0.0000s
+step 7: accuracy=0.7440, sparsity=0.0000, loss=0.192301, regrown=0, time=0.0000s
+step 8: accuracy=0.7440, sparsity=0.0000, loss=0.195781, regrown=0, time=0.0000s
+step 9: accuracy=0.7420, sparsity=0.0000, loss=0.199868, regrown=0, time=0.0000s
+step 10: accuracy=0.7440, sparsity=0.0000, loss=0.204688, regrown=0, time=0.0000s
+step 11: accuracy=0.7440, sparsity=0.0000, loss=0.210246, regrown=0, time=0.0000s
+step 12: accuracy=0.7480, sparsity=0.0000, loss=0.216790, regrown=0, time=0.0000s
+step 13: accuracy=0.7360, sparsity=0.0000, loss=0.222668, regrown=0, time=0.0000s
+step 14: accuracy=0.7480, sparsity=0.0000, loss=0.228767, regrown=0, time=0.0000s
+step 15: accuracy=0.7440, sparsity=0.0000, loss=0.232515, regrown=0, time=0.0000s
+step 16: accuracy=0.7440, sparsity=0.0833, loss=0.236616, regrown=0, time=0.0000s
+step 17: accuracy=0.7280, sparsity=0.0833, loss=0.240303, regrown=0, time=0.0000s
+step 18: accuracy=0.6820, sparsity=0.0833, loss=0.267458, regrown=0, time=0.0000s
+step 19: accuracy=0.7240, sparsity=0.0833, loss=0.305528, regrown=0, time=0.0000s
+step 20: accuracy=0.7480, sparsity=0.0833, loss=0.287353, regrown=0, time=0.0000s
+step 21: accuracy=0.7480, sparsity=0.1250, loss=0.260600, regrown=0, time=0.0000s
+step 22: accuracy=0.7320, sparsity=0.1250, loss=0.262550, regrown=0, time=0.0000s
+step 23: accuracy=0.7280, sparsity=0.1250, loss=0.271695, regrown=0, time=0.0000s
+step 24: accuracy=0.7220, sparsity=0.1250, loss=0.288032, regrown=0, time=0.0000s
+step 25: accuracy=0.7420, sparsity=0.1250, loss=0.289523, regrown=0, time=0.0000s
+step 26: accuracy=0.7460, sparsity=0.2083, loss=0.285226, regrown=0, time=0.0000s
+step 27: accuracy=0.7220, sparsity=0.2083, loss=0.304768, regrown=0, time=0.0000s
+step 28: accuracy=0.6700, sparsity=0.2083, loss=0.319093, regrown=0, time=0.0000s
+step 29: accuracy=0.7380, sparsity=0.2083, loss=0.342041, regrown=0, time=0.0000s
+step 30: accuracy=0.7520, sparsity=0.2083, loss=0.313717, regrown=0, time=0.0000s
+step 31: accuracy=0.7460, sparsity=0.2500, loss=0.310357, regrown=0, time=0.0000s
+step 32: accuracy=0.7560, sparsity=0.2500, loss=0.312473, regrown=0, time=0.0000s
+step 33: accuracy=0.7380, sparsity=0.2500, loss=0.317859, regrown=0, time=0.0000s
+step 34: accuracy=0.7540, sparsity=0.2500, loss=0.323745, regrown=0, time=0.0000s
+step 35: accuracy=0.7400, sparsity=0.2500, loss=0.329356, regrown=0, time=0.0000s
+step 36: accuracy=0.7600, sparsity=0.2500, loss=0.333711, regrown=0, time=0.0000s
+step 37: accuracy=0.7460, sparsity=0.2500, loss=0.337330, regrown=0, time=0.0000s
+step 38: accuracy=0.7120, sparsity=0.2500, loss=0.347291, regrown=0, time=0.0000s
+step 39: accuracy=0.7360, sparsity=0.2500, loss=0.365939, regrown=0, time=0.0000s
+step 40: accuracy=0.7180, sparsity=0.2500, loss=0.373156, regrown=0, time=0.0000s
+step 41: accuracy=0.7400, sparsity=0.2500, loss=0.367758, regrown=0, time=0.0000s
+step 42: accuracy=0.7520, sparsity=0.2500, loss=0.362005, regrown=0, time=0.0000s
+step 43: accuracy=0.7340, sparsity=0.2500, loss=0.368570, regrown=0, time=0.0000s
+step 44: accuracy=0.7300, sparsity=0.2500, loss=0.377049, regrown=0, time=0.0000s
+step 45: accuracy=0.7420, sparsity=0.2500, loss=0.386105, regrown=0, time=0.0000s
+step 46: accuracy=0.7540, sparsity=0.2500, loss=0.389481, regrown=0, time=0.0000s
+step 47: accuracy=0.7440, sparsity=0.2500, loss=0.388699, regrown=0, time=0.0000s
+step 48: accuracy=0.7260, sparsity=0.2500, loss=0.400888, regrown=0, time=0.0000s
+step 49: accuracy=0.7340, sparsity=0.2500, loss=0.415190, regrown=0, time=0.0000s
+step 50: accuracy=0.7240, sparsity=0.2500, loss=0.417375, regrown=0, time=0.0000s
+step 51: accuracy=0.7400, sparsity=0.2500, loss=0.415244, regrown=0, time=0.0000s
+step 52: accuracy=0.7380, sparsity=0.2500, loss=0.413133, regrown=0, time=0.0000s
+step 53: accuracy=0.7280, sparsity=0.2500, loss=0.425591, regrown=0, time=0.0000s
+step 54: accuracy=0.7200, sparsity=0.2500, loss=0.434631, regrown=0, time=0.0000s
+step 55: accuracy=0.7420, sparsity=0.2500, loss=0.432210, regrown=0, time=0.0000s
+step 56: accuracy=0.7540, sparsity=0.2500, loss=0.419007, regrown=0, time=0.0000s
+step 57: accuracy=0.7420, sparsity=0.2500, loss=0.415973, regrown=0, time=0.0000s
+step 58: accuracy=0.7540, sparsity=0.2500, loss=0.416852, regrown=0, time=0.0000s
+step 59: accuracy=0.7440, sparsity=0.2500, loss=0.419603, regrown=0, time=0.0000s
+step 60: accuracy=0.7400, sparsity=0.2500, loss=0.424125, regrown=0, time=0.0000s
+step 61: accuracy=0.7400, sparsity=0.2500, loss=0.423872, regrown=0, time=0.0000s
+step 62: accuracy=0.7340, sparsity=0.2500, loss=0.419596, regrown=0, time=0.0000s
+step 63: accuracy=0.7420, sparsity=0.2500, loss=0.430750, regrown=0, time=0.0000s
+step 64: accuracy=0.7240, sparsity=0.2500, loss=0.440082, regrown=0, time=0.0000s
+step 65: accuracy=0.7400, sparsity=0.2500, loss=0.431140, regrown=0, time=0.0000s
+step 66: accuracy=0.7480, sparsity=0.2500, loss=0.423104, regrown=0, time=0.0000s
+step 67: accuracy=0.7380, sparsity=0.2500, loss=0.419064, regrown=0, time=0.0000s
+step 68: accuracy=0.7200, sparsity=0.2500, loss=0.426407, regrown=0, time=0.0000s
+step 69: accuracy=0.7280, sparsity=0.2500, loss=0.436317, regrown=0, time=0.0000s
+step 70: accuracy=0.7440, sparsity=0.2500, loss=0.428323, regrown=0, time=0.0000s
+step 71: accuracy=0.7460, sparsity=0.2500, loss=0.420285, regrown=0, time=0.0000s
+step 72: accuracy=0.7540, sparsity=0.2500, loss=0.416000, regrown=0, time=0.0000s
+step 73: accuracy=0.7480, sparsity=0.2500, loss=0.417223, regrown=0, time=0.0000s
+step 74: accuracy=0.7360, sparsity=0.2500, loss=0.421544, regrown=0, time=0.0000s
+step 75: accuracy=0.7440, sparsity=0.2500, loss=0.426429, regrown=0, time=0.0000s
+step 76: accuracy=0.7580, sparsity=0.2500, loss=0.424966, regrown=0, time=0.0000s
+step 77: accuracy=0.7360, sparsity=0.2500, loss=0.417292, regrown=0, time=0.0000s
+step 78: accuracy=0.7200, sparsity=0.2500, loss=0.421412, regrown=0, time=0.0000s
+step 79: accuracy=0.7360, sparsity=0.2500, loss=0.432518, regrown=0, time=0.0000s
+step 80: accuracy=0.7260, sparsity=0.2500, loss=0.436874, regrown=0, time=0.0000s
+step 1: accuracy=0.7020, sparsity=0.0000, loss=0.321761, regrown=0, time=0.0000s
+step 2: accuracy=0.7280, sparsity=0.0000, loss=0.215725, regrown=0, time=0.0000s
+step 3: accuracy=0.7340, sparsity=0.0000, loss=0.194486, regrown=0, time=0.0000s
+step 4: accuracy=0.7440, sparsity=0.0000, loss=0.188622, regrown=0, time=0.0000s
+step 5: accuracy=0.7420, sparsity=0.0000, loss=0.188005, regrown=0, time=0.0000s
+step 6: accuracy=0.7420, sparsity=0.0000, loss=0.189546, regrown=0, time=0.0000s
+step 7: accuracy=0.7440, sparsity=0.0000, loss=0.192301, regrown=0, time=0.0000s
+step 8: accuracy=0.7440, sparsity=0.0000, loss=0.195781, regrown=0, time=0.0000s
+step 9: accuracy=0.7420, sparsity=0.0000, loss=0.199868, regrown=0, time=0.0000s
+step 10: accuracy=0.7440, sparsity=0.0000, loss=0.204688, regrown=0, time=0.0000s
+step 11: accuracy=0.7440, sparsity=0.0000, loss=0.210246, regrown=0, time=0.0000s
+step 12: accuracy=0.7480, sparsity=0.0000, loss=0.216790, regrown=0, time=0.0000s
+step 13: accuracy=0.7360, sparsity=0.0000, loss=0.222668, regrown=0, time=0.0000s
+step 14: accuracy=0.7480, sparsity=0.0000, loss=0.228767, regrown=0, time=0.0000s
+step 15: accuracy=0.7440, sparsity=0.0000, loss=0.232515, regrown=0, time=0.0000s
+step 16: accuracy=0.7440, sparsity=0.1250, loss=0.236616, regrown=0, time=0.0000s
+step 17: accuracy=0.7160, sparsity=0.1250, loss=0.241464, regrown=0, time=0.0000s
+step 18: accuracy=0.6840, sparsity=0.1250, loss=0.273807, regrown=0, time=0.0000s
+step 19: accuracy=0.7280, sparsity=0.1250, loss=0.300159, regrown=0, time=0.0000s
+step 20: accuracy=0.7380, sparsity=0.1250, loss=0.274721, regrown=0, time=0.0000s
+step 21: accuracy=0.7360, sparsity=0.2083, loss=0.262746, regrown=0, time=0.0000s
+step 22: accuracy=0.7340, sparsity=0.2083, loss=0.265192, regrown=0, time=0.0000s
+step 23: accuracy=0.7400, sparsity=0.2083, loss=0.269917, regrown=0, time=0.0000s
+step 24: accuracy=0.7440, sparsity=0.2083, loss=0.274395, regrown=0, time=0.0000s
+step 25: accuracy=0.7440, sparsity=0.2083, loss=0.278470, regrown=0, time=0.0000s
+step 26: accuracy=0.7480, sparsity=0.2917, loss=0.282381, regrown=0, time=0.0000s
+step 27: accuracy=0.7240, sparsity=0.2917, loss=0.306360, regrown=0, time=0.0000s
+step 28: accuracy=0.7400, sparsity=0.2917, loss=0.305890, regrown=0, time=0.0000s
+step 29: accuracy=0.7500, sparsity=0.2917, loss=0.305610, regrown=0, time=0.0000s
+step 30: accuracy=0.7300, sparsity=0.2917, loss=0.308284, regrown=0, time=0.0000s
+step 31: accuracy=0.7320, sparsity=0.3750, loss=0.317498, regrown=0, time=0.0000s
+step 32: accuracy=0.5320, sparsity=0.3750, loss=0.433800, regrown=0, time=0.0000s
+step 33: accuracy=0.6540, sparsity=0.3750, loss=0.492529, regrown=0, time=0.0000s
+step 34: accuracy=0.6980, sparsity=0.3750, loss=0.418879, regrown=0, time=0.0000s
+step 35: accuracy=0.6920, sparsity=0.3750, loss=0.396901, regrown=0, time=0.0000s
+step 36: accuracy=0.7040, sparsity=0.3750, loss=0.397474, regrown=0, time=0.0000s
+step 37: accuracy=0.7120, sparsity=0.3750, loss=0.399465, regrown=0, time=0.0000s
+step 38: accuracy=0.7100, sparsity=0.3750, loss=0.398966, regrown=0, time=0.0000s
+step 39: accuracy=0.7120, sparsity=0.3750, loss=0.399941, regrown=0, time=0.0000s
+step 40: accuracy=0.7160, sparsity=0.3750, loss=0.402716, regrown=0, time=0.0000s
+step 41: accuracy=0.7200, sparsity=0.4167, loss=0.406198, regrown=0, time=0.0000s
+step 42: accuracy=0.7020, sparsity=0.4167, loss=0.657271, regrown=0, time=0.0000s
+step 43: accuracy=0.7360, sparsity=0.4167, loss=0.455737, regrown=0, time=0.0000s
+step 44: accuracy=0.7360, sparsity=0.4167, loss=0.402370, regrown=0, time=0.0000s
+step 45: accuracy=0.7540, sparsity=0.4167, loss=0.393046, regrown=0, time=0.0000s
+step 46: accuracy=0.7500, sparsity=0.4167, loss=0.392938, regrown=0, time=0.0000s
+step 47: accuracy=0.7500, sparsity=0.4167, loss=0.395612, regrown=0, time=0.0000s
+step 48: accuracy=0.7460, sparsity=0.4167, loss=0.398339, regrown=0, time=0.0000s
+step 49: accuracy=0.7460, sparsity=0.4167, loss=0.402193, regrown=0, time=0.0000s
+step 50: accuracy=0.7460, sparsity=0.4167, loss=0.406474, regrown=0, time=0.0000s
+step 51: accuracy=0.7480, sparsity=0.4167, loss=0.410988, regrown=0, time=0.0000s
+step 52: accuracy=0.7500, sparsity=0.4167, loss=0.415634, regrown=0, time=0.0000s
+step 53: accuracy=0.7520, sparsity=0.4167, loss=0.420218, regrown=0, time=0.0000s
+step 54: accuracy=0.7440, sparsity=0.4167, loss=0.420034, regrown=0, time=0.0000s
+step 55: accuracy=0.7460, sparsity=0.4167, loss=0.419975, regrown=0, time=0.0000s
+step 56: accuracy=0.7480, sparsity=0.4167, loss=0.420017, regrown=0, time=0.0000s
+step 57: accuracy=0.7300, sparsity=0.4167, loss=0.420020, regrown=0, time=0.0000s
+step 58: accuracy=0.7360, sparsity=0.4167, loss=0.422183, regrown=0, time=0.0000s
+step 59: accuracy=0.7120, sparsity=0.4167, loss=0.430994, regrown=0, time=0.0000s
+step 60: accuracy=0.7400, sparsity=0.4167, loss=0.438588, regrown=0, time=0.0000s
+step 61: accuracy=0.7380, sparsity=0.4167, loss=0.424107, regrown=0, time=0.0000s
+step 62: accuracy=0.7380, sparsity=0.4167, loss=0.420717, regrown=0, time=0.0000s
+step 63: accuracy=0.7300, sparsity=0.4167, loss=0.421924, regrown=0, time=0.0000s
+step 64: accuracy=0.7360, sparsity=0.4167, loss=0.424110, regrown=0, time=0.0000s
+step 65: accuracy=0.7420, sparsity=0.4167, loss=0.423871, regrown=0, time=0.0000s
+step 66: accuracy=0.7500, sparsity=0.4167, loss=0.422903, regrown=0, time=0.0000s
+step 67: accuracy=0.7440, sparsity=0.4167, loss=0.420300, regrown=0, time=0.0000s
+step 68: accuracy=0.7380, sparsity=0.4167, loss=0.422248, regrown=0, time=0.0000s
+step 69: accuracy=0.7340, sparsity=0.4167, loss=0.425786, regrown=0, time=0.0000s
+step 70: accuracy=0.7340, sparsity=0.4167, loss=0.429292, regrown=0, time=0.0000s
+step 71: accuracy=0.7360, sparsity=0.4167, loss=0.423641, regrown=0, time=0.0000s
+step 72: accuracy=0.7340, sparsity=0.4167, loss=0.420859, regrown=0, time=0.0000s
+step 73: accuracy=0.7220, sparsity=0.4167, loss=0.423144, regrown=0, time=0.0000s
+step 74: accuracy=0.7340, sparsity=0.4167, loss=0.427900, regrown=0, time=0.0000s
+step 75: accuracy=0.7340, sparsity=0.4167, loss=0.426391, regrown=0, time=0.0000s
+step 76: accuracy=0.7480, sparsity=0.4167, loss=0.424047, regrown=0, time=0.0000s
+step 77: accuracy=0.7400, sparsity=0.4167, loss=0.420021, regrown=0, time=0.0000s
+step 78: accuracy=0.7360, sparsity=0.4167, loss=0.421114, regrown=0, time=0.0000s
+step 79: accuracy=0.7420, sparsity=0.4167, loss=0.423008, regrown=0, time=0.0000s
+step 80: accuracy=0.7300, sparsity=0.4167, loss=0.424918, regrown=0, time=0.0000s
+
+##############################################################################
+[2/16] dataset=mnist qubits=4 seed=1
+##############################################################################
+using lightning.gpu (cuQuantum), wires=4, shots=None
+[mnist/q4/seed1] circuit device: cuda (lightning.gpu)
+
+training without pruning (dense teacher):
+step 1: accuracy=0.6720, loss=0.735612, time=19.8283s
+step 2: accuracy=0.7140, loss=0.595246, time=20.0482s
+step 3: accuracy=0.7360, loss=0.568971, time=19.8590s
+step 4: accuracy=0.7640, loss=0.551332, time=19.9605s
+step 5: accuracy=0.7560, loss=0.540255, time=20.0963s
+step 6: accuracy=0.7720, loss=0.533145, time=19.6982s
+step 7: accuracy=0.7500, loss=0.529644, time=19.8624s
+step 8: accuracy=0.7900, loss=0.527496, time=20.0312s
+step 9: accuracy=0.7520, loss=0.522365, time=19.7687s
+step 10: accuracy=0.7840, loss=0.516308, time=19.8600s
+step 11: accuracy=0.7660, loss=0.511517, time=19.8942s
+step 12: accuracy=0.7880, loss=0.508370, time=19.9024s
+step 13: accuracy=0.7640, loss=0.505879, time=19.8426s
+step 14: accuracy=0.7820, loss=0.504409, time=19.8496s
+step 15: accuracy=0.7620, loss=0.503013, time=19.8736s
+step 16: accuracy=0.7820, loss=0.502333, time=19.8187s
+step 17: accuracy=0.7680, loss=0.501676, time=19.7754s
+step 18: accuracy=0.7780, loss=0.501749, time=19.9939s
+step 19: accuracy=0.7720, loss=0.501991, time=19.7943s
+step 20: accuracy=0.7820, loss=0.502726, time=19.5822s
+step 21: accuracy=0.7720, loss=0.502846, time=19.8580s
+step 22: accuracy=0.7860, loss=0.502388, time=19.7477s
+step 23: accuracy=0.7700, loss=0.501423, time=19.7749s
+step 24: accuracy=0.7860, loss=0.500598, time=20.0392s
+step 25: accuracy=0.7700, loss=0.500297, time=20.2521s
+step 26: accuracy=0.7840, loss=0.499892, time=19.8835s
+step 27: accuracy=0.7700, loss=0.499990, time=19.6500s
+step 28: accuracy=0.7880, loss=0.499139, time=19.7278s
+step 29: accuracy=0.7700, loss=0.498742, time=19.8073s
+step 30: accuracy=0.7880, loss=0.498004, time=19.9733s
+step 31: accuracy=0.7700, loss=0.497378, time=19.7723s
+step 32: accuracy=0.7840, loss=0.496756, time=19.5479s
+step 33: accuracy=0.7700, loss=0.496259, time=19.7506s
+step 34: accuracy=0.7860, loss=0.495830, time=19.7485s
+step 35: accuracy=0.7660, loss=0.495554, time=19.8388s
+step 36: accuracy=0.7800, loss=0.495250, time=20.1149s
+step 37: accuracy=0.7640, loss=0.495062, time=19.8148s
+step 38: accuracy=0.7800, loss=0.494782, time=19.5258s
+step 39: accuracy=0.7640, loss=0.494573, time=19.7028s
+step 40: accuracy=0.7820, loss=0.494337, time=19.7416s
+step 41: accuracy=0.7640, loss=0.494122, time=19.7667s
+step 42: accuracy=0.7820, loss=0.494043, time=19.9306s
+step 43: accuracy=0.7640, loss=0.493860, time=19.7908s
+step 44: accuracy=0.7800, loss=0.494003, time=19.5737s
+step 45: accuracy=0.7620, loss=0.493721, time=19.7346s
+step 46: accuracy=0.7800, loss=0.493954, time=19.7458s
+step 47: accuracy=0.7640, loss=0.493476, time=19.7283s
+step 48: accuracy=0.7820, loss=0.493810, time=19.9845s
+step 49: accuracy=0.7660, loss=0.493413, time=19.8692s
+step 50: accuracy=0.7840, loss=0.494051, time=19.6037s
+step 51: accuracy=0.7680, loss=0.493686, time=19.8223s
+step 52: accuracy=0.7860, loss=0.494421, time=19.8395s
+step 53: accuracy=0.7740, loss=0.493830, time=19.8501s
+step 54: accuracy=0.7800, loss=0.494362, time=20.0526s
+step 55: accuracy=0.7760, loss=0.493542, time=19.8926s
+step 56: accuracy=0.7800, loss=0.493548, time=19.6600s
+step 57: accuracy=0.7820, loss=0.492997, time=19.7975s
+step 58: accuracy=0.7760, loss=0.492773, time=19.7971s
+step 59: accuracy=0.7820, loss=0.492718, time=19.8232s
+step 60: accuracy=0.7760, loss=0.492379, time=19.9987s
+step 61: accuracy=0.7820, loss=0.492493, time=19.8750s
+step 62: accuracy=0.7840, loss=0.492323, time=19.6385s
+step 63: accuracy=0.7800, loss=0.492512, time=19.8650s
+step 64: accuracy=0.7860, loss=0.492982, time=19.8500s
+step 65: accuracy=0.7740, loss=0.493292, time=19.7794s
+step 66: accuracy=0.7880, loss=0.494177, time=19.9515s
+step 67: accuracy=0.7720, loss=0.493000, time=19.7706s
+step 68: accuracy=0.7780, loss=0.493462, time=19.5453s
+step 69: accuracy=0.7660, loss=0.492463, time=19.7706s
+step 70: accuracy=0.7820, loss=0.493302, time=19.8847s
+step 71: accuracy=0.7660, loss=0.493669, time=19.9132s
+step 72: accuracy=0.7740, loss=0.493579, time=20.0987s
+step 73: accuracy=0.7680, loss=0.493871, time=19.9557s
+step 74: accuracy=0.7740, loss=0.492538, time=19.6263s
+step 75: accuracy=0.7680, loss=0.492280, time=19.8146s
+step 76: accuracy=0.7760, loss=0.490988, time=19.7996s
+step 77: accuracy=0.7700, loss=0.490823, time=19.8452s
+step 78: accuracy=0.7740, loss=0.490329, time=20.0419s
+step 79: accuracy=0.7680, loss=0.490712, time=19.8802s
+step 80: accuracy=0.7760, loss=0.490945, time=19.6840s
+cumulative result: accuracy=0.7760, loss=0.490945, time=0:26:30.430000 (1590.4314s)
+(validation accuracy on held-out set: 0.7467)
+step 1: accuracy=0.6720, sparsity=0.0000, loss=0.329868, regrown=0, time=0.0000s
+step 2: accuracy=0.7220, sparsity=0.0000, loss=0.230071, regrown=0, time=0.0000s
+step 3: accuracy=0.7320, sparsity=0.0000, loss=0.214716, regrown=0, time=0.0000s
+step 4: accuracy=0.7520, sparsity=0.0000, loss=0.208576, regrown=0, time=0.0000s
+step 5: accuracy=0.7600, sparsity=0.0000, loss=0.206709, regrown=0, time=0.0000s
+step 6: accuracy=0.7640, sparsity=0.0000, loss=0.205304, regrown=0, time=0.0000s
+step 7: accuracy=0.7700, sparsity=0.0000, loss=0.205099, regrown=0, time=0.0000s
+step 8: accuracy=0.7520, sparsity=0.0000, loss=0.207648, regrown=0, time=0.0000s
+step 9: accuracy=0.7560, sparsity=0.0000, loss=0.213721, regrown=0, time=0.0000s
+step 10: accuracy=0.7620, sparsity=0.0000, loss=0.217961, regrown=0, time=0.0000s
+step 11: accuracy=0.7700, sparsity=0.0000, loss=0.218329, regrown=0, time=0.0000s
+step 12: accuracy=0.7900, sparsity=0.0000, loss=0.217324, regrown=0, time=0.0000s
+step 13: accuracy=0.7720, sparsity=0.0000, loss=0.218701, regrown=0, time=0.0000s
+step 14: accuracy=0.7880, sparsity=0.0000, loss=0.221307, regrown=0, time=0.0000s
+step 15: accuracy=0.7720, sparsity=0.0000, loss=0.224687, regrown=0, time=0.0000s
+step 16: accuracy=0.7820, sparsity=0.0417, loss=0.228674, regrown=0, time=0.0000s
+step 17: accuracy=0.7540, sparsity=0.0417, loss=0.231060, regrown=0, time=0.0000s
+step 18: accuracy=0.7260, sparsity=0.0417, loss=0.243386, regrown=0, time=0.0000s
+step 19: accuracy=0.7400, sparsity=0.0417, loss=0.273231, regrown=0, time=0.0000s
+step 20: accuracy=0.7720, sparsity=0.0417, loss=0.276724, regrown=0, time=0.0000s
+step 21: accuracy=0.7800, sparsity=0.0833, loss=0.255296, regrown=0, time=0.0000s
+step 22: accuracy=0.7760, sparsity=0.0833, loss=0.252944, regrown=0, time=0.0000s
+step 23: accuracy=0.7700, sparsity=0.0833, loss=0.258631, regrown=0, time=0.0000s
+step 24: accuracy=0.7700, sparsity=0.0833, loss=0.268219, regrown=0, time=0.0000s
+step 25: accuracy=0.7660, sparsity=0.0833, loss=0.276065, regrown=0, time=0.0000s
+step 26: accuracy=0.7840, sparsity=0.0833, loss=0.275991, regrown=0, time=0.0000s
+step 27: accuracy=0.7760, sparsity=0.0833, loss=0.274748, regrown=0, time=0.0000s
+step 28: accuracy=0.7780, sparsity=0.0833, loss=0.282206, regrown=0, time=0.0000s
+step 29: accuracy=0.7560, sparsity=0.0833, loss=0.294297, regrown=0, time=0.0000s
+step 30: accuracy=0.7800, sparsity=0.0833, loss=0.302207, regrown=0, time=0.0000s
+step 31: accuracy=0.7700, sparsity=0.1250, loss=0.296550, regrown=0, time=0.0000s
+step 32: accuracy=0.7900, sparsity=0.1250, loss=0.298477, regrown=0, time=0.0000s
+step 33: accuracy=0.7660, sparsity=0.1250, loss=0.304440, regrown=0, time=0.0000s
+step 34: accuracy=0.7880, sparsity=0.1250, loss=0.313176, regrown=0, time=0.0000s
+step 35: accuracy=0.7680, sparsity=0.1250, loss=0.317030, regrown=0, time=0.0000s
+step 36: accuracy=0.7800, sparsity=0.1250, loss=0.318799, regrown=0, time=0.0000s
+step 37: accuracy=0.7760, sparsity=0.1250, loss=0.319594, regrown=0, time=0.0000s
+step 38: accuracy=0.7860, sparsity=0.1250, loss=0.326376, regrown=0, time=0.0000s
+step 39: accuracy=0.7740, sparsity=0.1250, loss=0.336736, regrown=0, time=0.0000s
+step 40: accuracy=0.7820, sparsity=0.1250, loss=0.345385, regrown=0, time=0.0000s
+step 41: accuracy=0.7760, sparsity=0.1250, loss=0.342299, regrown=0, time=0.0000s
+step 42: accuracy=0.7800, sparsity=0.1250, loss=0.342990, regrown=0, time=0.0000s
+step 43: accuracy=0.7760, sparsity=0.1250, loss=0.349713, regrown=0, time=0.0000s
+step 44: accuracy=0.7820, sparsity=0.1250, loss=0.360950, regrown=0, time=0.0000s
+step 45: accuracy=0.7720, sparsity=0.1250, loss=0.367629, regrown=0, time=0.0000s
+step 46: accuracy=0.7820, sparsity=0.1250, loss=0.367619, regrown=0, time=0.0000s
+step 47: accuracy=0.7780, sparsity=0.1250, loss=0.366111, regrown=0, time=0.0000s
+step 48: accuracy=0.7800, sparsity=0.1250, loss=0.372399, regrown=0, time=0.0000s
+step 49: accuracy=0.7740, sparsity=0.1250, loss=0.382652, regrown=0, time=0.0000s
+step 50: accuracy=0.7780, sparsity=0.1250, loss=0.392976, regrown=0, time=0.0000s
+step 51: accuracy=0.7740, sparsity=0.1250, loss=0.389619, regrown=0, time=0.0000s
+step 52: accuracy=0.7840, sparsity=0.1250, loss=0.389800, regrown=0, time=0.0000s
+step 53: accuracy=0.7720, sparsity=0.1250, loss=0.397239, regrown=0, time=0.0000s
+step 54: accuracy=0.7820, sparsity=0.1250, loss=0.406570, regrown=0, time=0.0000s
+step 55: accuracy=0.7720, sparsity=0.1250, loss=0.405845, regrown=0, time=0.0000s
+step 56: accuracy=0.7800, sparsity=0.1250, loss=0.399152, regrown=0, time=0.0000s
+step 57: accuracy=0.7760, sparsity=0.1250, loss=0.393523, regrown=0, time=0.0000s
+step 58: accuracy=0.7780, sparsity=0.1250, loss=0.394348, regrown=0, time=0.0000s
+step 59: accuracy=0.7720, sparsity=0.1250, loss=0.399379, regrown=0, time=0.0000s
+step 60: accuracy=0.7800, sparsity=0.1250, loss=0.407037, regrown=0, time=0.0000s
+step 61: accuracy=0.7760, sparsity=0.1250, loss=0.398572, regrown=0, time=0.0000s
+step 62: accuracy=0.7820, sparsity=0.1250, loss=0.394258, regrown=0, time=0.0000s
+step 63: accuracy=0.7660, sparsity=0.1250, loss=0.397389, regrown=0, time=0.0000s
+step 64: accuracy=0.7760, sparsity=0.1250, loss=0.408152, regrown=0, time=0.0000s
+step 65: accuracy=0.7740, sparsity=0.1250, loss=0.405518, regrown=0, time=0.0000s
+step 66: accuracy=0.7760, sparsity=0.1250, loss=0.398323, regrown=0, time=0.0000s
+step 67: accuracy=0.7780, sparsity=0.1250, loss=0.393368, regrown=0, time=0.0000s
+step 68: accuracy=0.7840, sparsity=0.1250, loss=0.393942, regrown=0, time=0.0000s
+step 69: accuracy=0.7660, sparsity=0.1250, loss=0.398054, regrown=0, time=0.0000s
+step 70: accuracy=0.7840, sparsity=0.1250, loss=0.402977, regrown=0, time=0.0000s
+step 71: accuracy=0.7660, sparsity=0.1250, loss=0.401293, regrown=0, time=0.0000s
+step 72: accuracy=0.7680, sparsity=0.1250, loss=0.396554, regrown=0, time=0.0000s
+step 73: accuracy=0.7540, sparsity=0.1250, loss=0.405542, regrown=0, time=0.0000s
+step 74: accuracy=0.7760, sparsity=0.1250, loss=0.419134, regrown=0, time=0.0000s
+step 75: accuracy=0.7780, sparsity=0.1250, loss=0.400787, regrown=0, time=0.0000s
+step 76: accuracy=0.7740, sparsity=0.1250, loss=0.395314, regrown=0, time=0.0000s
+step 77: accuracy=0.7820, sparsity=0.1250, loss=0.392937, regrown=0, time=0.0000s
+step 78: accuracy=0.7740, sparsity=0.1250, loss=0.392890, regrown=0, time=0.0000s
+step 79: accuracy=0.7720, sparsity=0.1250, loss=0.394849, regrown=0, time=0.0000s
+step 80: accuracy=0.7860, sparsity=0.1250, loss=0.399570, regrown=0, time=0.0000s
+step 1: accuracy=0.6720, sparsity=0.0000, loss=0.329868, regrown=0, time=0.0000s
+step 2: accuracy=0.7220, sparsity=0.0000, loss=0.230071, regrown=0, time=0.0000s
+step 3: accuracy=0.7320, sparsity=0.0000, loss=0.214716, regrown=0, time=0.0000s
+step 4: accuracy=0.7520, sparsity=0.0000, loss=0.208576, regrown=0, time=0.0000s
+step 5: accuracy=0.7600, sparsity=0.0000, loss=0.206709, regrown=0, time=0.0000s
+step 6: accuracy=0.7640, sparsity=0.0000, loss=0.205304, regrown=0, time=0.0000s
+step 7: accuracy=0.7700, sparsity=0.0000, loss=0.205099, regrown=0, time=0.0000s
+step 8: accuracy=0.7520, sparsity=0.0000, loss=0.207648, regrown=0, time=0.0000s
+step 9: accuracy=0.7560, sparsity=0.0000, loss=0.213721, regrown=0, time=0.0000s
+step 10: accuracy=0.7620, sparsity=0.0000, loss=0.217961, regrown=0, time=0.0000s
+step 11: accuracy=0.7700, sparsity=0.0000, loss=0.218329, regrown=0, time=0.0000s
+step 12: accuracy=0.7900, sparsity=0.0000, loss=0.217324, regrown=0, time=0.0000s
+step 13: accuracy=0.7720, sparsity=0.0000, loss=0.218701, regrown=0, time=0.0000s
+step 14: accuracy=0.7880, sparsity=0.0000, loss=0.221307, regrown=0, time=0.0000s
+step 15: accuracy=0.7720, sparsity=0.0000, loss=0.224687, regrown=0, time=0.0000s
+step 16: accuracy=0.7820, sparsity=0.0833, loss=0.228674, regrown=0, time=0.0000s
+step 17: accuracy=0.7540, sparsity=0.0833, loss=0.231060, regrown=0, time=0.0000s
+step 18: accuracy=0.7260, sparsity=0.0833, loss=0.243386, regrown=0, time=0.0000s
+step 19: accuracy=0.7400, sparsity=0.0833, loss=0.273231, regrown=0, time=0.0000s
+step 20: accuracy=0.7720, sparsity=0.0833, loss=0.276724, regrown=0, time=0.0000s
+step 21: accuracy=0.7800, sparsity=0.1250, loss=0.255296, regrown=0, time=0.0000s
+step 22: accuracy=0.7760, sparsity=0.1250, loss=0.252944, regrown=0, time=0.0000s
+step 23: accuracy=0.7700, sparsity=0.1250, loss=0.258631, regrown=0, time=0.0000s
+step 24: accuracy=0.7700, sparsity=0.1250, loss=0.268219, regrown=0, time=0.0000s
+step 25: accuracy=0.7660, sparsity=0.1250, loss=0.276065, regrown=0, time=0.0000s
+step 26: accuracy=0.7840, sparsity=0.2083, loss=0.275991, regrown=0, time=0.0000s
+step 27: accuracy=0.7820, sparsity=0.2083, loss=0.274245, regrown=0, time=0.0000s
+step 28: accuracy=0.7820, sparsity=0.2083, loss=0.279025, regrown=0, time=0.0000s
+step 29: accuracy=0.7740, sparsity=0.2083, loss=0.285691, regrown=0, time=0.0000s
+step 30: accuracy=0.7860, sparsity=0.2083, loss=0.292889, regrown=0, time=0.0000s
+step 31: accuracy=0.7720, sparsity=0.2500, loss=0.296612, regrown=0, time=0.0000s
+step 32: accuracy=0.7720, sparsity=0.2500, loss=0.296764, regrown=0, time=0.0000s
+step 33: accuracy=0.7680, sparsity=0.2500, loss=0.301587, regrown=0, time=0.0000s
+step 34: accuracy=0.7900, sparsity=0.2500, loss=0.307345, regrown=0, time=0.0000s
+step 35: accuracy=0.7620, sparsity=0.2500, loss=0.312605, regrown=0, time=0.0000s
+step 36: accuracy=0.7820, sparsity=0.2500, loss=0.317495, regrown=0, time=0.0000s
+step 37: accuracy=0.7640, sparsity=0.2500, loss=0.319875, regrown=0, time=0.0000s
+step 38: accuracy=0.7900, sparsity=0.2500, loss=0.328602, regrown=0, time=0.0000s
+step 39: accuracy=0.7520, sparsity=0.2500, loss=0.340698, regrown=0, time=0.0000s
+step 40: accuracy=0.7800, sparsity=0.2500, loss=0.347532, regrown=0, time=0.0000s
+step 41: accuracy=0.7720, sparsity=0.2500, loss=0.339680, regrown=0, time=0.0000s
+step 42: accuracy=0.7780, sparsity=0.2500, loss=0.342051, regrown=0, time=0.0000s
+step 43: accuracy=0.7700, sparsity=0.2500, loss=0.346995, regrown=0, time=0.0000s
+step 44: accuracy=0.7900, sparsity=0.2500, loss=0.353089, regrown=0, time=0.0000s
+step 45: accuracy=0.7660, sparsity=0.2500, loss=0.359849, regrown=0, time=0.0000s
+step 46: accuracy=0.7800, sparsity=0.2500, loss=0.366124, regrown=0, time=0.0000s
+step 47: accuracy=0.7700, sparsity=0.2500, loss=0.366964, regrown=0, time=0.0000s
+step 48: accuracy=0.7680, sparsity=0.2500, loss=0.379911, regrown=0, time=0.0000s
+step 49: accuracy=0.7600, sparsity=0.2500, loss=0.393668, regrown=0, time=0.0000s
+step 50: accuracy=0.7780, sparsity=0.2500, loss=0.393692, regrown=0, time=0.0000s
+step 51: accuracy=0.7700, sparsity=0.2500, loss=0.384970, regrown=0, time=0.0000s
+step 52: accuracy=0.7780, sparsity=0.2500, loss=0.388387, regrown=0, time=0.0000s
+step 53: accuracy=0.7760, sparsity=0.2500, loss=0.392648, regrown=0, time=0.0000s
+step 54: accuracy=0.7740, sparsity=0.2500, loss=0.393161, regrown=0, time=0.0000s
+step 55: accuracy=0.7720, sparsity=0.2500, loss=0.395532, regrown=0, time=0.0000s
+step 56: accuracy=0.7740, sparsity=0.2500, loss=0.398628, regrown=0, time=0.0000s
+step 57: accuracy=0.7600, sparsity=0.2500, loss=0.396859, regrown=0, time=0.0000s
+step 58: accuracy=0.7700, sparsity=0.2500, loss=0.410812, regrown=0, time=0.0000s
+step 59: accuracy=0.7560, sparsity=0.2500, loss=0.413940, regrown=0, time=0.0000s
+step 60: accuracy=0.7780, sparsity=0.2500, loss=0.404993, regrown=0, time=0.0000s
+step 61: accuracy=0.7740, sparsity=0.2500, loss=0.394572, regrown=0, time=0.0000s
+step 62: accuracy=0.7780, sparsity=0.2500, loss=0.392893, regrown=0, time=0.0000s
+step 63: accuracy=0.7820, sparsity=0.2500, loss=0.392568, regrown=0, time=0.0000s
+step 64: accuracy=0.7820, sparsity=0.2500, loss=0.393126, regrown=0, time=0.0000s
+step 65: accuracy=0.7640, sparsity=0.2500, loss=0.394561, regrown=0, time=0.0000s
+step 66: accuracy=0.7820, sparsity=0.2500, loss=0.395855, regrown=0, time=0.0000s
+step 67: accuracy=0.7640, sparsity=0.2500, loss=0.394559, regrown=0, time=0.0000s
+step 68: accuracy=0.7660, sparsity=0.2500, loss=0.408610, regrown=0, time=0.0000s
+step 69: accuracy=0.7620, sparsity=0.2500, loss=0.413242, regrown=0, time=0.0000s
+step 70: accuracy=0.7720, sparsity=0.2500, loss=0.410606, regrown=0, time=0.0000s
+step 71: accuracy=0.7760, sparsity=0.2500, loss=0.394259, regrown=0, time=0.0000s
+step 72: accuracy=0.7760, sparsity=0.2500, loss=0.392867, regrown=0, time=0.0000s
+step 73: accuracy=0.7820, sparsity=0.2500, loss=0.392430, regrown=0, time=0.0000s
+step 74: accuracy=0.7720, sparsity=0.2500, loss=0.392896, regrown=0, time=0.0000s
+step 75: accuracy=0.7780, sparsity=0.2500, loss=0.394842, regrown=0, time=0.0000s
+step 76: accuracy=0.7720, sparsity=0.2500, loss=0.396851, regrown=0, time=0.0000s
+step 77: accuracy=0.7580, sparsity=0.2500, loss=0.396427, regrown=0, time=0.0000s
+step 78: accuracy=0.7660, sparsity=0.2500, loss=0.411565, regrown=0, time=0.0000s
+step 79: accuracy=0.7620, sparsity=0.2500, loss=0.417665, regrown=0, time=0.0000s
+step 80: accuracy=0.7760, sparsity=0.2500, loss=0.405214, regrown=0, time=0.0000s
+step 1: accuracy=0.6720, sparsity=0.0000, loss=0.329868, regrown=0, time=0.0000s
+step 2: accuracy=0.7220, sparsity=0.0000, loss=0.230071, regrown=0, time=0.0000s
+step 3: accuracy=0.7320, sparsity=0.0000, loss=0.214716, regrown=0, time=0.0000s
+step 4: accuracy=0.7520, sparsity=0.0000, loss=0.208576, regrown=0, time=0.0000s
+step 5: accuracy=0.7600, sparsity=0.0000, loss=0.206709, regrown=0, time=0.0000s
+step 6: accuracy=0.7640, sparsity=0.0000, loss=0.205304, regrown=0, time=0.0000s
+step 7: accuracy=0.7700, sparsity=0.0000, loss=0.205099, regrown=0, time=0.0000s
+step 8: accuracy=0.7520, sparsity=0.0000, loss=0.207648, regrown=0, time=0.0000s
+step 9: accuracy=0.7560, sparsity=0.0000, loss=0.213721, regrown=0, time=0.0000s
+step 10: accuracy=0.7620, sparsity=0.0000, loss=0.217961, regrown=0, time=0.0000s
+step 11: accuracy=0.7700, sparsity=0.0000, loss=0.218329, regrown=0, time=0.0000s
+step 12: accuracy=0.7900, sparsity=0.0000, loss=0.217324, regrown=0, time=0.0000s
+step 13: accuracy=0.7720, sparsity=0.0000, loss=0.218701, regrown=0, time=0.0000s
+step 14: accuracy=0.7880, sparsity=0.0000, loss=0.221307, regrown=0, time=0.0000s
+step 15: accuracy=0.7720, sparsity=0.0000, loss=0.224687, regrown=0, time=0.0000s
+step 16: accuracy=0.7820, sparsity=0.1250, loss=0.228674, regrown=0, time=0.0000s
+step 17: accuracy=0.7540, sparsity=0.1250, loss=0.231060, regrown=0, time=0.0000s
+step 18: accuracy=0.7260, sparsity=0.1250, loss=0.243386, regrown=0, time=0.0000s
+step 19: accuracy=0.7400, sparsity=0.1250, loss=0.273231, regrown=0, time=0.0000s
+step 20: accuracy=0.7720, sparsity=0.1250, loss=0.276724, regrown=0, time=0.0000s
+step 21: accuracy=0.7800, sparsity=0.2083, loss=0.255296, regrown=0, time=0.0000s
+step 22: accuracy=0.7700, sparsity=0.2083, loss=0.254587, regrown=0, time=0.0000s
+step 23: accuracy=0.7740, sparsity=0.2083, loss=0.260763, regrown=0, time=0.0000s
+step 24: accuracy=0.7840, sparsity=0.2083, loss=0.267606, regrown=0, time=0.0000s
+step 25: accuracy=0.7740, sparsity=0.2083, loss=0.270540, regrown=0, time=0.0000s
+step 26: accuracy=0.7760, sparsity=0.2917, loss=0.272083, regrown=0, time=0.0000s
+step 27: accuracy=0.7580, sparsity=0.2917, loss=0.297457, regrown=0, time=0.0000s
+step 28: accuracy=0.7560, sparsity=0.2917, loss=0.289533, regrown=0, time=0.0000s
+step 29: accuracy=0.7540, sparsity=0.2917, loss=0.295241, regrown=0, time=0.0000s
+step 30: accuracy=0.7700, sparsity=0.2917, loss=0.304311, regrown=0, time=0.0000s
+step 31: accuracy=0.7740, sparsity=0.3750, loss=0.308422, regrown=0, time=0.0000s
+step 32: accuracy=0.7660, sparsity=0.3750, loss=0.302674, regrown=0, time=0.0000s
+step 33: accuracy=0.7660, sparsity=0.3750, loss=0.306947, regrown=0, time=0.0000s
+step 34: accuracy=0.7620, sparsity=0.3750, loss=0.311865, regrown=0, time=0.0000s
+step 35: accuracy=0.7660, sparsity=0.3750, loss=0.316777, regrown=0, time=0.0000s
+step 36: accuracy=0.7660, sparsity=0.3750, loss=0.321029, regrown=0, time=0.0000s
+step 37: accuracy=0.7660, sparsity=0.3750, loss=0.324815, regrown=0, time=0.0000s
+step 38: accuracy=0.7660, sparsity=0.3750, loss=0.331522, regrown=0, time=0.0000s
+step 39: accuracy=0.7500, sparsity=0.3750, loss=0.341220, regrown=0, time=0.0000s
+step 40: accuracy=0.7700, sparsity=0.3750, loss=0.349527, regrown=0, time=0.0000s
+step 41: accuracy=0.7740, sparsity=0.4167, loss=0.347850, regrown=0, time=0.0000s
+step 42: accuracy=0.7800, sparsity=0.4167, loss=0.353138, regrown=0, time=0.0000s
+step 43: accuracy=0.7620, sparsity=0.4167, loss=0.355681, regrown=0, time=0.0000s
+step 44: accuracy=0.7840, sparsity=0.4167, loss=0.361517, regrown=0, time=0.0000s
+step 45: accuracy=0.7640, sparsity=0.4167, loss=0.367306, regrown=0, time=0.0000s
+step 46: accuracy=0.7780, sparsity=0.4167, loss=0.371036, regrown=0, time=0.0000s
+step 47: accuracy=0.7600, sparsity=0.4167, loss=0.373808, regrown=0, time=0.0000s
+step 48: accuracy=0.7780, sparsity=0.4167, loss=0.381902, regrown=0, time=0.0000s
+step 49: accuracy=0.7540, sparsity=0.4167, loss=0.393392, regrown=0, time=0.0000s
+step 50: accuracy=0.7760, sparsity=0.4167, loss=0.397576, regrown=0, time=0.0000s
+step 51: accuracy=0.7720, sparsity=0.4167, loss=0.395445, regrown=0, time=0.0000s
+step 52: accuracy=0.7740, sparsity=0.4167, loss=0.396706, regrown=0, time=0.0000s
+step 53: accuracy=0.7620, sparsity=0.4167, loss=0.402033, regrown=0, time=0.0000s
+step 54: accuracy=0.7760, sparsity=0.4167, loss=0.403629, regrown=0, time=0.0000s
+step 55: accuracy=0.7640, sparsity=0.4167, loss=0.405522, regrown=0, time=0.0000s
+step 56: accuracy=0.7780, sparsity=0.4167, loss=0.404088, regrown=0, time=0.0000s
+step 57: accuracy=0.7620, sparsity=0.4167, loss=0.402235, regrown=0, time=0.0000s
+step 58: accuracy=0.7780, sparsity=0.4167, loss=0.405749, regrown=0, time=0.0000s
+step 59: accuracy=0.7520, sparsity=0.4167, loss=0.413052, regrown=0, time=0.0000s
+step 60: accuracy=0.7780, sparsity=0.4167, loss=0.411698, regrown=0, time=0.0000s
+step 61: accuracy=0.7780, sparsity=0.4167, loss=0.406025, regrown=0, time=0.0000s
+step 62: accuracy=0.7760, sparsity=0.4167, loss=0.402140, regrown=0, time=0.0000s
+step 63: accuracy=0.7600, sparsity=0.4167, loss=0.404639, regrown=0, time=0.0000s
+step 64: accuracy=0.7700, sparsity=0.4167, loss=0.408322, regrown=0, time=0.0000s
+step 65: accuracy=0.7700, sparsity=0.4167, loss=0.408898, regrown=0, time=0.0000s
+step 66: accuracy=0.7760, sparsity=0.4167, loss=0.403789, regrown=0, time=0.0000s
+step 67: accuracy=0.7660, sparsity=0.4167, loss=0.401532, regrown=0, time=0.0000s
+step 68: accuracy=0.7780, sparsity=0.4167, loss=0.403549, regrown=0, time=0.0000s
+step 69: accuracy=0.7580, sparsity=0.4167, loss=0.407874, regrown=0, time=0.0000s
+step 70: accuracy=0.7840, sparsity=0.4167, loss=0.411021, regrown=0, time=0.0000s
+step 71: accuracy=0.7660, sparsity=0.4167, loss=0.406185, regrown=0, time=0.0000s
+step 72: accuracy=0.7780, sparsity=0.4167, loss=0.402113, regrown=0, time=0.0000s
+step 73: accuracy=0.7520, sparsity=0.4167, loss=0.404798, regrown=0, time=0.0000s
+step 74: accuracy=0.7760, sparsity=0.4167, loss=0.409285, regrown=0, time=0.0000s
+step 75: accuracy=0.7680, sparsity=0.4167, loss=0.409899, regrown=0, time=0.0000s
+step 76: accuracy=0.7760, sparsity=0.4167, loss=0.403651, regrown=0, time=0.0000s
+step 77: accuracy=0.7780, sparsity=0.4167, loss=0.401404, regrown=0, time=0.0000s
+step 78: accuracy=0.7780, sparsity=0.4167, loss=0.402643, regrown=0, time=0.0000s
+step 79: accuracy=0.7580, sparsity=0.4167, loss=0.405547, regrown=0, time=0.0000s
+step 80: accuracy=0.7740, sparsity=0.4167, loss=0.407930, regrown=0, time=0.0000s
+Traceback (most recent call last):
+  File "/home/.cmc/ywx345/ADQCO/sep/exp6.py", line 1062, in <module>
+    all_records, raw_bundles = run_experiment_grid(
+                               ^^^^^^^^^^^^^^^^^^^^
+  File "/home/.cmc/ywx345/ADQCO/sep/exp6.py", line 978, in run_experiment_grid
+    with open(f"{save_prefix}_raw.pkl", "wb") as f:
+OSError: [Errno 122] Disk quota exceeded

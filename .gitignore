@@ -1,0 +1,11 @@
+# Experiment result files
+nagp_v1_run_raw.pkl
+nagp_v1_run_results.csv
+qadaprune_run_aggregate.csv
+qadaprune_run_gap.csv
+qadaprune_run_mnist_results.pkl
+qadaprune_run_results.csv
+qadaprune_v5_run_aggregate.csv
+qadaprune_v5_run_gap.csv
+qadaprune_v5_run_results.csv
+qadaprune_v6_run_results.csv
