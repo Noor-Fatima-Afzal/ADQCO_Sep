@@ -27,3 +27,6 @@ qadaprune_v9_run_gap.csv
 qadaprune_v9_run_results.csv
 
 sweep_runs/
+
+qadaprune_v10_run_results.csv
+qadaprune_v10_run_sanity_baseline.csv
