@@ -18,3 +18,12 @@ qadaprune_v6_run_results.csv
 qadaprune_v7_run_aggregate.csv
 qadaprune_v7_run_gap.csv
 qadaprune_v7_run_results.csv
+
+qadaprune_v8_run_aggregate.csv 
+qadaprune_v8_run_gap.csv 
+qadaprune_v8_run_results.csv 
+qadaprune_v9_run_aggregate.csv 
+qadaprune_v9_run_gap.csv 
+qadaprune_v9_run_results.csv
+
+sweep_runs/

@@ -1,0 +1,121 @@
+Generated: 2026-09-18T12:13:23
+Algorithm: QAdaPrune-RigL-Q (v9) -- v8's movement-pruning drop criterion (Sanh et al. 2020, arXiv:2005.07683) + RigL grow criterion (Evci et al. 2020, arXiv:1911.11134) + automated gradual pruning sparsity ramp (Zhu & Gupta 2017, arXiv:1710.01878), now combined with quantization-aware training of the rotation-angle parameters: symmetric uniform fake-quantization with a straight-through estimator (Bengio et al. 2013, arXiv:1308.3432; Jacob et al. 2018, arXiv:1712.05877), ramped in progressively (Zhou et al. 2017, arXiv:1702.03044) rather than applied abruptly. See qadaprune_v9.py module docstring for the full rationale and what changed relative to v8.
+Torch device: cuda
+Run config:
+  datasets: ['mnist', 'fashionmnist']
+  qubits: [4]
+  sparsities: [0.1, 0.25, 0.4]
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7]
+  encoding: pca
+  noise_levels: [0.03, 0.05, 0.1]
+  layers: 3
+  steps: 40
+  win_sz: 4
+  shots: None
+  prune_start_frac: 0.15
+  prune_end_frac: 0.65
+  max_round_freeze_frac: 0.08
+  noise_eval_samples: 100
+  quant_bits: 6
+  v9_movement_ema_beta: 0.6
+  v9_cycle_frac_init: 0.3
+  v9_protect_entangling_frac: 0.34
+  v9_distill_hardness_max: 0.7
+  v9_distill_hardness_min: 0.2
+  v9_lr_warm_mult: 2.0
+  v9_quant_initial_bits: 16
+  v9_quant_start_frac: None
+  v9_quant_end_frac: None
+  v9_quant_stages: 4
+
+Total sweep run time: 21:42:18.450000 (78138.45s)
+Total records: 320
+
+======================================================================================
+VALIDATION ACCURACY (mean +/- 95% CI across seeds)
+======================================================================================
+dataset       q   run_type        sparsity  noise   n_seeds  acc_mean  acc_std   ci95    
+fashionmnist  4   no_pruning      -         0.000   8        0.6858    0.0292    0.0202  
+fashionmnist  4   no_pruning      -         0.030   8        0.6663    0.0414    0.0287  
+fashionmnist  4   no_pruning      -         0.050   8        0.6638    0.0378    0.0262  
+fashionmnist  4   no_pruning      -         0.100   8        0.6288    0.0491    0.0340  
+fashionmnist  4   quantized_dense 0.00      0.000   8        0.6838    0.0283    0.0196  
+fashionmnist  4   quantized_dense 0.00      0.030   8        0.6650    0.0239    0.0166  
+fashionmnist  4   quantized_dense 0.00      0.050   8        0.6587    0.0280    0.0194  
+fashionmnist  4   quantized_dense 0.00      0.100   8        0.6450    0.0366    0.0254  
+fashionmnist  4   pruned          0.10      0.000   8        0.6725    0.0423    0.0293  
+fashionmnist  4   pruned          0.10      0.030   8        0.6763    0.0472    0.0327  
+fashionmnist  4   pruned          0.10      0.050   8        0.6750    0.0370    0.0257  
+fashionmnist  4   pruned          0.10      0.100   8        0.6562    0.0424    0.0294  
+fashionmnist  4   pruned          0.25      0.000   8        0.6729    0.0341    0.0236  
+fashionmnist  4   pruned          0.25      0.030   8        0.6650    0.0411    0.0285  
+fashionmnist  4   pruned          0.25      0.050   8        0.6613    0.0340    0.0236  
+fashionmnist  4   pruned          0.25      0.100   8        0.6537    0.0427    0.0296  
+fashionmnist  4   pruned          0.40      0.000   8        0.6721    0.0441    0.0305  
+fashionmnist  4   pruned          0.40      0.030   8        0.6600    0.0385    0.0267  
+fashionmnist  4   pruned          0.40      0.050   8        0.6538    0.0463    0.0321  
+fashionmnist  4   pruned          0.40      0.100   8        0.6438    0.0501    0.0347  
+mnist         4   no_pruning      -         0.000   8        0.7488    0.0404    0.0280  
+mnist         4   no_pruning      -         0.030   8        0.7363    0.0699    0.0484  
+mnist         4   no_pruning      -         0.050   8        0.7425    0.0632    0.0438  
+mnist         4   no_pruning      -         0.100   8        0.7312    0.0613    0.0425  
+mnist         4   quantized_dense 0.00      0.000   8        0.7446    0.0506    0.0351  
+mnist         4   quantized_dense 0.00      0.030   8        0.7537    0.0737    0.0510  
+mnist         4   quantized_dense 0.00      0.050   8        0.7488    0.0688    0.0476  
+mnist         4   quantized_dense 0.00      0.100   8        0.7375    0.0555    0.0384  
+mnist         4   pruned          0.10      0.000   8        0.7533    0.0438    0.0303  
+mnist         4   pruned          0.10      0.030   8        0.7537    0.0612    0.0424  
+mnist         4   pruned          0.10      0.050   8        0.7475    0.0604    0.0419  
+mnist         4   pruned          0.10      0.100   8        0.7288    0.0554    0.0384  
+mnist         4   pruned          0.25      0.000   8        0.7463    0.0406    0.0282  
+mnist         4   pruned          0.25      0.030   8        0.7400    0.0655    0.0454  
+mnist         4   pruned          0.25      0.050   8        0.7350    0.0691    0.0479  
+mnist         4   pruned          0.25      0.100   8        0.7162    0.0558    0.0387  
+mnist         4   pruned          0.40      0.000   8        0.7179    0.0439    0.0304  
+mnist         4   pruned          0.40      0.030   8        0.7087    0.0906    0.0628  
+mnist         4   pruned          0.40      0.050   8        0.6987    0.1005    0.0696  
+mnist         4   pruned          0.40      0.100   8        0.6875    0.0936    0.0649  
+
+======================================================================================
+PAIRED ACCURACY GAP (no_pruning - arm, per seed) + significance
+======================================================================================
+dataset       q   run_type        sparsity  noise   n_seeds  gap_mean  ci95    p_value   sig?  method
+fashionmnist  4   quantized_dense 0.00      0.000   8        0.0021    0.0093  0.7266    no    wilcoxon
+fashionmnist  4   quantized_dense 0.00      0.030   8        0.0013    0.0238  0.7656    no    wilcoxon
+fashionmnist  4   quantized_dense 0.00      0.050   8        0.0050    0.0265  0.6875    no    wilcoxon
+fashionmnist  4   quantized_dense 0.00      0.100   8        -0.0162   0.0254  0.3281    no    wilcoxon
+fashionmnist  4   pruned          0.10      0.000   8        0.0133    0.0168  0.2188    no    wilcoxon
+fashionmnist  4   pruned          0.10      0.030   8        -0.0100   0.0331  0.7422    no    wilcoxon
+fashionmnist  4   pruned          0.10      0.050   8        -0.0112   0.0268  0.6406    no    wilcoxon
+fashionmnist  4   pruned          0.10      0.100   8        -0.0275   0.0298  0.2031    no    wilcoxon
+fashionmnist  4   pruned          0.25      0.000   8        0.0129    0.0139  0.1562    no    wilcoxon
+fashionmnist  4   pruned          0.25      0.030   8        0.0013    0.0286  0.9453    no    wilcoxon
+fashionmnist  4   pruned          0.25      0.050   8        0.0025    0.0281  0.9688    no    wilcoxon
+fashionmnist  4   pruned          0.25      0.100   8        -0.0250   0.0357  0.2031    no    wilcoxon
+fashionmnist  4   pruned          0.40      0.000   8        0.0138    0.0244  0.2422    no    wilcoxon
+fashionmnist  4   pruned          0.40      0.030   8        0.0063    0.0327  0.7188    no    wilcoxon
+fashionmnist  4   pruned          0.40      0.050   8        0.0100    0.0355  0.6641    no    wilcoxon
+fashionmnist  4   pruned          0.40      0.100   8        -0.0150   0.0319  0.1797    no    wilcoxon
+mnist         4   quantized_dense 0.00      0.000   8        0.0042    0.0192  0.6406    no    wilcoxon
+mnist         4   quantized_dense 0.00      0.030   8        -0.0175   0.0156  0.0781    no    wilcoxon
+mnist         4   quantized_dense 0.00      0.050   8        -0.0063   0.0196  0.6250    no    wilcoxon
+mnist         4   quantized_dense 0.00      0.100   8        -0.0062   0.0203  0.6250    no    wilcoxon
+mnist         4   pruned          0.10      0.000   8        -0.0046   0.0141  0.8750    no    wilcoxon
+mnist         4   pruned          0.10      0.030   8        -0.0175   0.0209  0.2031    no    wilcoxon
+mnist         4   pruned          0.10      0.050   8        -0.0050   0.0148  0.6250    no    wilcoxon
+mnist         4   pruned          0.10      0.100   8        0.0025    0.0177  0.8125    no    wilcoxon
+mnist         4   pruned          0.25      0.000   8        0.0025    0.0051  0.4531    no    wilcoxon
+mnist         4   pruned          0.25      0.030   8        -0.0038   0.0196  0.5625    no    wilcoxon
+mnist         4   pruned          0.25      0.050   8        0.0075    0.0127  0.3438    no    wilcoxon
+mnist         4   pruned          0.25      0.100   8        0.0150    0.0189  0.2656    no    wilcoxon
+mnist         4   pruned          0.40      0.000   8        0.0308    0.0228  0.0469    YES   wilcoxon
+mnist         4   pruned          0.40      0.030   8        0.0275    0.0497  0.7500    no    wilcoxon
+mnist         4   pruned          0.40      0.050   8        0.0437    0.0542  0.2969    no    wilcoxon
+mnist         4   pruned          0.40      0.100   8        0.0438    0.0470  0.1406    no    wilcoxon
+
+CAUTION: 0/32 cells have fewer than 5 seeds -- no significance test was run for those, and point-estimate differences there should NOT be read as findings. Only rows marked sig?=YES should be treated as a real difference from the dense baseline; everything else is consistent with noise at the tested seed count.
+
+run_type='quantized_dense' isolates the accuracy cost of quantization ALONE (no pruning); run_type='pruned' reflects pruning AND quantization together (unless --quant-bits 0 disabled quantization, in which case it matches v8's pruning-only behavior). Comparing the two gap rows at the same noise level tells you whether accuracy loss at a given sparsity is coming mainly from quantization, mainly from pruning, or both.
+
+Note: noise_level=0.0 rows use the noiseless (fast) simulator; noise_level>0.0 rows use a density-matrix simulator with a DepolarizingChannel inserted after every gate that is actually applied (frozen/zeroed gates are skipped). All val_acc figures are computed on the final QUANTIZED parameters when quantization is enabled, i.e. they reflect the actually-deployed low-precision circuit, not a full-precision shadow copy of it.
+See {results,aggregate,gap}.csv for the full machine-readable tables.

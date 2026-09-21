@@ -1,102 +1,110 @@
 """
-QAdaPrune-RigL (v8)
+QAdaPrune-RigL (v9)
 ====================
 
-WHAT THIS FILE CHANGES RELATIVE TO v7 (qadaprune_v7.py)
+WHAT THIS FILE CHANGES RELATIVE TO v8 (qadaprune_v8.py)
 ---------------------------------------------------------
-v7's own experiment run (exp7.txt, 256 records / 24 gap cells) came back
-with 23/24 no-pruning-vs-pruned gap cells statistically indistinguishable
-from zero, and the one significant cell (sparsity=0.40 on fashionmnist,
-p=0.031) was a *regression* against the dense baseline, with the same
-direction (non-significant) on mnist at 0.40 too. That result pattern --
-wide CIs everywhere, one clear signal at high sparsity -- pointed at two
-concrete problems in the decision rule's *inputs*, not in the published
-criteria themselves (Movement Pruning / RigL are unchanged in v8):
+v8 fixed two bugs in the pruning decision rule's *inputs* (a no-op "EMA"
+on the movement score, and a movement/grow signal computed from a
+separately-sampled proxy gradient instead of the real training gradient).
+Those fixes were correct. But the v8 sweep (exp8.txt: 48/256 expected
+records, 3/8 seeds completed, mnist only, fashionmnist never ran) exposed
+a deeper problem that a correct decision rule alone cannot fix: the
+surrounding experiment did not have enough signal-to-noise ratio for a
+pruning effect to be distinguishable from run-to-run noise, even with a
+complete sweep.
 
-  1. BUG: the "EMA" applied to the movement-pruning score was a no-op.
-     v7 had:
-         movement_score += movement_ema_beta * (-(params_before * cur_grad)) \
-             + (1 - movement_ema_beta) * 0.0
-     The second term is identically zero, so this reduces algebraically to
-     `movement_score += movement_ema_beta * contribution_t` -- i.e. every
-     step's contribution is scaled by the *same* constant. Since
-     movement_score is only ever consumed via `argsort` for ranking, a
-     uniform per-step rescaling by a constant changes no ranking and no
-     prune/regrow decision versus movement_ema_beta=1. It is not an EMA
-     and does not do what the v7 docstring claimed (down-weight/decay
-     contributions relative to each other). v8 replaces this with the raw
-     accumulated sum Sanh et al. actually define: movement_score +=
-     -(theta_t * grad_t) every step, no extra scaling.
+Diagnosis from exp8.txt:
+  - Dense (unpruned) baseline validation accuracy was only ~76-77% on a
+    2-class MNIST subset (3 vs 6) that a plain linear classifier on the
+    same features solves far better. A weak, undertrained dense reference
+    makes every pruned-vs-dense comparison meaningless, since pruned
+    models are being compared against a bad baseline rather than a
+    converged one.
+  - Per-seed accuracy std was 5-8 percentage points -- larger than the
+    accuracy gaps under test (0.3-1.7 points) -- and 2-3x larger than the
+    irreducible binomial sampling noise implied by a 300-point validation
+    set (sqrt(p(1-p)/n) ~ 2.4% at p=0.77), meaning most of the variance is
+    real training instability, not just eval-set sampling noise.
+  - Only 40 training steps for a PQC trained with stochastic
+    parameter-shift/adjoint gradients is very likely insufficient to
+    reach a stable optimum, so "pruned" and "dense" runs are both being
+    frozen mid-training -- which one looks better on a given seed is
+    largely a function of where each happened to land in a still-noisy
+    trajectory, not of the pruning method.
+  - The classification head (`reduce_to_two`: an untrained, hand-picked
+    sum over a fixed half of the qubits per class) is not learned. With
+    n_qubits=4 this is a 2-vs-2 partition with no training signal of its
+    own, adding architecture-imposed variance/ceiling unrelated to the
+    pruning method being evaluated.
+  - n_qubits=4, n_layers=3 gives only 24 total circuit parameters.
+    Pruning up to 40% of that removes ~10 numbers -- not enough parameter
+    budget for a sparsity/accuracy tradeoff to be visible above noise,
+    even with a perfect decision rule.
+  - Thresholded accuracy on a small (300-point) validation set is a
+    high-variance statistic; AUC and cross-entropy loss are lower-
+    variance ways to see the same effect.
 
-  2. BUG (bigger effect): the gradient used to compute *both* the
-     movement-pruning drop score and the RigL grow-criterion EMA
-     (`cur_grad`, via v7's `fresh_grad()`) was NOT the gradient that
-     actually moved the parameters. `fresh_grad()` drew a fresh random
-     16-example subsample (`grad_pts`) and ran a slow, separate per-example
-     `torch.autograd.grad` loop over it -- independent of, and differently
-     sampled from, the full-batch gradient computed two lines later inside
-     `loss.backward()` that `opt.step()` actually applies. Movement
-     Pruning's score is explicitly theta * dL/dtheta *for the gradient
-     driving the optimizer update*; scoring movement with a separately-
-     sampled proxy stacks a second, independent noise source on top of the
-     (unavoidable) noise already present in a finite quantum-circuit
-     gradient estimate. It also meant every one of the 320 training runs
-     in the v7 sweep paid for a redundant per-example autograd loop on
-     every single step -- almost certainly the dominant cost of the
-     sweep's 1-day-17-hour runtime for 256 records.
+v9 fixes, in priority order:
+  1. TRAINABLE CLASSICAL READOUT. Replaces `reduce_to_two` (a fixed,
+     untrained sum-of-halves) with a small trainable linear head
+     (readout_W: n_qubits x 2, readout_b: 2) applied to the circuit's
+     per-qubit Z-expectation values and trained jointly with the circuit
+     via the same optimizer. This removes an unlearned, high-variance
+     component from the pipeline. Readout parameters are NEVER pruned or
+     frozen -- only the quantum ansatz parameters are subject to the
+     movement-pruning/RigL decision rule, matching how the method is
+     defined in the literature (Sanh et al. / Evci et al. prune/regrow
+     model weights, not a fixed hand-coded decoder).
+  2. MORE CAPACITY TO PRUNE. Qubit/layer defaults raised (see --qubits,
+     --layers) so there is an actual parameter budget for a
+     sparsity/accuracy tradeoff to be visible.
+  3. LONGER TRAINING WITH A CONVERGENCE CHECK. Step budget raised by
+     default, and each run now records whether its loss had plateaued by
+     the end of training (vs. still decreasing meaningfully) -- flagging
+     undertrained runs instead of silently reporting them as results.
+  4. LARGER VALIDATION / NOISE-EVAL SETS to shrink the binomial-sampling
+     component of run-to-run variance for free, independent of any
+     modeling fix.
+  5. MORE SEEDS by default. Statistical power for the paired gap test
+     scales with seed count; at the effect sizes and per-seed std
+     observed in v8, 8 seeds was never going to reach significance.
+  6. LOWER-VARIANCE METRICS. Cross-entropy loss and ROC-AUC are now
+     computed and recorded alongside thresholded accuracy, for both the
+     noiseless and noisy evaluation paths, and the gap table is reported
+     for all three metrics.
+  7. CLASSICAL SANITY-CHECK BASELINE. Before spending GPU time on a
+     circuit, v9 fits a plain scikit-learn LogisticRegression on the
+     exact same PCA features used by the quantum model and reports its
+     accuracy. This is a cheap, standard "is this data even separable
+     with the features I gave the model" check -- if the classical probe
+     on the same 16-ish-d PCA features scores far above the dense quantum
+     baseline, the bottleneck is capacity/training/readout in the quantum
+     pipeline, not label noise or task difficulty (which is what v8's
+     results suggested).
 
-     v8 fix: reuse `params.grad` from the same `loss.backward()` call that
-     the optimizer step uses. This is:
-       - the exact quantity Movement Pruning's score is defined over (the
-         gradient that is actually driving theta's movement), not a proxy
-         for it;
-       - an *exact* expectation-value gradient when shots=None (the
-         script's default), i.e. it removes quantum-sampling noise from
-         the decision rule entirely in that mode, rather than adding a
-         second finite-sample estimate on top;
-       - already populated at currently-frozen (zero-valued) parameter
-         positions, since frozen params stay in the autograd graph and are
-         only clamped back to 0 by `enforce_frozen` *after* `opt.step()` --
-         exactly the "gradient magnitude of frozen params" signal RigL's
-         grow rule wants, with no extra computation needed.
-     This removes `compute_sample_grad`, `sample_grad_batch`, the
-     `grad_rng`/`fresh_grad` closure, and the `--grad-pts` CLI flag, since
-     nothing else in the file used them.
-
-  3. Nothing else changed. The published criteria (Movement Pruning drop,
-     RigL grow + cosine cycle schedule, Zhu & Gupta cubic sparsity ramp),
-     the entangling-protection structural prior, distillation, LR warmup,
-     circuit, noisy eval path, and all reporting/statistics code are
-     UNCHANGED from v7 -- this is a targeted fix to the two identified
-     noise/bug sources in the decision rule's inputs, not a redesign, so
-     v7 and v8 runs remain comparable apart from those two inputs.
-
-  4. Compute freed by removing the redundant per-step autograd loop should
-     be put toward more seeds: v7's CIs (+/-0.02 to +/-0.09) are often
-     larger than the sparsity effects being tested for. `--seeds` still
-     defaults to the same 8 as v7 here so the two versions are directly
-     comparable on equal seed count; raise it for a production run.
-
-  5. Priority follow-up once re-run under v8: the sparsity=0.40 regression
-     seen in v7 (significant on fashionmnist, same-direction on mnist) is
-     the one place v7's data actually said something. Re-check whether it
-     persists under v8's cleaner signal before concluding it's a real
-     over-pruning effect (as opposed to partly a v7 noise artifact) that
-     would warrant raising `protect_entangling_frac` or slowing the RigL
-     cycle-fraction decay so mask churn doesn't compound with the fastest
-     part of the sparsity ramp.
+The Movement-Pruning drop criterion, RigL grow criterion, cubic sparsity
+ramp, entangling-protection structural prior, --dispatch subprocess-per-
+combo GPU-handle isolation, and v8's real-gradient fix are all UNCHANGED
+in v9 -- none of those were shown to be wrong; the problem was that the
+surrounding experiment could not produce a measurable signal for them to
+be tested against.
 
 Output goes to exp8.txt.
 """
 
 import argparse
 import csv
+import gc
 import math
 import pickle
+import shlex
+import subprocess
 import sys
 import time
 from collections import defaultdict
 from datetime import datetime, timedelta
+from pathlib import Path
 
 import numpy as np
 import pennylane as qml
@@ -132,7 +140,7 @@ DATASET_CLASSES = {
 
 
 # ----------------------------------------------------------------------
-# Data -- UNCHANGED from v7
+# Data -- UNCHANGED from v7/v8
 # ----------------------------------------------------------------------
 def _split_indices(full, class_a, class_b, n_train, n_val, seed):
     idx_a = [i for i in range(len(full)) if full.targets[i] == class_a]
@@ -154,14 +162,20 @@ def _split_indices(full, class_a, class_b, n_train, n_val, seed):
     return train_idx, val_idx, a_set
 
 
-def load_binary_subset(dataset_name, n_qubits, n_train=500, n_val=300, seed=42,
+def load_binary_subset(dataset_name, n_qubits, n_train=800, n_val=800, seed=42,
                         root="./data", encoding="pca"):
     """Returns (X_train, y_train), (X_val, y_val) with X shaped
     (N, n_qubits, IMG_COLS), scaled to [0, pi].
 
-    encoding="pca" (default): fit a 16-component PCA on the training crops,
-    min-max scale each component using train-set stats (val is clipped to
-    the same range, not re-fit -- no val-set leakage).
+    n_train/n_val defaults raised from v8 (500/300) to 800/800: a bigger
+    validation set alone shrinks the binomial-sampling component of
+    run-to-run variance (see module docstring, diagnosis point 2), before
+    any modeling change.
+
+    encoding="pca" (default): fit a min(n_features, N-1)-component PCA on
+    the training crops, min-max scale each component using train-set
+    stats (val is clipped to the same range, not re-fit -- no val-set
+    leakage).
     encoding="resize": CenterCrop then a naive box-filter resize to
     (n_qubits, IMG_COLS). Kept for comparison.
     """
@@ -217,8 +231,32 @@ def load_binary_subset(dataset_name, n_qubits, n_train=500, n_val=300, seed=42,
     return (X_train, y_train), (X_val, y_val)
 
 
+def classical_sanity_baseline(X_train_feat, y_train, X_val_feat, y_val):
+    """Quick logistic-regression probe on the EXACT SAME PCA features fed
+    to the quantum model, as a data-separability sanity check.
+
+    This is NOT a fair "classical vs quantum" comparison (no
+    hyperparameter tuning, no cross-validation, and it gets the same
+    limited feature budget the circuit gets, nothing more). Its only job
+    is: if a plain linear model on these features scores far above the
+    dense quantum baseline, the bottleneck is capacity/training/readout
+    in the quantum pipeline, not the data or the task -- exactly the
+    pattern v8's results (dense accuracy ~76-77% on an easy binary split)
+    pointed at. Returns None if scikit-learn isn't available.
+    """
+    try:
+        from sklearn.linear_model import LogisticRegression
+    except ImportError:
+        return None
+    X_tr_flat = X_train_feat.reshape(X_train_feat.shape[0], -1)
+    X_val_flat = X_val_feat.reshape(X_val_feat.shape[0], -1)
+    clf = LogisticRegression(max_iter=2000)
+    clf.fit(X_tr_flat, y_train)
+    return float(clf.score(X_val_flat, y_val))
+
+
 # ----------------------------------------------------------------------
-# Circuit (training path, torch-differentiable) -- UNCHANGED from v7
+# Circuit (training path, torch-differentiable) -- UNCHANGED from v7/v8
 # ----------------------------------------------------------------------
 def encode(img, wires):
     for q, w in enumerate(wires):
@@ -269,16 +307,20 @@ def make_qnode(n_qubits, shots):
     return qnode, is_gpu_sim
 
 
-def reduce_to_two(out_vals):
-    n = len(out_vals)
-    half = n // 2
-    c0 = sum(out_vals[:half]) if half > 0 else out_vals[0] * 0
-    c1 = sum(out_vals[half:])
-    return torch.stack([c0, c1])
-
-
-def batch_forward(qckt, params, X_t):
-    logits = torch.stack([reduce_to_two(qckt(params, x)) for x in X_t])
+# ----------------------------------------------------------------------
+# NOTE (v9 change #1): v7/v8's `reduce_to_two` -- a fixed, untrained sum
+# of Z-expectation values over a hand-picked half of the qubits per class
+# -- has been REMOVED. It is replaced by a small trainable linear readout
+# (readout_W, readout_b) applied in `batch_forward` below and trained
+# jointly with the circuit. See module docstring, v9 fix #1.
+# ----------------------------------------------------------------------
+def batch_forward(qckt, params, readout_W, readout_b, X_t):
+    """readout_W: (n_qubits, 2) torch tensor, readout_b: (2,) torch
+    tensor, both trainable and NEVER touched by the pruning/freezing
+    logic (that only ever operates on `params`, the quantum ansatz
+    tensor)."""
+    exp_stack = torch.stack([torch.stack(qckt(params, x)) for x in X_t])  # (batch, n_qubits)
+    logits = exp_stack @ readout_W + readout_b
     return torch.softmax(logits, dim=1)
 
 
@@ -301,17 +343,51 @@ def accuracy_from_probs(probs, y_t):
     return (preds == y_t.long()).float().mean().item()
 
 
-# ----------------------------------------------------------------------
-# NOTE: v7's compute_sample_grad / sample_grad_batch / fresh_grad closure
-# have been REMOVED in v8. They computed a separately-sampled mini-batch
-# gradient (via a slow per-example autograd.grad loop) that was distinct
-# from, and independent noise on top of, the actual full-batch gradient
-# that drives the parameter update via loss.backward()/opt.step(). v8
-# reuses params.grad from that same backward() call for both the
-# movement-pruning score and the RigL grow-criterion EMA -- see module
-# docstring. Nothing else in the file referenced these functions, so
-# removing them is a pure cleanup with no other behavioral effect.
-# ----------------------------------------------------------------------
+def numpy_bce(y_true, y_prob, eps=1e-7):
+    p = np.clip(y_prob, eps, 1 - eps)
+    return float(-np.mean(y_true * np.log(p) + (1 - y_true) * np.log(1 - p)))
+
+
+def compute_auc(y_true, y_score):
+    """ROC-AUC via scikit-learn if available, else a rank-based
+    (Mann-Whitney U) fallback that needs no dependency beyond numpy.
+    Returns nan if only one class is present (AUC is undefined there)."""
+    y_true = np.asarray(y_true)
+    y_score = np.asarray(y_score)
+    if len(np.unique(y_true)) < 2:
+        return float("nan")
+    try:
+        from sklearn.metrics import roc_auc_score
+        return float(roc_auc_score(y_true, y_score))
+    except Exception:
+        order = np.argsort(y_score)
+        ranks = np.empty_like(order, dtype=float)
+        ranks[order] = np.arange(1, len(y_score) + 1)
+        n_pos = int((y_true == 1).sum())
+        n_neg = int((y_true == 0).sum())
+        sum_ranks_pos = ranks[y_true == 1].sum()
+        return float((sum_ranks_pos - n_pos * (n_pos + 1) / 2) / (n_pos * n_neg))
+
+
+def check_convergence(cost_hist, window_frac=0.15, rel_threshold=0.03):
+    """True if training looks plateaued by the end (mean loss over the
+    final window changed by less than `rel_threshold` relative to the
+    window immediately before it); False if it still looks like it was
+    improving fast enough that more --steps would likely help; None if
+    there aren't enough recorded steps yet to judge (treated as "assume
+    converged" by callers, since a short run that already hit its `tol`
+    early-stop is a separate, stronger convergence signal handled
+    upstream)."""
+    n = len(cost_hist)
+    window = max(5, int(round(n * window_frac)))
+    if n < 2 * window:
+        return None
+    prev = float(np.mean(cost_hist[-2 * window:-window]))
+    last = float(np.mean(cost_hist[-window:]))
+    if prev <= 1e-9:
+        return True
+    rel_drop = (prev - last) / prev
+    return bool(rel_drop < rel_threshold)
 
 
 def get_sparsity(arr):
@@ -356,7 +432,7 @@ def entangling_protected_mask(n_layers, n_qubits, protect_frac, seed=0):
     parameters from ever being pruned, since removing entangling gates
     tends to be disproportionately damaging to a PQC's trainability
     compared to removing single-qubit rotation parameters of the same
-    count (see module docstring for references). Unchanged from v7."""
+    count. Unchanged from v7/v8."""
     mask = np.zeros((n_layers, n_qubits, 2), dtype=bool)
     n_live_ent = max(0, n_qubits - 1)
     n_protect = int(np.ceil(protect_frac * n_live_ent)) if n_live_ent > 0 else 0
@@ -396,22 +472,18 @@ def top_up_to_target_sparsity(params, frozen_mask, protected_mask, movement_scor
 def rigl_drop_and_grow_round(params, frozen_mask, protected_mask, movement_score,
                               grad_ema, n_target, param_shape, max_round_freeze,
                               cycle_frac):
-    """Core decision rule (unchanged from v7 -- only its *inputs*,
-    movement_score and grad_ema, changed in v8; see module docstring).
+    """Core decision rule (UNCHANGED from v7/v8 -- only its *inputs*,
+    movement_score and grad_ema, changed in v8, and only the readout
+    around it changed in v9; see module docstrings).
 
     GROW (RigL, Evci et al. 2020): among currently-frozen, unprotected
     params, reactivate the `cycle_frac`-fraction with the largest-magnitude
-    (EMA-smoothed) gradient. They are already at 0 (their frozen value),
-    which matches RigL's own "initialize regrown connections to zero"
-    prescription -- growth is driven purely by "this direction currently
-    wants to move a lot", not by re-using whatever old value they had.
+    (EMA-smoothed) gradient, initialized to zero on regrowth per RigL.
 
     DROP (Movement Pruning, Sanh et al. 2020): among the eligible active
-    (non-frozen, non-protected, and not the params we just regrew this
-    round) params, freeze enough of the lowest-movement-score ones to hit
-    n_target for this round, capped at max_round_freeze. Movement score is
-    an accumulated running statistic (see training loop), so no separate
-    noise-suppression hack is required here.
+    (non-frozen, non-protected, not just-regrown) params, freeze enough of
+    the lowest-movement-score ones to hit n_target for this round, capped
+    at max_round_freeze.
     """
     frozen_mask = frozen_mask.copy()
 
@@ -443,7 +515,7 @@ def rigl_drop_and_grow_round(params, frozen_mask, protected_mask, movement_score
 
 
 # ----------------------------------------------------------------------
-# Noisy (density-matrix) evaluation path -- UNCHANGED from v7
+# Noisy (density-matrix) evaluation path
 # ----------------------------------------------------------------------
 def noisy_encode(img, wires, noise_prob):
     gates = (qml.RY, qml.RX, qml.RZ, qml.RY)
@@ -478,8 +550,13 @@ def numpy_softmax(logits):
     return e / e.sum()
 
 
-def evaluate_noise_robustness(final_params_np, X_val, y_val, n_qubits, noise_levels,
-                               max_eval_samples=100, freeze_tol=1e-9, eval_seed=0):
+def evaluate_noise_robustness(final_params_np, final_readout_W_np, final_readout_b_np,
+                               X_val, y_val, n_qubits, noise_levels,
+                               max_eval_samples=300, freeze_tol=1e-9, eval_seed=0):
+    """v9 change: uses the trained readout (final_readout_W/b) instead of
+    v7/v8's fixed sum-of-halves, and now also returns val_loss / val_auc
+    alongside val_acc for each noise level (see module docstring, fix #6).
+    Returns {} if no positive noise levels were requested."""
     noise_levels_pos = sorted({nl for nl in noise_levels if nl > 0})
     if not noise_levels_pos:
         return {}
@@ -505,21 +582,24 @@ def evaluate_noise_robustness(final_params_np, X_val, y_val, n_qubits, noise_lev
 
     results = {}
     for noise_prob in noise_levels_pos:
-        correct = 0
+        p1_list, y_list = [], []
         for x, y in zip(Xs, ys):
-            out = np.array(qnode(noise_prob, x), dtype=float)
-            half = len(out) // 2
-            c0 = out[:half].sum() if half > 0 else out[0]
-            c1 = out[half:].sum()
-            probs = numpy_softmax(np.array([c0, c1]))
-            pred = int(probs[1] > 0.5)
-            correct += int(pred == int(y))
-        results[noise_prob] = correct / n_eval
+            out = np.array(qnode(noise_prob, x), dtype=float)  # (n_qubits,)
+            logits = out @ final_readout_W_np + final_readout_b_np
+            probs = numpy_softmax(logits)
+            p1_list.append(float(probs[1]))
+            y_list.append(int(y))
+        p1_arr = np.array(p1_list)
+        y_arr = np.array(y_list)
+        acc = float(np.mean((p1_arr > 0.5).astype(int) == y_arr))
+        loss = numpy_bce(y_arr, p1_arr)
+        auc = compute_auc(y_arr, p1_arr)
+        results[noise_prob] = {"val_acc": acc, "val_loss": loss, "val_auc": auc}
     return results
 
 
 # ----------------------------------------------------------------------
-# Reporting helpers -- UNCHANGED from v7
+# Reporting helpers -- UNCHANGED from v7/v8
 # ----------------------------------------------------------------------
 def format_duration(seconds):
     return str(timedelta(seconds=round(seconds, 2)))
@@ -547,22 +627,33 @@ def print_prune_cumulative(acc, sparsity, loss, total_t):
 # ----------------------------------------------------------------------
 # Training loops
 # ----------------------------------------------------------------------
+def _init_readout(n_qubits, seed, compute_device):
+    rng = np.random.RandomState(seed + 10_000)  # offset so it never aliases circuit/mask RNGs
+    W0 = rng.uniform(-1.0, 1.0, size=(n_qubits, 2)) / np.sqrt(n_qubits)
+    readout_W = torch.tensor(W0, dtype=DTYPE, device=compute_device, requires_grad=True)
+    readout_b = torch.zeros(2, dtype=DTYPE, device=compute_device, requires_grad=True)
+    return readout_W, readout_b
+
+
 def optimize_and_prune(qckt, iparams, X_train, y_train, X_val, y_val,
-                        win_sz=4, steps=40, tol=0.01, lr=0.1,
+                        win_sz=4, steps=200, tol=0.01, lr=0.1,
                         target_sparsity=0.25, compute_device=None,
                         prune_start_frac=0.15, prune_end_frac=0.65,
                         max_round_freeze_frac=0.08, verbose=True,
                         movement_ema_beta=0.6, cycle_frac_init=0.30,
                         protect_entangling_frac=0.34,
                         seed=0, teacher_params=None,
+                        teacher_readout_W=None, teacher_readout_b=None,
                         distill_hardness_max=0.7, distill_hardness_min=0.2,
-                        lr_warm_mult=2.0):
-    """QAdaPrune-RigL (v8): dynamic sparse training with a Movement-Pruning
-    drop criterion and a RigL grow criterion (see module docstring). The
-    drop/grow *decision rule* is identical to v7; what changed is that both
-    its inputs (movement_score, grad_ema) are now computed from the same
-    real backward-pass gradient (`params.grad`) that drives the optimizer
-    step, instead of v7's separately-sampled mini-batch proxy.
+                        lr_warm_mult=2.0,
+                        convergence_window_frac=0.15, convergence_rel_threshold=0.03):
+    """QAdaPrune-RigL (v9): dynamic sparse training with a Movement-Pruning
+    drop criterion and a RigL grow criterion. The drop/grow decision rule
+    is identical to v7/v8. v9 changes: (a) a trainable classical readout
+    (readout_W/readout_b) replaces the fixed sum-of-halves decoder and is
+    trained jointly but never pruned; (b) a convergence check is recorded
+    alongside the result; (c) val_auc/val_loss are computed alongside
+    val_acc. See module docstring.
     """
     compute_device = compute_device if compute_device is not None else TORCH_DEVICE
     X_t = torch.tensor(X_train, dtype=DTYPE, device=compute_device)
@@ -575,7 +666,10 @@ def optimize_and_prune(qckt, iparams, X_train, y_train, X_val, y_val,
     n_layers, n_qubits, _ = param_shape
     n_params = int(np.prod(param_shape))
 
-    opt = torch.optim.RMSprop([params], lr=lr, alpha=RMSPROP_ALPHA, eps=RMSPROP_EPS)
+    readout_W, readout_b = _init_readout(n_qubits, seed, compute_device)
+
+    opt = torch.optim.RMSprop([params, readout_W, readout_b], lr=lr,
+                               alpha=RMSPROP_ALPHA, eps=RMSPROP_EPS)
 
     start_step = max(win_sz, int(round(prune_start_frac * steps)))
     end_step = max(start_step + win_sz, int(round(prune_end_frac * steps)))
@@ -584,17 +678,19 @@ def optimize_and_prune(qckt, iparams, X_train, y_train, X_val, y_val,
     protected_mask = entangling_protected_mask(n_layers, n_qubits, protect_entangling_frac, seed=seed)
 
     teacher_t = None
+    teacher_readout_W_t = None
+    teacher_readout_b_t = None
     if teacher_params is not None:
         teacher_t = torch.tensor(teacher_params, dtype=DTYPE, device=compute_device)
+        teacher_readout_W_t = torch.tensor(teacher_readout_W, dtype=DTYPE, device=compute_device)
+        teacher_readout_b_t = torch.tensor(teacher_readout_b, dtype=DTYPE, device=compute_device)
 
     # Movement Pruning score: accumulated running SUM of -(theta * grad),
     # per Sanh et al. -- updated EVERY step from the real training
-    # gradient (see below), not from a separately-sampled proxy.
+    # gradient (v8 fix, unchanged in v9).
     movement_score = np.zeros(n_params)
     # RigL grow-criterion EMA of |grad|, also from the real training
-    # gradient. Initialized to zero and populated from step 0's backward
-    # pass -- no separate "warm-up" gradient call needed now that we reuse
-    # params.grad instead of a standalone fresh_grad() estimate.
+    # gradient.
     grad_ema = np.zeros(n_params)
     frozen_mask = np.zeros(n_params, dtype=bool)
 
@@ -602,8 +698,9 @@ def optimize_and_prune(qckt, iparams, X_train, y_train, X_val, y_val,
     step_records = []
 
     if verbose:
-        print("\ntraining with QAdaPrune-RigL (v8) pruning:")
+        print("\ntraining with QAdaPrune-RigL (v9) pruning:")
     loop_start = time.time()
+    new_cost = float("nan")
     for t in range(steps):
         step_start = time.time()
 
@@ -623,21 +720,19 @@ def optimize_and_prune(qckt, iparams, X_train, y_train, X_val, y_val,
         params_before = params.detach().cpu().numpy().flatten()
 
         opt.zero_grad()
-        probs = batch_forward(qckt, params, X_t)
+        probs = batch_forward(qckt, params, readout_W, readout_b, X_t)
         loss = bce_loss(probs, y_t)
         if teacher_t is not None and hardness > 0:
             with torch.no_grad():
-                teacher_probs = batch_forward(qckt, teacher_t, X_t)
+                teacher_probs = batch_forward(qckt, teacher_t, teacher_readout_W_t, teacher_readout_b_t, X_t)
             loss = (1 - hardness) * loss + hardness * kd_kl_loss(probs, teacher_probs)
         loss.backward()
 
-        # v8: reuse the REAL training gradient (same one opt.step() is
-        # about to apply) for both the movement-pruning drop score and the
-        # RigL grow-criterion EMA, instead of v7's separately-sampled
-        # mini-batch proxy. Autograd still populates .grad at currently-
-        # frozen (zero-valued) positions since they remain in the graph
-        # until enforce_frozen() clamps them back to 0 below -- exactly
-        # the "gradient at frozen params" signal RigL's grow rule needs.
+        # Reuse the REAL training gradient (same one opt.step() is about
+        # to apply) for both the movement-pruning drop score and the RigL
+        # grow-criterion EMA. Only `params` (the quantum ansatz tensor)
+        # feeds the pruning logic -- readout_W/readout_b are optimized but
+        # never pruned or frozen.
         cur_grad = params.grad.detach().cpu().numpy().flatten()
         movement_score += -(params_before * cur_grad)
         grad_ema = movement_ema_beta * grad_ema + (1 - movement_ema_beta) * np.abs(cur_grad)
@@ -648,7 +743,7 @@ def optimize_and_prune(qckt, iparams, X_train, y_train, X_val, y_val,
         new_cost = loss.item()
         cost_hists.append(new_cost)
         with torch.no_grad():
-            train_acc = accuracy_from_probs(batch_forward(qckt, params, X_t), y_t)
+            train_acc = accuracy_from_probs(batch_forward(qckt, params, readout_W, readout_b, X_t), y_t)
         train_acc_hists.append(train_acc)
 
         n_regrown_this_step = 0
@@ -676,16 +771,27 @@ def optimize_and_prune(qckt, iparams, X_train, y_train, X_val, y_val,
         params, frozen_mask, protected_mask, movement_score, target_sparsity, param_shape
     )
 
+    if new_cost < tol:
+        converged = True
+    else:
+        plateaued = check_convergence(cost_hists, convergence_window_frac, convergence_rel_threshold)
+        converged = True if plateaued is None else plateaued
+        if not converged and verbose:
+            print(f"WARNING: loss still decreasing meaningfully after {len(cost_hists)} steps "
+                  f"(tol={tol} not reached, no plateau detected) -- consider more --steps.")
+
     sparsity = get_sparsity(params.detach().cpu().numpy())
     with torch.no_grad():
-        val_probs = batch_forward(qckt, params, Xv_t)
+        val_probs = batch_forward(qckt, params, readout_W, readout_b, Xv_t)
         val_acc = accuracy_from_probs(val_probs, yv_t)
+        val_loss = bce_loss(val_probs, yv_t).item()
+    val_auc = compute_auc(y_val, val_probs[:, 1].detach().cpu().numpy())
 
     total_time = time.time() - loop_start
     final_train_acc = step_records[-1][1] if step_records else float("nan")
     final_train_loss = step_records[-1][3] if step_records else float("nan")
     print_prune_cumulative(final_train_acc, sparsity, final_train_loss, total_time)
-    print(f"(validation accuracy on held-out set: {val_acc:.4f})")
+    print(f"(validation: acc={val_acc:.4f}, auc={val_auc:.4f}, loss={val_loss:.4f}, converged={converged})")
 
     return {
         "step_records": step_records,
@@ -693,14 +799,22 @@ def optimize_and_prune(qckt, iparams, X_train, y_train, X_val, y_val,
         "train_acc_hists": train_acc_hists,
         "sparsity": sparsity,
         "val_acc": val_acc,
+        "val_auc": val_auc,
+        "val_loss": val_loss,
+        "converged": converged,
         "total_time": total_time,
         "final_params": params.detach().cpu().numpy(),
+        "final_readout_W": readout_W.detach().cpu().numpy(),
+        "final_readout_b": readout_b.detach().cpu().numpy(),
     }
 
 
-def optimize(qckt, iparams, X_train, y_train, X_val, y_val, steps=100, tol=0.01, lr=0.1,
-             compute_device=None, verbose=True):
-    """Dense (no pruning) baseline / teacher -- UNCHANGED from v7."""
+def optimize(qckt, iparams, X_train, y_train, X_val, y_val, steps=200, tol=0.01, lr=0.1,
+             compute_device=None, verbose=True, seed=0,
+             convergence_window_frac=0.15, convergence_rel_threshold=0.03):
+    """Dense (no pruning) baseline / teacher. v9 adds the trainable
+    readout, val_auc/val_loss, and a convergence check -- otherwise
+    unchanged from v7/v8."""
     compute_device = compute_device if compute_device is not None else TORCH_DEVICE
     X_t = torch.tensor(X_train, dtype=DTYPE, device=compute_device)
     y_t = torch.tensor(y_train, dtype=DTYPE, device=compute_device)
@@ -708,7 +822,11 @@ def optimize(qckt, iparams, X_train, y_train, X_val, y_val, steps=100, tol=0.01,
     yv_t = torch.tensor(y_val, dtype=DTYPE, device=compute_device)
 
     params = torch.tensor(iparams, dtype=DTYPE, device=compute_device, requires_grad=True)
-    opt = torch.optim.RMSprop([params], lr=lr, alpha=RMSPROP_ALPHA, eps=RMSPROP_EPS)
+    n_qubits = params.shape[1]
+    readout_W, readout_b = _init_readout(n_qubits, seed, compute_device)
+
+    opt = torch.optim.RMSprop([params, readout_W, readout_b], lr=lr,
+                               alpha=RMSPROP_ALPHA, eps=RMSPROP_EPS)
 
     cost_hists, train_acc_hists = [], []
     step_records = []
@@ -716,11 +834,12 @@ def optimize(qckt, iparams, X_train, y_train, X_val, y_val, steps=100, tol=0.01,
     if verbose:
         print("\ntraining without pruning (dense teacher):")
     loop_start = time.time()
+    new_cost = float("nan")
     for t in range(steps):
         step_start = time.time()
 
         opt.zero_grad()
-        probs = batch_forward(qckt, params, X_t)
+        probs = batch_forward(qckt, params, readout_W, readout_b, X_t)
         loss = bce_loss(probs, y_t)
         loss.backward()
         opt.step()
@@ -728,7 +847,7 @@ def optimize(qckt, iparams, X_train, y_train, X_val, y_val, steps=100, tol=0.01,
         new_cost = loss.item()
         cost_hists.append(new_cost)
         with torch.no_grad():
-            train_acc = accuracy_from_probs(batch_forward(qckt, params, X_t), y_t)
+            train_acc = accuracy_from_probs(batch_forward(qckt, params, readout_W, readout_b, X_t), y_t)
         train_acc_hists.append(train_acc)
 
         step_time = time.time() - step_start
@@ -739,67 +858,90 @@ def optimize(qckt, iparams, X_train, y_train, X_val, y_val, steps=100, tol=0.01,
         if new_cost < tol:
             break
 
+    if new_cost < tol:
+        converged = True
+    else:
+        plateaued = check_convergence(cost_hists, convergence_window_frac, convergence_rel_threshold)
+        converged = True if plateaued is None else plateaued
+        if not converged and verbose:
+            print(f"WARNING: loss still decreasing meaningfully after {len(cost_hists)} steps "
+                  f"(tol={tol} not reached, no plateau detected) -- consider more --steps.")
+
     with torch.no_grad():
-        val_probs = batch_forward(qckt, params, Xv_t)
+        val_probs = batch_forward(qckt, params, readout_W, readout_b, Xv_t)
         val_acc = accuracy_from_probs(val_probs, yv_t)
+        val_loss = bce_loss(val_probs, yv_t).item()
+    val_auc = compute_auc(y_val, val_probs[:, 1].detach().cpu().numpy())
 
     total_time = time.time() - loop_start
     final_train_acc = step_records[-1][1] if step_records else float("nan")
     final_train_loss = step_records[-1][2] if step_records else float("nan")
     print_no_prune_cumulative(final_train_acc, final_train_loss, total_time)
-    print(f"(validation accuracy on held-out set: {val_acc:.4f})")
+    print(f"(validation: acc={val_acc:.4f}, auc={val_auc:.4f}, loss={val_loss:.4f}, converged={converged})")
 
     return {
         "step_records": step_records,
         "cost_hists": cost_hists,
         "train_acc_hists": train_acc_hists,
         "val_acc": val_acc,
+        "val_auc": val_auc,
+        "val_loss": val_loss,
+        "converged": converged,
         "total_time": total_time,
         "final_params": params.detach().cpu().numpy(),
+        "final_readout_W": readout_W.detach().cpu().numpy(),
+        "final_readout_b": readout_b.detach().cpu().numpy(),
     }
 
 
 # ----------------------------------------------------------------------
-# Sweep driver -- UNCHANGED from v7 apart from algorithm labels/kwargs
+# Sweep driver
 # ----------------------------------------------------------------------
 RECORD_FIELDS = [
     "dataset", "n_qubits", "seed", "run_type", "algorithm", "target_sparsity",
     "achieved_sparsity", "n_params", "n_params_active",
-    "train_final_acc", "train_final_loss",
-    "noise_level", "val_acc", "total_time_s",
+    "train_final_acc", "train_final_loss", "converged",
+    "noise_level", "val_acc", "val_auc", "val_loss", "total_time_s",
 ]
+
+SANITY_FIELDS = ["dataset", "n_qubits", "seed", "logreg_val_acc"]
 
 
 def _build_rows(dataset, n_qubits, seed, run_type, algorithm, target_sparsity, achieved_sparsity,
-                 n_params, train_final_acc, train_final_loss, val_acc_noiseless,
-                 noisy_results, total_time):
+                 n_params, train_final_acc, train_final_loss, converged,
+                 val_acc0, val_auc0, val_loss0, noisy_results, total_time):
     n_active = int(round((1 - achieved_sparsity) * n_params))
-    rows = [{
+    base = {
         "dataset": dataset, "n_qubits": n_qubits, "seed": seed, "run_type": run_type,
         "algorithm": algorithm,
         "target_sparsity": target_sparsity, "achieved_sparsity": achieved_sparsity,
         "n_params": n_params, "n_params_active": n_active,
         "train_final_acc": train_final_acc, "train_final_loss": train_final_loss,
-        "noise_level": 0.0, "val_acc": val_acc_noiseless, "total_time_s": total_time,
-    }]
-    for noise_level, acc in sorted(noisy_results.items()):
-        rows.append({
-            "dataset": dataset, "n_qubits": n_qubits, "seed": seed, "run_type": run_type,
-            "algorithm": algorithm,
-            "target_sparsity": target_sparsity, "achieved_sparsity": achieved_sparsity,
-            "n_params": n_params, "n_params_active": n_active,
-            "train_final_acc": train_final_acc, "train_final_loss": train_final_loss,
-            "noise_level": noise_level, "val_acc": acc, "total_time_s": total_time,
-        })
+        "converged": converged, "total_time_s": total_time,
+    }
+    rows = [dict(base, noise_level=0.0, val_acc=val_acc0, val_auc=val_auc0, val_loss=val_loss0)]
+    for noise_level, m in sorted(noisy_results.items()):
+        rows.append(dict(base, noise_level=noise_level, val_acc=m["val_acc"],
+                          val_auc=m["val_auc"], val_loss=m["val_loss"]))
     return rows
 
 
 def run_single(dataset_name, n_qubits, seed, n_layers, steps, win_sz, sparsities,
                noise_levels, prune_start_frac, prune_end_frac, max_round_freeze_frac,
-               shots, noise_eval_samples, quiet, encoding, v8_hparams):
+               shots, noise_eval_samples, quiet, encoding, n_train, n_val,
+               skip_sanity_check, v9_hparams):
     (X_train, y_train), (X_val, y_val) = load_binary_subset(
-        dataset_name, n_qubits, seed=seed, encoding=encoding
+        dataset_name, n_qubits, n_train=n_train, n_val=n_val, seed=seed, encoding=encoding
     )
+
+    sanity_row = None
+    if not skip_sanity_check:
+        logreg_acc = classical_sanity_baseline(X_train, y_train, X_val, y_val)
+        if logreg_acc is not None:
+            print(f"[{dataset_name}/q{n_qubits}/seed{seed}] classical sanity-check "
+                  f"(LogisticRegression on same PCA features): val_acc={logreg_acc:.4f}")
+            sanity_row = {"dataset": dataset_name, "n_qubits": n_qubits, "seed": seed,
+                          "logreg_val_acc": logreg_acc}
 
     np.random.seed(seed)
     init_params = np.random.uniform(-np.pi, np.pi, size=(n_layers, n_qubits, 2))
@@ -812,18 +954,24 @@ def run_single(dataset_name, n_qubits, seed, n_layers, steps, win_sz, sparsities
 
     no_prune_result = optimize(
         qckt, init_params.copy(), X_train, y_train, X_val, y_val, steps=steps,
-        compute_device=compute_device, verbose=not quiet,
+        compute_device=compute_device, verbose=not quiet, seed=seed,
+        convergence_window_frac=v9_hparams["convergence_window_frac"],
+        convergence_rel_threshold=v9_hparams["convergence_rel_threshold"],
     )
     noise_np = evaluate_noise_robustness(
-        no_prune_result["final_params"], X_val, y_val, n_qubits, noise_levels,
+        no_prune_result["final_params"], no_prune_result["final_readout_W"],
+        no_prune_result["final_readout_b"], X_val, y_val, n_qubits, noise_levels,
         max_eval_samples=noise_eval_samples, eval_seed=seed,
     )
     records = _build_rows(
         dataset_name, n_qubits, seed, "no_pruning", "dense", None, 0.0, n_params,
         no_prune_result["step_records"][-1][1], no_prune_result["step_records"][-1][2],
-        no_prune_result["val_acc"], noise_np, no_prune_result["total_time"],
+        no_prune_result["converged"],
+        no_prune_result["val_acc"], no_prune_result["val_auc"], no_prune_result["val_loss"],
+        noise_np, no_prune_result["total_time"],
     )
 
+    pruning_hparams = {k: v for k, v in v9_hparams.items()}
     pruned_results = {}
     for ts in sparsities:
         prune_result = optimize_and_prune(
@@ -831,17 +979,22 @@ def run_single(dataset_name, n_qubits, seed, n_layers, steps, win_sz, sparsities
             win_sz=win_sz, steps=steps, target_sparsity=ts, compute_device=compute_device,
             prune_start_frac=prune_start_frac, prune_end_frac=prune_end_frac,
             max_round_freeze_frac=max_round_freeze_frac, verbose=not quiet,
-            teacher_params=no_prune_result["final_params"], seed=seed,
-            **v8_hparams,
+            teacher_params=no_prune_result["final_params"],
+            teacher_readout_W=no_prune_result["final_readout_W"],
+            teacher_readout_b=no_prune_result["final_readout_b"],
+            seed=seed, **pruning_hparams,
         )
         noise_p = evaluate_noise_robustness(
-            prune_result["final_params"], X_val, y_val, n_qubits, noise_levels,
+            prune_result["final_params"], prune_result["final_readout_W"],
+            prune_result["final_readout_b"], X_val, y_val, n_qubits, noise_levels,
             max_eval_samples=noise_eval_samples, eval_seed=seed,
         )
         records.extend(_build_rows(
-            dataset_name, n_qubits, seed, "pruned", "qadaprune_rigl_v8", ts, prune_result["sparsity"],
+            dataset_name, n_qubits, seed, "pruned", "qadaprune_rigl_v9", ts, prune_result["sparsity"],
             n_params, prune_result["step_records"][-1][1], prune_result["step_records"][-1][3],
-            prune_result["val_acc"], noise_p, prune_result["total_time"],
+            prune_result["converged"],
+            prune_result["val_acc"], prune_result["val_auc"], prune_result["val_loss"],
+            noise_p, prune_result["total_time"],
         ))
         pruned_results[ts] = prune_result
 
@@ -849,7 +1002,14 @@ def run_single(dataset_name, n_qubits, seed, n_layers, steps, win_sz, sparsities
         "dataset": dataset_name, "n_qubits": n_qubits, "seed": seed,
         "no_pruning": no_prune_result, "pruned": pruned_results,
     }
-    return records, raw_bundle
+
+    # Cleanup: drop the only remaining Python reference to the QNode (and,
+    # through it, the lightning.gpu device / cuStateVec handle) before the
+    # caller moves on to the next combo. See v8 module docstring for why;
+    # unchanged in v9.
+    del qckt
+
+    return records, raw_bundle, sanity_row
 
 
 def write_csv(path, fieldnames, rows):
@@ -860,34 +1020,91 @@ def write_csv(path, fieldnames, rows):
             writer.writerow({k: ("" if row.get(k) is None else row.get(k)) for k in fieldnames})
 
 
+# Used only by --dispatch mode, to read a completed combo's _results.csv /
+# _sanity_baseline.csv back in for merging.
+_INT_FIELDS = {"n_qubits", "seed", "n_params", "n_params_active"}
+_FLOAT_FIELDS = {
+    "achieved_sparsity", "train_final_acc", "train_final_loss",
+    "noise_level", "val_acc", "val_auc", "val_loss", "total_time_s",
+}
+_BOOL_FIELDS = {"converged"}
+
+
+def read_records(path):
+    records = []
+    with open(path, newline="") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            rec = dict(row)
+            for k in _INT_FIELDS:
+                rec[k] = int(rec[k])
+            for k in _FLOAT_FIELDS:
+                rec[k] = float(rec[k])
+            for k in _BOOL_FIELDS:
+                rec[k] = (rec[k] == "True")
+            rec["target_sparsity"] = (
+                None if rec["target_sparsity"] == "" else float(rec["target_sparsity"])
+            )
+            records.append(rec)
+    return records
+
+
+def read_sanity_rows(path):
+    rows = []
+    if not Path(path).exists():
+        return rows
+    with open(path, newline="") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            rows.append({
+                "dataset": row["dataset"], "n_qubits": int(row["n_qubits"]),
+                "seed": int(row["seed"]), "logreg_val_acc": float(row["logreg_val_acc"]),
+            })
+    return rows
+
+
+def _mean_std_ci(vals):
+    vals = [v for v in vals if v is not None and not (isinstance(v, float) and math.isnan(v))]
+    if not vals:
+        return float("nan"), float("nan"), float("nan")
+    n = len(vals)
+    mean = float(np.mean(vals))
+    std = float(np.std(vals, ddof=1)) if n > 1 else 0.0
+    ci95 = 1.96 * std / np.sqrt(n) if n > 1 else 0.0
+    return mean, std, ci95
+
+
 def aggregate_records(records):
     groups = defaultdict(list)
     for r in records:
         key = (r["dataset"], r["n_qubits"], r["run_type"], r["target_sparsity"], r["noise_level"])
-        groups[key].append(r["val_acc"])
+        groups[key].append(r)
     agg = []
-    for (dataset, n_qubits, run_type, target_sparsity, noise_level), vals in groups.items():
-        n = len(vals)
-        mean = float(np.mean(vals))
-        std = float(np.std(vals, ddof=1)) if n > 1 else 0.0
-        ci95 = 1.96 * std / np.sqrt(n) if n > 1 else 0.0
-        agg.append({
+    for (dataset, n_qubits, run_type, target_sparsity, noise_level), rs in groups.items():
+        row = {
             "dataset": dataset, "n_qubits": n_qubits, "run_type": run_type,
             "target_sparsity": target_sparsity, "noise_level": noise_level,
-            "n_seeds": n, "val_acc_mean": mean, "val_acc_std": std, "val_acc_ci95": ci95,
-        })
+            "n_seeds": len(rs),
+        }
+        for metric in ("val_acc", "val_auc", "val_loss"):
+            mean, std, ci95 = _mean_std_ci([r[metric] for r in rs])
+            row[f"{metric}_mean"] = mean
+            row[f"{metric}_std"] = std
+            row[f"{metric}_ci95"] = ci95
+        row["converged_frac"] = float(np.mean([1.0 if r["converged"] else 0.0 for r in rs]))
+        agg.append(row)
     agg.sort(key=lambda r: (r["dataset"], r["n_qubits"], r["run_type"] != "no_pruning",
                              r["target_sparsity"] or 0, r["noise_level"]))
     return agg
 
 
-def _paired_test(baseline_vals, pruned_vals):
-    """Paired significance test on (baseline - pruned) per seed. Prefers
-    Wilcoxon signed-rank (nonparametric, robust to the small/unequal sample
-    sizes typical here); falls back to a paired t-test if scipy is
-    unavailable or the sample is degenerate. Returns (p_value or None,
-    method_str). UNCHANGED from v7."""
-    diffs = np.array(baseline_vals) - np.array(pruned_vals)
+def _paired_test(a_vals, b_vals):
+    """Paired significance test on (a - b) per seed. Prefers Wilcoxon
+    signed-rank (nonparametric, robust to the small/unequal sample sizes
+    typical here); falls back to a paired t-test if scipy is unavailable
+    or the sample is degenerate. Returns (p_value or None, method_str).
+    UNCHANGED from v7/v8."""
+    diffs = np.array(a_vals) - np.array(b_vals)
     if len(diffs) < MIN_SEEDS_FOR_TEST:
         return None, "insufficient_seeds"
     if np.allclose(diffs, diffs[0]):
@@ -899,61 +1116,80 @@ def _paired_test(baseline_vals, pruned_vals):
     except Exception:
         try:
             from scipy.stats import ttest_rel
-            stat, p = ttest_rel(baseline_vals, pruned_vals)
+            stat, p = ttest_rel(a_vals, b_vals)
             return float(p), "paired_t"
         except Exception:
             return None, "scipy_unavailable"
 
 
-def compute_gap_table(records, alpha=0.05):
+def compute_gap_table(records, metric, higher_is_better, alpha=0.05):
+    """Paired (no_pruning - pruned) gap on `metric`, per seed, oriented so
+    a POSITIVE gap always means "pruning hurt" regardless of whether the
+    metric is higher-is-better (accuracy, AUC) or lower-is-better (loss).
+    v9 generalizes v8's accuracy-only gap table to run over
+    {val_acc, val_auc, val_loss} (see module docstring, fix #6)."""
     lookup = defaultdict(dict)
     for r in records:
+        val = r[metric]
+        if val is None or (isinstance(val, float) and math.isnan(val)):
+            continue
         key = (r["dataset"], r["n_qubits"], r["seed"], r["noise_level"])
         if r["run_type"] == "no_pruning":
-            lookup[key]["baseline"] = r["val_acc"]
+            lookup[key]["baseline"] = val
         else:
-            lookup[key].setdefault("pruned", {})[r["target_sparsity"]] = r["val_acc"]
+            lookup[key].setdefault("pruned", {})[r["target_sparsity"]] = val
 
-    paired = defaultdict(list)  # key -> list of (baseline, pruned) per seed
+    paired = defaultdict(list)
     for (dataset, n_qubits, seed, noise_level), d in lookup.items():
         if "baseline" not in d or "pruned" not in d:
             continue
-        for sparsity, acc in d["pruned"].items():
-            paired[(dataset, n_qubits, sparsity, noise_level)].append((d["baseline"], acc))
+        for sparsity, val in d["pruned"].items():
+            paired[(dataset, n_qubits, sparsity, noise_level)].append((d["baseline"], val))
 
     gap_rows = []
     for (dataset, n_qubits, sparsity, noise_level), pairs in paired.items():
         baseline_vals = [p[0] for p in pairs]
         pruned_vals = [p[1] for p in pairs]
-        vals = [b - p for b, p in pairs]
-        n = len(vals)
-        mean = float(np.mean(vals))
-        std = float(np.std(vals, ddof=1)) if n > 1 else 0.0
+        if higher_is_better:
+            diffs = [b - p for b, p in pairs]  # positive = pruning hurt
+        else:
+            diffs = [p - b for b, p in pairs]  # positive = pruning hurt (loss went up)
+        n = len(diffs)
+        mean = float(np.mean(diffs))
+        std = float(np.std(diffs, ddof=1)) if n > 1 else 0.0
         ci95 = 1.96 * std / np.sqrt(n) if n > 1 else 0.0
         p_value, test_method = _paired_test(baseline_vals, pruned_vals)
         significant = (p_value is not None) and (p_value < alpha)
         gap_rows.append({
             "dataset": dataset, "n_qubits": n_qubits, "target_sparsity": sparsity,
             "noise_level": noise_level, "n_seeds": n,
-            "accuracy_gap_mean": mean, "accuracy_gap_std": std, "accuracy_gap_ci95": ci95,
+            "gap_mean": mean, "gap_ci95": ci95,
             "p_value": p_value, "test_method": test_method, "significant": significant,
         })
     gap_rows.sort(key=lambda r: (r["dataset"], r["n_qubits"], r["target_sparsity"], r["noise_level"]))
     return gap_rows
 
 
-def write_report(path, config, records, agg, gaps, total_elapsed):
+def write_report(path, config, records, agg, sanity_rows, total_elapsed):
+    gap_metrics = [
+        ("val_acc", True, "ACCURACY"),
+        ("val_auc", True, "AUC"),
+        ("val_loss", False, "LOSS (higher gap = pruning increased loss)"),
+    ]
+    gap_tables = {m: compute_gap_table(records, m, higher) for m, higher, _ in gap_metrics}
+
     with open(path, "w") as f:
         f.write(f"Generated: {datetime.now().isoformat(timespec='seconds')}\n")
-        f.write("Algorithm: QAdaPrune-RigL (v8) -- movement-pruning drop criterion "
+        f.write("Algorithm: QAdaPrune-RigL (v9) -- movement-pruning drop criterion "
                 "(Sanh et al. 2020, arXiv:2005.07683) + RigL grow criterion "
                 "(Evci et al. 2020, arXiv:1911.11134) + automated gradual pruning "
-                "sparsity ramp (Zhu & Gupta 2017, arXiv:1710.01878), with both the "
-                "drop score and the grow EMA now computed from the real training "
-                "gradient (params.grad from the same backward() call driving the "
-                "optimizer step) rather than v7's separately-sampled mini-batch "
-                "proxy. See qadaprune_v8.py module docstring for the full "
-                "diagnosis and what changed relative to v7.\n")
+                "sparsity ramp (Zhu & Gupta 2017, arXiv:1710.01878), unchanged from "
+                "v7/v8. v9 adds a trainable classical readout (replacing v7/v8's "
+                "fixed sum-of-halves decoder), larger circuit/step/seed/validation "
+                "budgets, a convergence check per run, AUC/loss metrics alongside "
+                "accuracy, and a classical logistic-regression sanity-check baseline "
+                "on the same PCA features. See qadaprune_v9.py module docstring for "
+                "the full diagnosis of why v8's results were inconclusive.\n")
         f.write(f"Torch device: {TORCH_DEVICE}\n")
         f.write("Run config:\n")
         for k, v in config.items():
@@ -961,185 +1197,416 @@ def write_report(path, config, records, agg, gaps, total_elapsed):
         f.write(f"\nTotal sweep run time: {format_duration(total_elapsed)} ({total_elapsed:.2f}s)\n")
         f.write(f"Total records: {len(records)}\n\n")
 
-        f.write("=" * 78 + "\n")
-        f.write("VALIDATION ACCURACY (mean +/- 95% CI across seeds)\n")
-        f.write("=" * 78 + "\n")
-        f.write(f"{'dataset':<14}{'q':<4}{'run_type':<12}{'sparsity':<10}"
-                f"{'noise':<8}{'n_seeds':<9}{'acc_mean':<10}{'acc_std':<10}{'ci95':<8}\n")
+        if sanity_rows:
+            by_combo = defaultdict(list)
+            for r in sanity_rows:
+                by_combo[(r["dataset"], r["n_qubits"])].append(r["logreg_val_acc"])
+            f.write("=" * 90 + "\n")
+            f.write("CLASSICAL SANITY-CHECK BASELINE (LogisticRegression on same PCA features)\n")
+            f.write("=" * 90 + "\n")
+            f.write(f"{'dataset':<16}{'q':<4}{'n_seeds':<9}{'logreg_acc_mean':<18}\n")
+            for (dataset, n_qubits), vals in sorted(by_combo.items()):
+                mean, _, _ = _mean_std_ci(vals)
+                f.write(f"{dataset:<16}{n_qubits:<4}{len(vals):<9}{mean:<18.4f}\n")
+            f.write("If this is far above the dense (no_pruning) val_acc below for the "
+                    "same dataset/qubit combo, the bottleneck is the quantum pipeline "
+                    "(capacity, training length, or readout) rather than the data.\n\n")
+
+        f.write("=" * 90 + "\n")
+        f.write("VALIDATION METRICS (mean +/- 95% CI across seeds)\n")
+        f.write("=" * 90 + "\n")
+        f.write(f"{'dataset':<12}{'q':<4}{'run_type':<11}{'sparsity':<9}{'noise':<7}{'n':<4}"
+                f"{'acc':<9}{'ci':<7}{'auc':<9}{'ci':<7}{'loss':<9}{'ci':<7}{'conv%':<7}\n")
         for r in agg:
             sparsity_str = "-" if r["target_sparsity"] is None else f"{r['target_sparsity']:.2f}"
-            f.write(f"{r['dataset']:<14}{r['n_qubits']:<4}{r['run_type']:<12}{sparsity_str:<10}"
-                    f"{r['noise_level']:<8.3f}{r['n_seeds']:<9}{r['val_acc_mean']:<10.4f}"
-                    f"{r['val_acc_std']:<10.4f}{r['val_acc_ci95']:<8.4f}\n")
+            f.write(f"{r['dataset']:<12}{r['n_qubits']:<4}{r['run_type']:<11}{sparsity_str:<9}"
+                    f"{r['noise_level']:<7.3f}{r['n_seeds']:<4}"
+                    f"{r['val_acc_mean']:<9.4f}{r['val_acc_ci95']:<7.4f}"
+                    f"{r['val_auc_mean']:<9.4f}{r['val_auc_ci95']:<7.4f}"
+                    f"{r['val_loss_mean']:<9.4f}{r['val_loss_ci95']:<7.4f}"
+                    f"{100 * r['converged_frac']:<7.0f}\n")
 
-        f.write("\n" + "=" * 78 + "\n")
-        f.write("PAIRED ACCURACY GAP (no_pruning - pruned, per seed) + significance\n")
-        f.write("=" * 78 + "\n")
-        f.write(f"{'dataset':<14}{'q':<4}{'sparsity':<10}{'noise':<8}{'n_seeds':<9}"
-                f"{'gap_mean':<10}{'ci95':<8}{'p_value':<10}{'sig?':<6}method\n")
-        for r in gaps:
-            p_str = "n/a" if r["p_value"] is None else f"{r['p_value']:.4f}"
-            sig_str = "YES" if r["significant"] else "no"
-            f.write(f"{r['dataset']:<14}{r['n_qubits']:<4}{r['target_sparsity']:<10.2f}"
-                    f"{r['noise_level']:<8.3f}{r['n_seeds']:<9}{r['accuracy_gap_mean']:<10.4f}"
-                    f"{r['accuracy_gap_ci95']:<8.4f}{p_str:<10}{sig_str:<6}{r['test_method']}\n")
+        n_not_converged = sum(1 for r in agg if r["converged_frac"] < 1.0)
+        f.write(f"\nCAUTION: {n_not_converged}/{len(agg)} (dataset,qubits,run_type,sparsity,noise) "
+                f"groups had at least one seed whose loss had not plateaued by the end of "
+                f"training (conv% < 100) -- results for those groups may still be improvable "
+                f"with more --steps rather than reflecting a real pruning effect.\n")
 
-        n_underpowered = sum(1 for r in gaps if r["test_method"] == "insufficient_seeds")
-        f.write(f"\nCAUTION: {n_underpowered}/{len(gaps)} cells have fewer than "
-                f"{MIN_SEEDS_FOR_TEST} seeds -- no significance test was run for those, "
-                f"and point-estimate differences between sparsity levels there should NOT "
-                f"be read as findings. Only rows marked sig?=YES should be treated as "
-                f"a real difference from the dense baseline; everything else is "
-                f"consistent with noise at the tested seed count.\n")
-        f.write("\nNote: noise_level=0.0 rows use the noiseless (fast) simulator; "
+        for metric, higher_is_better, label in gap_metrics:
+            gaps = gap_tables[metric]
+            f.write("\n" + "=" * 90 + "\n")
+            f.write(f"PAIRED GAP: {label} (no_pruning - pruned, per seed) + significance\n")
+            f.write("=" * 90 + "\n")
+            f.write(f"{'dataset':<14}{'q':<4}{'sparsity':<10}{'noise':<8}{'n_seeds':<9}"
+                    f"{'gap_mean':<10}{'ci95':<8}{'p_value':<10}{'sig?':<6}method\n")
+            for r in gaps:
+                p_str = "n/a" if r["p_value"] is None else f"{r['p_value']:.4f}"
+                sig_str = "YES" if r["significant"] else "no"
+                f.write(f"{r['dataset']:<14}{r['n_qubits']:<4}{r['target_sparsity']:<10.2f}"
+                        f"{r['noise_level']:<8.3f}{r['n_seeds']:<9}{r['gap_mean']:<10.4f}"
+                        f"{r['gap_ci95']:<8.4f}{p_str:<10}{sig_str:<6}{r['test_method']}\n")
+            n_underpowered = sum(1 for r in gaps if r["test_method"] == "insufficient_seeds")
+            if gaps:
+                f.write(f"{n_underpowered}/{len(gaps)} cells had fewer than {MIN_SEEDS_FOR_TEST} "
+                        f"seeds -- no significance test was run for those.\n")
+
+        f.write("\nOnly rows marked sig?=YES in any of the three gap tables above should be "
+                "treated as a real difference from the dense baseline; everything else is "
+                "consistent with noise at the tested seed count.\n")
+        f.write("Note: noise_level=0.0 rows use the noiseless (fast) simulator; "
                 "noise_level>0.0 rows use a density-matrix simulator with a "
                 "DepolarizingChannel inserted after every gate that is actually "
                 "applied (frozen/zeroed gates are skipped).\n")
-        f.write("See {results,aggregate,gap}.csv for the full machine-readable tables.\n")
+        f.write("See {results,aggregate}.csv, the three gap CSVs, and "
+                "_sanity_baseline.csv for the full machine-readable tables.\n")
 
 
 def run_experiment_grid(datasets, qubit_counts, sparsities, seeds, noise_levels,
                          n_layers, steps, win_sz, shots,
                          prune_start_frac, prune_end_frac,
                          max_round_freeze_frac, noise_eval_samples,
-                         quiet, encoding, save_prefix, save_raw, v8_hparams):
+                         quiet, encoding, n_train, n_val, skip_sanity_check,
+                         save_prefix, save_raw, v9_hparams):
     combos = [(d, q, s) for d in datasets for q in qubit_counts for s in seeds]
     total = len(combos)
     all_records = []
+    all_sanity_rows = []
     raw_bundles = []
 
     for i, (dataset_name, n_qubits, seed) in enumerate(combos, 1):
         print(f"\n{'#' * 78}\n[{i}/{total}] dataset={dataset_name} qubits={n_qubits} seed={seed}\n{'#' * 78}")
-        records, raw_bundle = run_single(
+        records, raw_bundle, sanity_row = run_single(
             dataset_name, n_qubits, seed, n_layers, steps, win_sz, sparsities,
             noise_levels, prune_start_frac, prune_end_frac, max_round_freeze_frac,
-            shots, noise_eval_samples, quiet, encoding, v8_hparams,
+            shots, noise_eval_samples, quiet, encoding, n_train, n_val,
+            skip_sanity_check, v9_hparams,
         )
         all_records.extend(records)
+        if sanity_row is not None:
+            all_sanity_rows.append(sanity_row)
         raw_bundles.append(raw_bundle)
 
         write_csv(f"{save_prefix}_results.csv", RECORD_FIELDS, all_records)
+        if all_sanity_rows:
+            write_csv(f"{save_prefix}_sanity_baseline.csv", SANITY_FIELDS, all_sanity_rows)
         if save_raw:
             with open(f"{save_prefix}_raw.pkl", "wb") as f:
                 pickle.dump(raw_bundles, f)
 
-    return all_records, raw_bundles
+        # First-line mitigation for the custatevec memory-pool accumulation
+        # issue diagnosed in v8 (does not guarantee cuQuantum's internal
+        # pool is released -- if long single-process sweeps still crash,
+        # use --dispatch, which reclaims GPU memory unconditionally between
+        # combos via subprocess isolation).
+        gc.collect()
+        torch.cuda.empty_cache()
+
+    return all_records, all_sanity_rows, raw_bundles
+
+
+# ----------------------------------------------------------------------
+# --dispatch mode: run each (dataset, n_qubits, seed) combo as its own OS
+# subprocess (re-invoking THIS SAME FILE without --dispatch). Unchanged
+# from v8 apart from threading the new v9 CLI flags through.
+# ----------------------------------------------------------------------
+def build_worker_cmd(args, dataset_name, n_qubits, seed, combo_prefix):
+    cmd = [
+        sys.executable, __file__,
+        "--datasets", dataset_name,
+        "--qubits", str(n_qubits),
+        "--seeds", str(seed),
+        "--sparsities", *[str(x) for x in args.sparsities],
+        "--save", str(combo_prefix),
+        "--report-name", f"{combo_prefix}_report.txt",
+        "--layers", str(args.layers),
+        "--steps", str(args.steps),
+        "--win-sz", str(args.win_sz),
+        "--encoding", args.encoding,
+        "--n-train", str(args.n_train),
+        "--n-val", str(args.n_val),
+        "--noise-levels", *[str(x) for x in args.noise_levels],
+        "--noise-eval-samples", str(args.noise_eval_samples),
+        "--prune-start-frac", str(args.prune_start_frac),
+        "--prune-end-frac", str(args.prune_end_frac),
+        "--max-round-freeze-frac", str(args.max_round_freeze_frac),
+        "--movement-ema-beta", str(args.movement_ema_beta),
+        "--cycle-frac-init", str(args.cycle_frac_init),
+        "--protect-entangling-frac", str(args.protect_entangling_frac),
+        "--distill-hardness-max", str(args.distill_hardness_max),
+        "--distill-hardness-min", str(args.distill_hardness_min),
+        "--lr-warm-mult", str(args.lr_warm_mult),
+        "--convergence-window-frac", str(args.convergence_window_frac),
+        "--convergence-rel-threshold", str(args.convergence_rel_threshold),
+    ]
+    if args.shots is not None:
+        cmd += ["--shots", str(args.shots)]
+    if args.quiet:
+        cmd.append("--quiet")
+    if args.save_raw:
+        cmd.append("--save-raw")
+    if args.skip_sanity_check:
+        cmd.append("--skip-sanity-check")
+    return cmd
+
+
+def run_dispatch(args):
+    combos = [(d, q, s) for d in args.datasets for q in args.qubits for s in args.seeds]
+    total = len(combos)
+    work_dir = Path(args.work_dir)
+    work_dir.mkdir(parents=True, exist_ok=True)
+
+    all_records = []
+    all_sanity_rows = []
+    failed_combos = []
+    driver_start = time.time()
+
+    config = {
+        "mode": "dispatch (subprocess-per-combo)",
+        "datasets": args.datasets, "qubits": args.qubits, "sparsities": args.sparsities,
+        "seeds": args.seeds, "encoding": args.encoding, "noise_levels": args.noise_levels,
+        "layers": args.layers, "steps": args.steps, "win_sz": args.win_sz, "shots": args.shots,
+        "n_train": args.n_train, "n_val": args.n_val, "work_dir": str(work_dir),
+    }
+
+    for i, (dataset_name, n_qubits, seed) in enumerate(combos, 1):
+        combo_prefix = work_dir / f"{dataset_name}_q{n_qubits}_seed{seed}"
+        results_csv = Path(f"{combo_prefix}_results.csv")
+        sanity_csv = Path(f"{combo_prefix}_sanity_baseline.csv")
+
+        if args.skip_existing and results_csv.exists():
+            print(f"[{i}/{total}] SKIP {dataset_name}/q{n_qubits}/seed{seed} "
+                  f"(found existing {results_csv})")
+            all_records.extend(read_records(results_csv))
+            all_sanity_rows.extend(read_sanity_rows(sanity_csv))
+            continue
+
+        cmd = build_worker_cmd(args, dataset_name, n_qubits, seed, combo_prefix)
+        print(f"\n{'#' * 78}")
+        print(f"[{i}/{total}] dataset={dataset_name} qubits={n_qubits} seed={seed}")
+        print(" ".join(shlex.quote(c) for c in cmd))
+        print("#" * 78)
+
+        ok = False
+        attempts = args.max_retries + 1
+        for attempt in range(1, attempts + 1):
+            proc = subprocess.run(cmd)
+            if proc.returncode == 0 and results_csv.exists():
+                ok = True
+                break
+            print(f"[{i}/{total}] combo {dataset_name}/q{n_qubits}/seed{seed} "
+                  f"FAILED (attempt {attempt}/{attempts}, exit code {proc.returncode})")
+
+        if not ok:
+            failed_combos.append((dataset_name, n_qubits, seed))
+            print(f"[{i}/{total}] giving up on {dataset_name}/q{n_qubits}/seed{seed} "
+                  f"after {attempts} attempt(s); continuing with remaining combos.")
+            continue
+
+        all_records.extend(read_records(results_csv))
+        all_sanity_rows.extend(read_sanity_rows(sanity_csv))
+
+        agg = aggregate_records(all_records)
+        elapsed_so_far = time.time() - driver_start
+        write_csv(f"{args.save}_results.csv", RECORD_FIELDS, all_records)
+        write_csv(f"{args.save}_aggregate.csv",
+                  ["dataset", "n_qubits", "run_type", "target_sparsity", "noise_level",
+                   "n_seeds", "val_acc_mean", "val_acc_std", "val_acc_ci95",
+                   "val_auc_mean", "val_auc_std", "val_auc_ci95",
+                   "val_loss_mean", "val_loss_std", "val_loss_ci95", "converged_frac"], agg)
+        if all_sanity_rows:
+            write_csv(f"{args.save}_sanity_baseline.csv", SANITY_FIELDS, all_sanity_rows)
+        for metric in ("val_acc", "val_auc", "val_loss"):
+            higher = metric != "val_loss"
+            gaps = compute_gap_table(all_records, metric, higher)
+            write_csv(f"{args.save}_gap_{metric}.csv",
+                      ["dataset", "n_qubits", "target_sparsity", "noise_level", "n_seeds",
+                       "gap_mean", "gap_ci95", "p_value", "test_method", "significant"], gaps)
+        write_report(args.report_name, config, all_records, agg, all_sanity_rows, elapsed_so_far)
+        print(f"[{i}/{total}] merged {len(all_records)} records so far into "
+              f"{args.save}_results.csv / {args.report_name}")
+
+    total_elapsed = time.time() - driver_start
+
+    print("\n" + "=" * 78)
+    print(f"Dispatch complete | total run time: {format_duration(total_elapsed)}")
+    print(f"Combos completed: {total - len(failed_combos)}/{total}")
+    if failed_combos:
+        print(f"Combos FAILED after retries ({len(failed_combos)}):")
+        for dataset_name, n_qubits, seed in failed_combos:
+            print(f"  - {dataset_name} / q{n_qubits} / seed{seed}")
+        print("Re-run the same command with --skip-existing to retry only "
+              "the remaining/failed combos.")
+    if all_records:
+        print(f"Wrote: {args.save}_results.csv, {args.save}_aggregate.csv, "
+              f"{args.save}_gap_{{val_acc,val_auc,val_loss}}.csv, {args.report_name}")
+    print("=" * 78)
+
+    if failed_combos:
+        sys.exit(1)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="QAdaPrune-RigL (v8): fixes two noise/bug sources in v7's "
-                     "drop/grow decision-rule inputs (a no-op 'EMA' on the "
-                     "movement score, and a movement/grow signal computed from a "
-                     "separately-sampled mini-batch gradient instead of the real "
-                     "training gradient) while keeping the Movement-Pruning drop "
-                     "criterion (Sanh et al. 2020), RigL grow criterion (Evci et "
-                     "al. 2020), and gradual sparsity schedule (Zhu & Gupta 2017) "
-                     "unchanged. See module docstring for the full diagnosis."
+        description="QAdaPrune-RigL (v9): adds a trainable classical readout, "
+                     "larger circuit/step/seed/validation budgets, a convergence "
+                     "check, AUC/loss metrics, and a classical sanity-check "
+                     "baseline on top of v8's real-gradient pruning-decision fix. "
+                     "See module docstring for the full diagnosis of why v8's "
+                     "results (exp8.txt) were inconclusive."
     )
-    parser.add_argument("-s", "--save", type=str, default="qadaprune_v8_run")
+    parser.add_argument("-s", "--save", type=str, default="qadaprune_v9_run")
     parser.add_argument("--report-name", type=str, default="exp8.txt")
-    parser.add_argument("--layers", type=int, default=3)
-    parser.add_argument("--steps", type=int, default=40)
+    parser.add_argument("--layers", type=int, default=4,
+                         help="Raised from v8's default of 3 for more parameter "
+                              "budget to prune (see module docstring, fix #2).")
+    parser.add_argument("--steps", type=int, default=200,
+                         help="Raised from v8's default of 40 -- 40 steps was very "
+                              "likely leaving both dense and pruned models "
+                              "undertrained (see module docstring, fix #3). Check "
+                              "the 'converged' field / CAUTION line in the report; "
+                              "raise further if runs are still flagged unconverged.")
     parser.add_argument("--win-sz", type=int, default=4)
     parser.add_argument("--shots", type=int, default=None)
     parser.add_argument("--datasets", type=str, nargs="+",
                          default=["mnist", "fashionmnist"], choices=list(DATASET_CLASSES.keys()))
-    parser.add_argument("--qubits", type=int, nargs="+", default=[4])
+    parser.add_argument("--qubits", type=int, nargs="+", default=[6],
+                         help="Raised from v8's default of 4 for more parameter "
+                              "budget to prune (see module docstring, fix #2).")
     parser.add_argument("--sparsities", type=float, nargs="+", default=[0.10, 0.25, 0.40])
     parser.add_argument("--seeds", type=int, nargs="+",
-                         default=[0, 1, 2, 3, 4, 5, 6, 7],
-                         help="Kept at the same default as v7 for a like-for-like "
-                              "comparison. v7's CIs (+/-0.02 to +/-0.09) were often "
-                              "larger than the sparsity effects under test; now that "
-                              "the redundant per-step autograd loop is gone, consider "
-                              "raising this well past 8 for a production run.")
-    parser.add_argument("--encoding", type=str, default="pca", choices=["pca", "resize"],
-                         help="pca (default): 16-component PCA projection, preserves far "
-                              "more class-discriminative signal per qubit than a naive "
-                              "spatial resize. resize: box-filter downsample, kept for "
-                              "direct comparison.")
+                         default=list(range(16)),
+                         help="Raised from v8's default of 8 seeds. At the effect "
+                              "sizes and per-seed std observed in v8's exp8.txt, 8 "
+                              "seeds could never reach significance; see module "
+                              "docstring, fix #5.")
+    parser.add_argument("--encoding", type=str, default="pca", choices=["pca", "resize"])
+    parser.add_argument("--n-train", type=int, default=800,
+                         help="Raised from v8's default of 500 (see module "
+                              "docstring, fix #4).")
+    parser.add_argument("--n-val", type=int, default=800,
+                         help="Raised from v8's default of 300 to shrink the "
+                              "binomial-sampling component of run-to-run variance "
+                              "(see module docstring, fix #4).")
     parser.add_argument("--noise-levels", type=float, nargs="+", default=[0.03, 0.05, 0.10])
-    parser.add_argument("--noise-eval-samples", type=int, default=100)
+    parser.add_argument("--noise-eval-samples", type=int, default=300,
+                         help="Raised from v8's default of 100 (see module "
+                              "docstring, fix #4).")
     parser.add_argument("--prune-start-frac", type=float, default=0.15)
     parser.add_argument("--prune-end-frac", type=float, default=0.65)
     parser.add_argument("--max-round-freeze-frac", type=float, default=0.08)
     parser.add_argument("--movement-ema-beta", type=float, default=0.6,
                          help="Decay used ONLY for the RigL grow-criterion |grad| "
-                              "EMA now (v8: no longer applied to the movement-"
-                              "pruning score, which is a raw accumulated sum per "
-                              "Sanh et al. -- see module docstring, v7 bug #1).")
-    parser.add_argument("--cycle-frac-init", type=float, default=0.30,
-                         help="RigL zeta_0: initial fraction of the frozen/active pool "
-                              "cycled (grown/dropped) at each mask-update round; cosine-"
-                              "annealed to 0 by prune-end-frac.")
+                              "EMA (the movement-pruning score itself is a raw "
+                              "accumulated sum per Sanh et al. -- see v8 docstring).")
+    parser.add_argument("--cycle-frac-init", type=float, default=0.30)
     parser.add_argument("--protect-entangling-frac", type=float, default=0.34)
     parser.add_argument("--distill-hardness-max", type=float, default=0.7)
     parser.add_argument("--distill-hardness-min", type=float, default=0.2)
     parser.add_argument("--lr-warm-mult", type=float, default=2.0)
+    parser.add_argument("--convergence-window-frac", type=float, default=0.15,
+                         help="Fraction of steps used as the 'final window' for the "
+                              "loss-plateau convergence check (see module docstring, "
+                              "fix #3).")
+    parser.add_argument("--convergence-rel-threshold", type=float, default=0.03,
+                         help="A run is flagged 'converged' if the mean loss over "
+                              "the final window changed by less than this fraction "
+                              "relative to the window before it.")
+    parser.add_argument("--skip-sanity-check", action="store_true",
+                         help="Skip the classical LogisticRegression sanity-check "
+                              "baseline (module docstring, fix #7). On by default "
+                              "because it is cheap relative to circuit training.")
     parser.add_argument("--quiet", action="store_true")
     parser.add_argument("--save-raw", action="store_true")
+    parser.add_argument("--dispatch", action="store_true",
+                         help="Instead of training every (dataset, n_qubits, seed) "
+                              "combo in this one process, re-invoke this same "
+                              "script once per combo as its own subprocess (without "
+                              "--dispatch) and merge results after each one. Use "
+                              "this if a single-process sweep crashes with "
+                              "'custatevec memory allocation failed' -- see "
+                              "run_dispatch() docstring above for why.")
+    parser.add_argument("--work-dir", type=str, default="sweep_runs",
+                         help="[--dispatch only] Directory for per-combo "
+                              "intermediate files.")
+    parser.add_argument("--skip-existing", action="store_true",
+                         help="[--dispatch only] Reuse an existing combo results "
+                              "CSV in --work-dir instead of re-training it.")
+    parser.add_argument("--max-retries", type=int, default=1,
+                         help="[--dispatch only] Extra attempts per combo if its "
+                              "subprocess fails or doesn't produce a results CSV.")
     args = parser.parse_args()
 
-    v8_hparams = dict(
+    if args.dispatch:
+        run_dispatch(args)
+        sys.exit(0)
+
+    v9_hparams = dict(
         movement_ema_beta=args.movement_ema_beta,
         cycle_frac_init=args.cycle_frac_init,
         protect_entangling_frac=args.protect_entangling_frac,
         distill_hardness_max=args.distill_hardness_max,
         distill_hardness_min=args.distill_hardness_min,
         lr_warm_mult=args.lr_warm_mult,
+        convergence_window_frac=args.convergence_window_frac,
+        convergence_rel_threshold=args.convergence_rel_threshold,
     )
 
     config = {
         "datasets": args.datasets, "qubits": args.qubits, "sparsities": args.sparsities,
         "seeds": args.seeds, "encoding": args.encoding, "noise_levels": args.noise_levels,
         "layers": args.layers, "steps": args.steps, "win_sz": args.win_sz, "shots": args.shots,
+        "n_train": args.n_train, "n_val": args.n_val,
         "prune_start_frac": args.prune_start_frac, "prune_end_frac": args.prune_end_frac,
         "max_round_freeze_frac": args.max_round_freeze_frac,
         "noise_eval_samples": args.noise_eval_samples,
-        **{f"v8_{k}": v for k, v in v8_hparams.items()},
+        **{f"v9_{k}": v for k, v in v9_hparams.items()},
     }
     print("Run config:")
     for k, v in config.items():
         print(f"  {k}: {v}")
     if len(args.seeds) < MIN_SEEDS_FOR_TEST:
         print(f"WARNING: {len(args.seeds)} seeds < {MIN_SEEDS_FOR_TEST} -- gap-table "
-              f"significance tests will be skipped for every cell (marked "
-              f"'insufficient_seeds'). Point estimates from a run this small should not "
-              f"be reported as findings.")
+              f"significance tests will be skipped for every cell.")
     n_combos = len(args.datasets) * len(args.qubits) * len(args.seeds)
     n_runs = n_combos * (1 + len(args.sparsities))
     print(f"\nThis sweep will train {n_runs} models "
           f"({n_combos} combos x (1 no-pruning + {len(args.sparsities)} sparsities)).")
 
     run_start = time.time()
-    all_records, raw_bundles = run_experiment_grid(
+    all_records, all_sanity_rows, raw_bundles = run_experiment_grid(
         args.datasets, args.qubits, args.sparsities, args.seeds, args.noise_levels,
         n_layers=args.layers, steps=args.steps, win_sz=args.win_sz, shots=args.shots,
         prune_start_frac=args.prune_start_frac, prune_end_frac=args.prune_end_frac,
         max_round_freeze_frac=args.max_round_freeze_frac,
         noise_eval_samples=args.noise_eval_samples, quiet=args.quiet,
-        encoding=args.encoding, save_prefix=args.save, save_raw=args.save_raw,
-        v8_hparams=v8_hparams,
+        encoding=args.encoding, n_train=args.n_train, n_val=args.n_val,
+        skip_sanity_check=args.skip_sanity_check,
+        save_prefix=args.save, save_raw=args.save_raw, v9_hparams=v9_hparams,
     )
     total_elapsed = time.time() - run_start
 
     agg = aggregate_records(all_records)
-    gaps = compute_gap_table(all_records)
 
     write_csv(f"{args.save}_results.csv", RECORD_FIELDS, all_records)
     write_csv(f"{args.save}_aggregate.csv",
               ["dataset", "n_qubits", "run_type", "target_sparsity", "noise_level",
-               "n_seeds", "val_acc_mean", "val_acc_std", "val_acc_ci95"], agg)
-    write_csv(f"{args.save}_gap.csv",
-              ["dataset", "n_qubits", "target_sparsity", "noise_level", "n_seeds",
-               "accuracy_gap_mean", "accuracy_gap_std", "accuracy_gap_ci95",
-               "p_value", "test_method", "significant"], gaps)
-    write_report(args.report_name, config, all_records, agg, gaps, total_elapsed)
+               "n_seeds", "val_acc_mean", "val_acc_std", "val_acc_ci95",
+               "val_auc_mean", "val_auc_std", "val_auc_ci95",
+               "val_loss_mean", "val_loss_std", "val_loss_ci95", "converged_frac"], agg)
+    if all_sanity_rows:
+        write_csv(f"{args.save}_sanity_baseline.csv", SANITY_FIELDS, all_sanity_rows)
+    for metric in ("val_acc", "val_auc", "val_loss"):
+        higher = metric != "val_loss"
+        gaps = compute_gap_table(all_records, metric, higher)
+        write_csv(f"{args.save}_gap_{metric}.csv",
+                  ["dataset", "n_qubits", "target_sparsity", "noise_level", "n_seeds",
+                   "gap_mean", "gap_ci95", "p_value", "test_method", "significant"], gaps)
+    write_report(args.report_name, config, all_records, agg, all_sanity_rows, total_elapsed)
 
     print("\n" + "=" * 78)
     print(f"Sweep complete | total run time: {format_duration(total_elapsed)}")
     print(f"Wrote: {args.save}_results.csv, {args.save}_aggregate.csv, "
-          f"{args.save}_gap.csv, {args.report_name}"
+          f"{args.save}_gap_{{val_acc,val_auc,val_loss}}.csv, "
+          f"{args.save}_sanity_baseline.csv, {args.report_name}"
           + (f", {args.save}_raw.pkl" if args.save_raw else ""))
     print("=" * 78)
