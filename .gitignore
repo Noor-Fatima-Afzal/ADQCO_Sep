@@ -30,3 +30,18 @@ sweep_runs/
 
 qadaprune_v10_run_results.csv
 qadaprune_v10_run_sanity_baseline.csv
+
+qadaprune_v11_run_aggregate.csv 
+qadaprune_v11_run_contrasts_val_acc.csv 
+qadaprune_v11_run_contrasts_val_auc.csv 
+qadaprune_v11_run_contrasts_val_loss.csv 
+qadaprune_v11_run_gatematched_val_acc.csv 
+qadaprune_v11_run_gatematched_val_auc.csv 
+qadaprune_v11_run_results.csv 
+qadaprune_v11_run_sanity_baseline.csv 
+qadaprune_v12_run_aggregate.csv 
+
+qadaprune_v10_run_aggregate.csv 
+qadaprune_v10_run_contrasts_val_acc.csv 
+qadaprune_v10_run_contrasts_val_auc.csv 
+qadaprune_v10_run_contrasts_val_loss.csv
