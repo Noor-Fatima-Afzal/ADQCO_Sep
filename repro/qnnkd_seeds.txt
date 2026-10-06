@@ -1,0 +1,10 @@
+seed 73: teacher_test_acc=0.8300 plain_student_test_acc=0.6500 kd_student_test_acc=0.6400 
+seed 0: teacher_test_acc=0.8800 plain_student_test_acc=0.6350 kd_student_test_acc=0.6275 
+seed 1: teacher_test_acc=0.8500 plain_student_test_acc=0.6200 kd_student_test_acc=0.5875 
+seed 2: teacher_test_acc=0.8200 plain_student_test_acc=0.5650 kd_student_test_acc=0.5550 
+seed 3: teacher_test_acc=0.8350 plain_student_test_acc=0.6225 kd_student_test_acc=0.6100 
+seed 4: teacher_test_acc=0.8600 plain_student_test_acc=0.6525 kd_student_test_acc=0.6450 
+seed 5: teacher_test_acc=0.8600 plain_student_test_acc=0.6475 kd_student_test_acc=0.6325 
+seed 6: teacher_test_acc=0.8325 plain_student_test_acc=0.5775 kd_student_test_acc=0.5800 
+seed 7: teacher_test_acc=0.8975 plain_student_test_acc=0.5875 kd_student_test_acc=0.6350 
+seed 8: teacher_test_acc=0.8500 plain_student_test_acc=0.6575 kd_student_test_acc=0.6675 

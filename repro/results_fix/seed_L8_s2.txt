@@ -1,0 +1,2 @@
+data (12163, 15) (2027, 15); PC1-bit rule train 11073/12163 test 1864/2027; paper flat 11055 / 1865
+student L 8 {'plain': {'train': 0.9115349831456055, 'test': 0.919585594474593, 'train_n': 11087, 'test_n': 1864, 'agree_pc1_train': 0.9976979363643838, 'agree_pc1_test': 0.9990133201776024}} 1600s

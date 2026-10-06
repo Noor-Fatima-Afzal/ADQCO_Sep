@@ -1,0 +1,105 @@
+{
+ "seed": 0,
+ "mode": "rawpca",
+ "init": "paper",
+ "students": {
+  "4": {
+   "plain": {
+    "train": 0.9103839513277974,
+    "test": 0.919585594474593,
+    "train_n": 11073,
+    "test_n": 1864,
+    "agree_pc1_train": 1.0,
+    "agree_pc1_test": 1.0
+   },
+   "kd": {
+    "train": 0.9103839513277974,
+    "test": 0.919585594474593,
+    "train_n": 11073,
+    "test_n": 1864,
+    "agree_pc1_train": 1.0,
+    "agree_pc1_test": 1.0
+   }
+  },
+  "5": {
+   "plain": {
+    "train": 0.9103839513277974,
+    "test": 0.919585594474593,
+    "train_n": 11073,
+    "test_n": 1864,
+    "agree_pc1_train": 1.0,
+    "agree_pc1_test": 1.0
+   },
+   "kd": {
+    "train": 0.9103839513277974,
+    "test": 0.919585594474593,
+    "train_n": 11073,
+    "test_n": 1864,
+    "agree_pc1_train": 1.0,
+    "agree_pc1_test": 1.0
+   }
+  },
+  "6": {
+   "plain": {
+    "train": 0.911863849379265,
+    "test": 0.919585594474593,
+    "train_n": 11091,
+    "test_n": 1864,
+    "agree_pc1_train": 0.998191235714873,
+    "agree_pc1_test": 0.9990133201776024
+   },
+   "kd": {
+    "train": 0.9116994162624352,
+    "test": 0.919585594474593,
+    "train_n": 11089,
+    "test_n": 1864,
+    "agree_pc1_train": 0.9983556688317027,
+    "agree_pc1_test": 0.9990133201776024
+   }
+  },
+  "7": {
+   "plain": {
+    "train": 0.9105483844446272,
+    "test": 0.919585594474593,
+    "train_n": 11075,
+    "test_n": 1864,
+    "agree_pc1_train": 0.9998355668831703,
+    "agree_pc1_test": 1.0
+   },
+   "kd": {
+    "train": 0.9103839513277974,
+    "test": 0.919585594474593,
+    "train_n": 11073,
+    "test_n": 1864,
+    "agree_pc1_train": 1.0,
+    "agree_pc1_test": 1.0
+   }
+  },
+  "8": {
+   "plain": {
+    "train": 0.9103839513277974,
+    "test": 0.919585594474593,
+    "train_n": 11073,
+    "test_n": 1864,
+    "agree_pc1_train": 1.0,
+    "agree_pc1_test": 1.0
+   },
+   "kd": {
+    "train": 0.9105483844446272,
+    "test": 0.919585594474593,
+    "train_n": 11075,
+    "test_n": 1864,
+    "agree_pc1_train": 0.9998355668831703,
+    "agree_pc1_test": 1.0
+   }
+  }
+ },
+ "teacher": {
+  "train": 0.9132615308723177,
+  "test": 0.9200789343857918,
+  "train_n": 11108,
+  "test_n": 1865,
+  "agree_pc1_train": 0.99695798733865,
+  "agree_pc1_test": 0.9995066600888012
+ }
+}
