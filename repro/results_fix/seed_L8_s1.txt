@@ -1,0 +1,2 @@
+data (12163, 15) (2027, 15); PC1-bit rule train 11073/12163 test 1864/2027; paper flat 11055 / 1865
+student L 8 {'plain': {'train': 0.9135903971059771, 'test': 0.9200789343857918, 'train_n': 11112, 'test_n': 1865, 'agree_pc1_train': 0.9963002548713311, 'agree_pc1_test': 0.9995066600888012}} 1575s

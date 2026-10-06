@@ -63,3 +63,12 @@ qadaprune_v13_run_contrasts_val_auc.csv
 qadaprune_v13_run_contrasts_val_loss.csv 
 qadaprune_v13_run_gatematched_val_acc.csv 
 qadaprune_v13_run_gatematched_val_auc.csv
+.venv/
+repro/out/
+repro/ref/
+repro/out_abl/
+repro/*.log
+repro/GATE_GSI/
+.venv_gate/
+repro/out_kd/
+repro/out_fix/

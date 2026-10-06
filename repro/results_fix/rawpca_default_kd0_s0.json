@@ -1,0 +1,17 @@
+{
+ "seed": 0,
+ "mode": "rawpca",
+ "init": "default",
+ "students": {
+  "4": {
+   "plain": {
+    "train": 0.9105483844446272,
+    "test": 0.919585594474593,
+    "train_n": 11075,
+    "test_n": 1864,
+    "agree_pc1_train": 0.9998355668831703,
+    "agree_pc1_test": 1.0
+   }
+  }
+ }
+}
